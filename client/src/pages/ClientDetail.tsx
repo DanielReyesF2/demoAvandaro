@@ -171,106 +171,100 @@ export default function ClientDetail() {
             </div>
           </div>
           
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            {/* Tarjeta principal con desviación de relleno sanitario */}
-            <Card className="md:col-span-2 bg-gradient-to-r from-navy to-navy-light">
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center">
-                  <Percent className="h-5 w-5 mr-2 text-black" />
-                  <span className="uppercase text-black font-bold">Desviación de Relleno Sanitario</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-col">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="text-5xl font-bold text-lime">
-                      {latestDeviation !== null 
-                        ? `${latestDeviation}%` 
-                        : 'No disponible'}
-                    </div>
-                    <div className="hidden md:block">
-                      <RecycleIcon className="h-16 w-16 text-lime opacity-75" />
-                    </div>
-                  </div>
-                  <p className="text-base text-black font-medium">
-                    Porcentaje de residuos desviados del relleno sanitario
-                  </p>
+          {/* Stats Cards - Nuevo diseño similar a la captura */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-gray-200 rounded-lg overflow-hidden mb-6">
+            {/* Residuos Orgánicos */}
+            <div className="bg-white p-4">
+              <div className="text-gray-500 text-xs uppercase">Residuos Orgánicos</div>
+              <div className="flex items-baseline mt-1">
+                <div className="text-2xl font-bold">
+                  {new Intl.NumberFormat('es-MX', { maximumFractionDigits: 2 }).format(totalOrganic)}
+                  <span className="text-sm font-normal ml-1">kg</span>
                 </div>
-              </CardContent>
-            </Card>
+                <div className="ml-auto text-xs text-lime">
+                  ↑ 8.2%
+                </div>
+              </div>
+              <div className="mt-2 h-1 bg-gray-100 rounded-full">
+                <div 
+                  className="h-1 bg-lime rounded-full" 
+                  style={{ width: '78%' }}
+                />
+              </div>
+              <div className="text-xs text-gray-400 mt-1">
+                78% de la meta mensual
+              </div>
+            </div>
             
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-gray-500 uppercase">Residuos Totales</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">{formatNumber(totalWaste)} kg</div>
-                <p className="text-sm text-gray-500 mt-1">Gestionados</p>
-              </CardContent>
-            </Card>
+            {/* Residuos Inorgánicos */}
+            <div className="bg-white p-4">
+              <div className="text-gray-500 text-xs uppercase">Residuos Inorgánicos</div>
+              <div className="flex items-baseline mt-1">
+                <div className="text-2xl font-bold">
+                  {new Intl.NumberFormat('es-MX', { maximumFractionDigits: 2 }).format(totalInorganic)}
+                  <span className="text-sm font-normal ml-1">kg</span>
+                </div>
+                <div className="ml-auto text-xs text-red-500">
+                  ↑ 5.1%
+                </div>
+              </div>
+              <div className="mt-2 h-1 bg-gray-100 rounded-full">
+                <div 
+                  className="h-1 bg-navy rounded-full" 
+                  style={{ width: '92%' }}
+                />
+              </div>
+              <div className="text-xs text-gray-400 mt-1">
+                92% de la meta mensual
+              </div>
+            </div>
             
-            <Card className="bg-gradient-to-br from-navy/5 to-lime/10 border-lime/20">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-gray-700 uppercase flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-lime" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="m2 12 5.25 5 2-2-2.25-2.25L11.25 9l2 1.875L17.5 7" />
-                    <path d="M22 2 12 12" />
-                  </svg>
-                  ODS-12 Progreso
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="text-3xl font-bold text-navy flex items-baseline">
-                      {wasteData.length > 0 && wasteData[0].deviation ? wasteData[0].deviation.toFixed(2) : "0.00"}
-                      <span className="text-lg ml-1">%</span>
-                    </div>
-                    <p className="text-sm text-gray-500 mt-1">Desviación de relleno sanitario</p>
-                  </div>
-                  <div className="flex items-center bg-lime/20 px-2 py-1 rounded-md">
-                    <svg viewBox="0 0 24 24" className="h-4 w-4 text-lime mr-1" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-                      <polyline points="17 6 23 6 23 12" />
-                    </svg>
-                    <span className="text-xs font-medium text-navy">+5.95%</span>
-                  </div>
+            {/* Total Residuos */}
+            <div className="bg-white p-4">
+              <div className="text-gray-500 text-xs uppercase">Total Residuos</div>
+              <div className="flex items-baseline mt-1">
+                <div className="text-2xl font-bold">
+                  {new Intl.NumberFormat('es-MX', { maximumFractionDigits: 2 }).format(totalWaste)}
+                  <span className="text-sm font-normal ml-1">kg</span>
                 </div>
-                
-                <div className="mt-4">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-xs text-gray-500">Meta ODS 2030</span>
-                    <span className="text-xs font-semibold">30%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-lime h-2 rounded-full relative overflow-hidden" 
-                         style={{ width: `${Math.min((wasteData.length > 0 && wasteData[0].deviation ? wasteData[0].deviation : 0) / 30 * 100, 100)}%` }}>
-                      <div className="absolute inset-0 bg-white/30 animate-pulse"></div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex justify-between mt-3">
-                    <div className="text-center">
-                      <div className="text-sm font-semibold text-navy">{Math.round(totalRecyclable / totalWaste * 100)}%</div>
-                      <div className="text-xs text-gray-500">Reciclables</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-sm font-semibold text-lime">
-                        {Math.round(totalOrganic / totalWaste * 100)}%
-                      </div>
-                      <div className="text-xs text-gray-500">Orgánicos</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-sm font-semibold">
-                        {Math.round(totalInorganic / totalWaste * 100)}%
-                      </div>
-                      <div className="text-xs text-gray-500">Inorgánicos</div>
-                    </div>
-                  </div>
+                <div className="ml-auto text-xs text-red-500">
+                  ↑ 2.8%
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+              <div className="mt-2 h-1 bg-gray-100 rounded-full">
+                <div 
+                  className="h-1 bg-gray-500 rounded-full" 
+                  style={{ width: '86%' }}
+                />
+              </div>
+              <div className="text-xs text-gray-400 mt-1">
+                86% de la meta mensual
+              </div>
+            </div>
+            
+            {/* Desviación */}
+            <div className="bg-white p-4">
+              <div className="text-gray-500 text-xs uppercase">Desviación</div>
+              <div className="flex items-baseline mt-1">
+                <div className="text-2xl font-bold">
+                  {latestDeviation !== null ? 
+                    `${latestDeviation}%` : 
+                    '0%'}
+                </div>
+                <div className="ml-auto text-xs text-lime">
+                  ↑ 1.5%
+                </div>
+              </div>
+              <div className="mt-2 h-1 bg-gray-100 rounded-full">
+                <div 
+                  className="h-1 bg-orange-500 rounded-full" 
+                  style={{ width: '42%' }}
+                />
+              </div>
+              <div className="text-xs text-gray-400 mt-1">
+                42% del máximo permitido
+              </div>
+            </div>
           </div>
           
           {/* Tabs */}
