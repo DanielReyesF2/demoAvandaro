@@ -42,6 +42,13 @@ export const wasteData = pgTable("waste_data", {
   recyclableWaste: real("recyclable_waste"), // in kg
   totalWaste: real("total_waste"), // in kg
   deviation: real("deviation"), // percentage deviation
+  // Impacto ambiental
+  treesSaved: real("trees_saved"), // árboles salvados
+  waterSaved: real("water_saved"), // litros de agua ahorrados
+  energySaved: real("energy_saved"), // kW de energía eléctrica ahorrada
+  fuelSaved: real("fuel_saved"), // litros de combustible ahorrados
+  wasteDiverted: real("waste_diverted"), // m³ de basura evitados
+  redMudAvoided: real("red_mud_avoided"), // kg de fango rojo evitado
   notes: text("notes"),
   rawData: json("raw_data").$type<Record<string, any>>(), // Store raw extracted data
 });
@@ -55,6 +62,13 @@ export const insertWasteDataSchema = createInsertSchema(wasteData).pick({
   recyclableWaste: true,
   totalWaste: true,
   deviation: true,
+  // Nuevos campos de impacto ambiental
+  treesSaved: true,
+  waterSaved: true,
+  energySaved: true,
+  fuelSaved: true,
+  wasteDiverted: true,
+  redMudAvoided: true,
   notes: true,
   rawData: true,
 });

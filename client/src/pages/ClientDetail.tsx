@@ -8,10 +8,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { User, FileText, BarChart2, AlertTriangle, ChevronLeft, Download, Edit, Trash2, Percent, RecycleIcon } from 'lucide-react';
+import { User, FileText, BarChart2, AlertTriangle, ChevronLeft, Download, Edit, Trash2, Percent, RecycleIcon, Leaf } from 'lucide-react';
 import FileUploader from '@/components/FileUploader';
 import TrendChart from '@/components/dashboard/TrendChart';
 import SustainabilityBadges from '@/components/dashboard/SustainabilityBadges';
+import EnvironmentalImpact from '@/components/dashboard/EnvironmentalImpact';
 import { Client, Document, WasteData } from '@shared/schema';
 
 export default function ClientDetail() {
