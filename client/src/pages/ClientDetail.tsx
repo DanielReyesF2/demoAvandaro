@@ -176,8 +176,8 @@ export default function ClientDetail() {
             <Card className="md:col-span-2 bg-gradient-to-r from-navy to-navy-light">
               <CardHeader className="pb-2">
                 <CardTitle className="flex items-center">
-                  <Percent className="h-5 w-5 mr-2 text-lime" />
-                  <span className="uppercase text-lime font-bold">Desviación de Relleno Sanitario</span>
+                  <Percent className="h-5 w-5 mr-2 text-black" />
+                  <span className="uppercase text-black font-bold">Desviación de Relleno Sanitario</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -192,7 +192,7 @@ export default function ClientDetail() {
                       <RecycleIcon className="h-16 w-16 text-lime opacity-75" />
                     </div>
                   </div>
-                  <p className="text-base text-lime font-medium">
+                  <p className="text-base text-black font-medium">
                     Porcentaje de residuos desviados del relleno sanitario
                   </p>
                 </div>
