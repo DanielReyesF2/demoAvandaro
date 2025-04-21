@@ -277,34 +277,31 @@ export default function ClientDetail() {
               <TabsTrigger value="alerts">Alertas</TabsTrigger>
             </TabsList>
             <TabsContent value="overview">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Tendencias de Residuos</CardTitle>
-                      <CardDescription>Análisis histórico de residuos por tipo</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      {chartData.length > 0 ? (
-                        <TrendChart data={chartData} />
-                      ) : (
-                        <div className="text-center py-10 text-gray-500">
-                          <BarChart2 className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                          <p>No hay datos suficientes para mostrar tendencias</p>
-                          <p className="text-sm mt-2">Sube documentos para generar análisis</p>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                </div>
-                <div>
-                  <EnvironmentalImpact wasteData={wasteData} />
-                  
-                  {/* Sustainability Badges */}
-                  <div className="mt-6">
-                    <SustainabilityBadges clientId={client.id} />
-                  </div>
-                </div>
+              <div className="flex flex-col gap-6">
+                {/* Tendencias de Residuos - Ocupa todo el ancho */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Tendencias de Residuos</CardTitle>
+                    <CardDescription>Análisis histórico de residuos por tipo</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {chartData.length > 0 ? (
+                      <TrendChart data={chartData} />
+                    ) : (
+                      <div className="text-center py-10 text-gray-500">
+                        <BarChart2 className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                        <p>No hay datos suficientes para mostrar tendencias</p>
+                        <p className="text-sm mt-2">Sube documentos para generar análisis</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+                
+                {/* Impacto Ambiental - Debajo de Tendencias */}
+                <EnvironmentalImpact wasteData={wasteData} />
+                
+                {/* Sustainability Badges - Debajo de Impacto Ambiental */}
+                <SustainabilityBadges clientId={client.id} />
               </div>
             </TabsContent>
             
