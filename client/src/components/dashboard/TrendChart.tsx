@@ -55,12 +55,16 @@ export default function TrendChart({ data }: TrendChartProps) {
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={data}
-            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+            margin={{ top: 5, right: 30, left: 20, bottom: 80 }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
             <XAxis 
               dataKey="month" 
-              tick={{ fontSize: 12, fill: '#64748b' }}
+              tick={{ fontSize: 11, fill: '#64748b' }}
+              interval={0}
+              angle={-45}
+              textAnchor="end"
+              height={70}
             />
             <YAxis 
               tick={{ fontSize: 12, fill: '#64748b' }}

@@ -558,12 +558,17 @@ function processWasteDataForChart(wasteData: WasteData[]): any[] {
   // Convertir a array con año y mes para poder ordenarlos
   const dataWithDates = filteredData.map(item => {
     const date = new Date(item.date);
+    const monthAbbr = date.toLocaleString('es-ES', { month: 'short' });
+    const yearShort = date.getFullYear().toString().substring(2);
+    
+    // Formatear correctamente "Ene 24", "Feb 24", etc.
+    const monthLabel = `${monthAbbr.charAt(0).toUpperCase() + monthAbbr.slice(1)} ${yearShort}`;
+    
     return {
       ...item,
       year: date.getFullYear(),
       month: date.getMonth(),
-      // Formatear para mostrar en la gráfica: "Ene 24", "Feb 24", etc.
-      monthLabel: `${date.toLocaleString('es-ES', { month: 'short' })} ${date.getFullYear().toString().substring(2)}`
+      monthLabel
     };
   });
   
