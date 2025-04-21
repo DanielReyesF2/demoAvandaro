@@ -176,8 +176,8 @@ export default function ClientDetail() {
             <Card className="md:col-span-2 bg-gradient-to-r from-navy to-navy-light">
               <CardHeader className="pb-2">
                 <CardTitle className="flex items-center">
-                  <Percent className="h-5 w-5 mr-2 text-lime-300" />
-                  <span className="uppercase text-lime-200 font-bold">Desviación de Relleno Sanitario</span>
+                  <Percent className="h-5 w-5 mr-2 text-navy" />
+                  <span className="uppercase text-white font-bold">Desviación de Relleno Sanitario</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>

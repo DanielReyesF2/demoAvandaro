@@ -154,8 +154,8 @@ export default function ClientsGrid({ selectedCategory, selectedPeriod }: Client
               <div className="grid grid-cols-1 gap-4 my-2">
                 <div className="flex flex-col">
                   <div className="flex items-center gap-2">
-                    <Percent className="h-6 w-6 text-lime-500" />
-                    <p className="text-sm font-medium text-gray-700">Desviación de relleno sanitario</p>
+                    <Percent className="h-6 w-6 text-navy" />
+                    <p className="text-sm font-medium text-navy">Desviación de relleno sanitario</p>
                   </div>
                   <p className="font-bold text-lime-600 text-2xl mt-2">
                     {deviation !== null 
