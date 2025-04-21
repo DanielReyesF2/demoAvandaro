@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area } from 'recharts';
 
 interface TrendChartProps {
   data: Array<{
@@ -144,36 +144,77 @@ export default function TrendChart({ data }: TrendChartProps) {
   }
   console.log("Datos procesados para mostrar:", displayData, "Periodo:", period);
   
+  // Calcular datos adicionales para estadísticas
+  const organicTotal = displayData.reduce((sum, month) => sum + month.organicWaste, 0);
+  const inorganicTotal = displayData.reduce((sum, month) => sum + month.inorganicWaste, 0);
+  const recyclableTotal = displayData.reduce((sum, month) => sum + month.recyclableWaste, 0);
+  const totalWaste = organicTotal + inorganicTotal + recyclableTotal;
+  
+  // Calcular el mes con mayor generación
+  const maxMonth = displayData.reduce((max, month) => {
+    const total = month.organicWaste + month.inorganicWaste + month.recyclableWaste;
+    return total > max.total ? { name: month.month, total } : max;
+  }, { name: '', total: 0 });
+  
+  // Calcular evolución respecto al período anterior
+  const getLastPeriodTrend = () => {
+    if (displayData.length < 2) return { value: 0, isPositive: false };
+    
+    const lastIndex = displayData.length - 1;
+    const currentTotal = displayData[lastIndex].organicWaste + 
+                        displayData[lastIndex].inorganicWaste + 
+                        displayData[lastIndex].recyclableWaste;
+    
+    const previousTotal = displayData[lastIndex - 1].organicWaste + 
+                         displayData[lastIndex - 1].inorganicWaste + 
+                         displayData[lastIndex - 1].recyclableWaste;
+    
+    const change = ((currentTotal - previousTotal) / previousTotal) * 100;
+    return {
+      value: Math.abs(change).toFixed(1),
+      isPositive: change > 0
+    };
+  };
+  
+  const trend = getLastPeriodTrend();
+
   return (
-    <div className="bg-white shadow rounded-lg p-5">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-anton uppercase tracking-wider text-gray-800">Tendencia de Residuos</h2>
-        <div className="flex space-x-2">
+    <div className="bg-white shadow rounded-lg p-5 relative overflow-hidden">
+      {/* Decorative corner accent */}
+      <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-lime/10 to-navy/5 rounded-bl-3xl"></div>
+      
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 relative">
+        <div>
+          <h2 className="text-lg font-anton uppercase tracking-wider text-navy">Tendencia de Residuos</h2>
+          <p className="text-xs text-gray-500">Análisis comparativo por período</p>
+        </div>
+        
+        <div className="flex flex-wrap gap-2">
           <button 
-            className={`px-2 py-1 text-xs font-medium rounded ${
+            className={`px-3 py-1 text-xs font-medium rounded-full transition-all ${
               period === 'monthly' 
-                ? 'bg-navy text-white' 
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                ? 'bg-navy text-white shadow-sm' 
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
             onClick={() => setPeriod('monthly')}
           >
             Mensual
           </button>
           <button 
-            className={`px-2 py-1 text-xs font-medium rounded ${
+            className={`px-3 py-1 text-xs font-medium rounded-full transition-all ${
               period === 'quarterly' 
-                ? 'bg-navy text-white' 
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                ? 'bg-navy text-white shadow-sm' 
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
             onClick={() => setPeriod('quarterly')}
           >
             Trimestral
           </button>
           <button 
-            className={`px-2 py-1 text-xs font-medium rounded ${
+            className={`px-3 py-1 text-xs font-medium rounded-full transition-all ${
               period === 'yearly' 
-                ? 'bg-navy text-white' 
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                ? 'bg-navy text-white shadow-sm' 
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
             onClick={() => setPeriod('yearly')}
           >
@@ -182,13 +223,58 @@ export default function TrendChart({ data }: TrendChartProps) {
         </div>
       </div>
       
-      <div className="h-[400px]">
+      {/* KPI Section */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+        <div className="bg-gray-50 rounded-lg p-3">
+          <div className="text-xs text-gray-500 mb-1">Total Generado</div>
+          <div className="text-lg font-semibold text-navy">{totalWaste.toLocaleString('es-ES')} kg</div>
+        </div>
+        <div className="bg-gray-50 rounded-lg p-3">
+          <div className="text-xs text-gray-500 mb-1">Evolución</div>
+          <div className={`text-lg font-semibold flex items-center ${trend.isPositive ? 'text-red-500' : 'text-green-600'}`}>
+            {trend.isPositive ? (
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="18 15 12 9 6 15" />
+              </svg>
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            )}
+            {trend.value}%
+          </div>
+        </div>
+        <div className="bg-gray-50 rounded-lg p-3">
+          <div className="text-xs text-gray-500 mb-1">Mayor Volumen</div>
+          <div className="text-lg font-semibold text-navy">{maxMonth.name}</div>
+        </div>
+        <div className="bg-gray-50 rounded-lg p-3">
+          <div className="text-xs text-gray-500 mb-1">Reciclables</div>
+          <div className="text-lg font-semibold text-orange-500">{Math.round(recyclableTotal / totalWaste * 100)}%</div>
+        </div>
+      </div>
+      
+      <div className="h-[350px]">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={displayData}
-            margin={{ top: 5, right: 30, left: 20, bottom: 80 }}
+            margin={{ top: 5, right: 15, left: 15, bottom: 60 }}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+            <defs>
+              <linearGradient id="organicGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#b5e951" stopOpacity={0.3}/>
+                <stop offset="95%" stopColor="#b5e951" stopOpacity={0}/>
+              </linearGradient>
+              <linearGradient id="inorganicGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#273949" stopOpacity={0.2}/>
+                <stop offset="95%" stopColor="#273949" stopOpacity={0}/>
+              </linearGradient>
+              <linearGradient id="recyclableGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#ff9933" stopOpacity={0.2}/>
+                <stop offset="95%" stopColor="#ff9933" stopOpacity={0}/>
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
             <XAxis 
               dataKey="month" 
               tick={{ fontSize: 11, fill: '#64748b' }}
@@ -196,25 +282,42 @@ export default function TrendChart({ data }: TrendChartProps) {
               angle={-45}
               textAnchor="end"
               height={70}
+              axisLine={{ stroke: '#e5e7eb' }}
+              tickLine={{ stroke: '#e5e7eb' }}
             />
             <YAxis 
-              tick={{ fontSize: 12, fill: '#64748b' }}
+              tick={{ fontSize: 11, fill: '#64748b' }}
               unit=" kg"
+              axisLine={false}
+              tickLine={false}
+              tickCount={6}
             />
             <Tooltip 
+              animationDuration={200}
               contentStyle={{ 
                 backgroundColor: 'white', 
                 borderColor: '#e5e7eb',
-                borderRadius: '0.375rem',
-                boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)' 
+                borderRadius: '0.5rem',
+                boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 10px -5px rgba(0, 0, 0, 0.04)',
+                padding: '10px 14px',
+                fontSize: '12px',
+                border: 'none',
               }}
               formatter={(value) => [`${value.toLocaleString('es-ES')} kg`, undefined]}
+              labelFormatter={(label) => `<span style="font-weight: 600;">${label}</span>`}
+              itemStyle={{ padding: '3px 0' }}
             />
             <Legend 
               verticalAlign="top" 
               height={36}
               formatter={(value) => (
-                <span style={{ color: '#64748b', fontSize: 12 }}>
+                <span style={{ 
+                  color: value === 'organicWaste' ? '#3a5a14' : 
+                         value === 'inorganicWaste' ? '#273949' : '#b25a0c',
+                  fontSize: 12,
+                  fontWeight: 500,
+                  padding: '3px 6px',
+                }}>
                   {value === 'organicWaste' 
                     ? 'Orgánicos' 
                     : value === 'inorganicWaste' 
@@ -222,14 +325,18 @@ export default function TrendChart({ data }: TrendChartProps) {
                       : 'Reciclables'}
                 </span>
               )}
+              wrapperStyle={{ paddingBottom: '10px' }}
             />
-            <Line 
-              type="monotone" 
+            <Area 
+              type="monotone"
               dataKey="organicWaste" 
               name="organicWaste"
               stroke="#b5e951" 
               strokeWidth={3}
-              activeDot={{ r: 6 }}
+              fill="url(#organicGradient)"
+              activeDot={{ r: 7, stroke: '#b5e951', strokeWidth: 2, fill: 'white' }}
+              animationDuration={1500}
+              animationEasing="ease-out"
             />
             <Line 
               type="monotone" 
@@ -237,7 +344,10 @@ export default function TrendChart({ data }: TrendChartProps) {
               name="inorganicWaste"
               stroke="#273949" 
               strokeWidth={3}
-              activeDot={{ r: 6 }}
+              dot={{ r: 4, strokeWidth: 2, fill: 'white' }}
+              activeDot={{ r: 7, stroke: '#273949', strokeWidth: 2, fill: 'white' }}
+              animationDuration={1500}
+              animationEasing="ease-out"
             />
             <Line 
               type="monotone" 
@@ -245,10 +355,17 @@ export default function TrendChart({ data }: TrendChartProps) {
               name="recyclableWaste"
               stroke="#ff9933" 
               strokeWidth={3}
-              activeDot={{ r: 6 }}
+              dot={{ r: 4, strokeWidth: 2, fill: 'white' }}
+              activeDot={{ r: 7, stroke: '#ff9933', strokeWidth: 2, fill: 'white' }}
+              animationDuration={1500}
+              animationEasing="ease-out"
             />
           </LineChart>
         </ResponsiveContainer>
+      </div>
+      
+      <div className="mt-3 text-xs text-gray-400 text-right">
+        Fuente: Bitácoras mensuales de residuos procesadas con IA
       </div>
     </div>
   );

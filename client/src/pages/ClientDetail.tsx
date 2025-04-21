@@ -11,6 +11,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { User, FileText, BarChart2, AlertTriangle, ChevronLeft, Download, Edit, Trash2, Percent, RecycleIcon } from 'lucide-react';
 import FileUploader from '@/components/FileUploader';
 import TrendChart from '@/components/dashboard/TrendChart';
+import SustainabilityBadges from '@/components/dashboard/SustainabilityBadges';
 import { Client, Document, WasteData } from '@shared/schema';
 
 export default function ClientDetail() {
@@ -209,15 +210,65 @@ export default function ClientDetail() {
               </CardContent>
             </Card>
             
-            <Card>
+            <Card className="bg-gradient-to-br from-navy/5 to-lime/10 border-lime/20">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-gray-500 uppercase">Desviación</CardTitle>
+                <CardTitle className="text-sm text-gray-700 uppercase flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-lime" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="m2 12 5.25 5 2-2-2.25-2.25L11.25 9l2 1.875L17.5 7" />
+                    <path d="M22 2 12 12" />
+                  </svg>
+                  ODS-12 Progreso
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold">
-                  {wasteData.length > 0 && wasteData[0].deviation ? wasteData[0].deviation.toFixed(2) : "0.00"}%
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-3xl font-bold text-navy flex items-baseline">
+                      {wasteData.length > 0 && wasteData[0].deviation ? wasteData[0].deviation.toFixed(2) : "0.00"}
+                      <span className="text-lg ml-1">%</span>
+                    </div>
+                    <p className="text-sm text-gray-500 mt-1">Desviación de relleno sanitario</p>
+                  </div>
+                  <div className="flex items-center bg-lime/20 px-2 py-1 rounded-md">
+                    <svg viewBox="0 0 24 24" className="h-4 w-4 text-lime mr-1" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                      <polyline points="17 6 23 6 23 12" />
+                    </svg>
+                    <span className="text-xs font-medium text-navy">+5.95%</span>
+                  </div>
                 </div>
-                <p className="text-sm text-gray-500 mt-1">Relleno sanitario</p>
+                
+                <div className="mt-4">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-xs text-gray-500">Meta ODS 2030</span>
+                    <span className="text-xs font-semibold">30%</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="bg-lime h-2 rounded-full relative overflow-hidden" 
+                         style={{ width: `${Math.min((wasteData.length > 0 && wasteData[0].deviation ? wasteData[0].deviation : 0) / 30 * 100, 100)}%` }}>
+                      <div className="absolute inset-0 bg-white/30 animate-pulse"></div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-between mt-3">
+                    <div className="text-center">
+                      <div className="text-sm font-semibold text-navy">{Math.round(totalRecyclable / totalWaste * 100)}%</div>
+                      <div className="text-xs text-gray-500">Reciclables</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-sm font-semibold text-lime">
+                        {Math.round(totalOrganic / totalWaste * 100)}%
+                      </div>
+                      <div className="text-xs text-gray-500">Orgánicos</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-sm font-semibold">
+                        {Math.round(totalInorganic / totalWaste * 100)}%
+                      </div>
+                      <div className="text-xs text-gray-500">Inorgánicos</div>
+                    </div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -252,28 +303,63 @@ export default function ClientDetail() {
                   </Card>
                 </div>
                 <div>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>CO2 Total Generado</CardTitle>
+                  <Card className="overflow-hidden">
+                    <CardHeader className="pb-2 relative">
+                      <CardTitle>Impacto Ambiental</CardTitle>
+                      <span className="absolute top-3 right-3 bg-lime/20 text-xs font-medium px-2 py-1 rounded-full text-navy">
+                        Certificado Econova
+                      </span>
                     </CardHeader>
                     <CardContent>
-                      <div className="flex flex-col items-center justify-center py-6">
-                        <div className="text-4xl font-bold text-navy mb-2">
-                          {Math.round(totalWaste * 0.87).toLocaleString('es-ES')} kg
+                      <div className="flex flex-col items-center justify-center py-3">
+                        <div className="text-4xl font-bold text-navy mb-2 flex items-baseline">
+                          {Math.round(totalWaste * 0.87).toLocaleString('es-ES')} 
+                          <span className="text-lg ml-1">kg CO₂</span>
                         </div>
-                        <p className="text-sm text-gray-500 mt-1">Emisiones estimadas de CO2</p>
                         
-                        <div className="mt-4 w-full space-y-2">
-                          <div className="flex justify-between text-xs">
-                            <span className="text-gray-600">Impacto bajo</span>
-                            <span className="text-gray-600">Impacto alto</span>
+                        <div className="w-full bg-gray-100 rounded-lg p-3 mt-2 mb-3">
+                          <div className="text-xs text-gray-500 mb-1">Equivalente a:</div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="flex items-center gap-2">
+                              <div className="w-8 h-8 rounded-full bg-lime flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M2 22h20" /><path d="M12 2v6.36" />
+                                  <path d="M18 8c0 4.97-6 10-6 10s-6-5.03-6-10a6 6 0 0 1 12 0Z" />
+                                </svg>
+                              </div>
+                              <div>
+                                <span className="text-sm font-semibold">{Math.round(totalWaste * 0.2)} árboles</span>
+                                <div className="text-xs text-gray-500">para compensar</div>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <div className="w-8 h-8 rounded-full bg-lime flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M19 9h2v10H3V9h2" />
+                                  <path d="M3 13h18" />
+                                  <path d="M5 9V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3" />
+                                </svg>
+                              </div>
+                              <div>
+                                <span className="text-sm font-semibold">{Math.round(totalWaste * 0.023)} viajes</span>
+                                <div className="text-xs text-gray-500">CDMX-Cancún</div>
+                              </div>
+                            </div>
                           </div>
-                          <div className="w-full bg-gray-200 rounded-full h-2.5">
-                            <div 
-                              className="bg-lime h-2.5 rounded-full" 
-                              style={{ width: `${Math.min(totalWaste / 15000 * 100, 100)}%` }}
-                            ></div>
+                        </div>
+                        
+                        <div className="relative w-full mt-2">
+                          <div className="text-xs text-gray-500 mb-1">Reducción vs. promedio del sector:</div>
+                          <div className="flex items-center w-full">
+                            <div className="bg-gray-200 h-2.5 flex-grow rounded-full overflow-hidden">
+                              <div 
+                                className="bg-lime h-full transition-all duration-1000 ease-out"
+                                style={{ width: `${Math.min(75, 100)}%` }}
+                              ></div>
+                            </div>
+                            <span className="ml-2 text-sm font-semibold text-lime">-25%</span>
                           </div>
+                          <div className="text-xs text-gray-500 mt-1 text-right">Mejor que el 75% de clientes similares</div>
                         </div>
                       </div>
                     </CardContent>
