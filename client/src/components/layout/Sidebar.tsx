@@ -33,12 +33,10 @@ const SidebarItem = ({ to, icon, children, isActive }: SidebarItemProps) => {
 export default function Sidebar() {
   const [location] = useLocation();
   
-  // Mock user data (in a real app this would come from auth context)
+  // User data
   const user = {
-    name: "Ana Rodríguez",
-    role: "Administrador",
-    // This would be a real image URL in production
-    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+    name: "Daniel Reyes",
+    role: "Administrador"
   };
   
   return (
@@ -106,8 +104,7 @@ export default function Sidebar() {
       {/* User profile */}
       <div className="flex items-center justify-between px-4 py-3 bg-navy-light">
         <div className="flex items-center">
-          <img className="w-8 h-8 rounded-full" src={user.avatar} alt="Foto de perfil" />
-          <div className="ml-3">
+          <div>
             <p className="text-sm font-medium">{user.name}</p>
             <p className="text-xs text-gray-400">{user.role}</p>
           </div>
