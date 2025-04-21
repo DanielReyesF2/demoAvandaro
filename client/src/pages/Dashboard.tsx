@@ -57,18 +57,18 @@ export default function Dashboard() {
     const totalRecyclable = wasteData.reduce((sum: number, item) => sum + (item.recyclableWaste || 0), 0);
     const total = totalOrganic + totalInorganic + totalRecyclable;
     
-    // Calcular el promedio de desviación de relleno sanitario
-    let avgDeviation = 0;
-    if (wasteData.length > 0) {
-      const totalDeviation = wasteData.reduce((sum: number, item) => sum + (item.deviation || 0), 0);
-      avgDeviation = totalDeviation / wasteData.length;
+    // Calcular el porcentaje de desviación de relleno sanitario
+    // La desviación es el porcentaje de residuos reciclables respecto a los residuos de relleno sanitario
+    let deviation = 0;
+    if (totalInorganic > 0 && totalRecyclable > 0) {
+      deviation = (totalRecyclable / totalInorganic) * 100;
     }
     
     return {
       organicWaste: `${(totalOrganic/1000).toFixed(1)} ton`,
       inorganicWaste: `${(totalInorganic/1000).toFixed(1)} ton`,
       totalWaste: `${(total/1000).toFixed(1)} ton`,
-      deviation: `${avgDeviation.toFixed(2)}%`
+      deviation: `${deviation.toFixed(2)}%`
     };
   };
   

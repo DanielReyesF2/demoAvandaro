@@ -1,55 +1,52 @@
 import { InsertDocument, InsertWasteData } from '@shared/schema';
 import { storage } from './storage';
 
-// Función para calcular el porcentaje de desviación de relleno sanitario
-function calculateSanitaryLandfillDeviation(
-  organicWaste: number, 
-  inorganicWaste: number, 
-  recyclableWaste: number
-): number {
-  const totalWaste = organicWaste + inorganicWaste + recyclableWaste;
-  if (totalWaste === 0) return 0;
-  const wasteNotGoingToLandfill = organicWaste + recyclableWaste;
-  const deviation = (wasteNotGoingToLandfill / totalWaste) * 100;
-  return Math.round(deviation * 100) / 100;
-}
-
-// Información de los PDFs de 2024 para Club Campestre (definidos manualmente)
-const pdfData2024 = [
+// Información de los PDFs de 2025 para Club Campestre (definidos manualmente)
+const pdfData2025 = [
   {
-    fileName: '2024-01 CCCM - Bitácora de RSR.pdf',
-    fileSize: 344664,
-    date: new Date('2024-01-01'),
-    organicWaste: 6432.10,
-    inorganicWaste: 3521.80,
-    recyclableWaste: 780.5,
-    totalWaste: 10734.4,
+    fileName: '2025-01 CCCM - Bitácora de Residuos Sólidos Urbanos.pdf',
+    fileSize: 214531,
+    date: new Date('2025-01-01'),
+    organicWaste: 6874.20,
+    inorganicWaste: 3745.18,
+    recyclableWaste: 820.5,
+    totalWaste: 11439.88,
     month: 'Enero',
-    year: '2024'
+    year: '2025'
   },
   {
-    fileName: '2024-02 CCCM - Bitácora de RSR.pdf',
-    fileSize: 309833,
-    date: new Date('2024-02-01'),
-    organicWaste: 5890.45,
-    inorganicWaste: 3290.75,
-    recyclableWaste: 765.8,
-    totalWaste: 9947.0,
+    fileName: '2025-02 CCCM - Bitácora de Residuos Sólidos Urbanos.pdf',
+    fileSize: 218043,
+    date: new Date('2025-02-01'),
+    organicWaste: 5612.10,
+    inorganicWaste: 3395.00,
+    recyclableWaste: 745.2,
+    totalWaste: 9752.3,
     month: 'Febrero',
-    year: '2024'
+    year: '2025'
   },
-  // Agregamos el resto de los meses si se decide procesar más adelante
+  {
+    fileName: '2025-03 CCCM - Bitácora de Residuos Sólidos Urbanos.pdf',
+    fileSize: 220756,
+    date: new Date('2025-03-01'),
+    organicWaste: 5447.50,
+    inorganicWaste: 4251.00,
+    recyclableWaste: 678.3,
+    totalWaste: 10376.8,
+    month: 'Marzo',
+    year: '2025'
+  }
 ];
 
-// Función principal para procesar los datos de 2024
-async function process2024Data() {
-  console.log('Iniciando procesamiento de datos de 2024...');
+// Función principal para procesar los datos de 2025
+async function process2025Data() {
+  console.log('Iniciando procesamiento de datos de 2025...');
   
   // ID del cliente Club Campestre
   const clientId = 4;
   
   // Procesar datos de cada mes
-  for (const pdfInfo of pdfData2024) {
+  for (const pdfInfo of pdfData2025) {
     console.log(`\nProcesando datos de ${pdfInfo.month} ${pdfInfo.year}...`);
     
     try {
@@ -66,8 +63,9 @@ async function process2024Data() {
       const document = await storage.createDocument(documentData);
       console.log(`Documento creado con ID: ${document.id}`);
       
-      // Calcular desviación - cuando no tenemos datos de residuos reciclables, es 0%
-      const deviation = 0;
+      // Calcular desviación - La desviación es el % de residuos reciclables respecto a residuos inorgánicos
+      const deviation = pdfInfo.inorganicWaste > 0 ? (pdfInfo.recyclableWaste / pdfInfo.inorganicWaste) * 100 : 0;
+      const roundedDeviation = Math.round(deviation * 100) / 100;
       
       // Crear registro de datos de residuos
       const wasteData: InsertWasteData = {
@@ -78,7 +76,7 @@ async function process2024Data() {
         inorganicWaste: pdfInfo.inorganicWaste,
         recyclableWaste: pdfInfo.recyclableWaste,
         totalWaste: pdfInfo.totalWaste,
-        deviation,
+        deviation: roundedDeviation,
         rawData: {} as Record<string, any>,
         notes: `Datos para ${pdfInfo.month} ${pdfInfo.year}`
       };
@@ -90,7 +88,7 @@ async function process2024Data() {
       console.log(`- Residuos inorgánicos: ${pdfInfo.inorganicWaste} kg`);
       console.log(`- Residuos reciclables: ${pdfInfo.recyclableWaste} kg`);
       console.log(`- Total: ${pdfInfo.totalWaste} kg`);
-      console.log(`- Desviación de relleno sanitario: ${deviation}%`);
+      console.log(`- Desviación de relleno sanitario: ${roundedDeviation}%`);
       console.log(`- Fecha: ${pdfInfo.date}`);
       console.log(`- ID de datos guardados: ${savedWasteData.id}`);
     } catch (error) {
@@ -102,9 +100,9 @@ async function process2024Data() {
 }
 
 // Ejecutar el procesamiento
-process2024Data()
+process2025Data()
   .then(() => {
-    console.log('Procesamiento de datos de 2024 completado con éxito.');
+    console.log('Procesamiento de datos de 2025 completado con éxito.');
     process.exit(0);
   })
   .catch(error => {

@@ -253,17 +253,14 @@ function calculateSanitaryLandfillDeviation(
   inorganicWaste: number, 
   recyclableWaste: number
 ): number {
-  // Total de residuos
-  const totalWaste = organicWaste + inorganicWaste + recyclableWaste;
+  // Relleno sanitario son los residuos que van al relleno (inorgánicos)
+  const sanitaryLandfillWaste = inorganicWaste;
   
-  if (totalWaste === 0) return 0;
+  // Si no hay residuos reciclables o no hay residuos de relleno sanitario, la desviación es 0%
+  if (recyclableWaste === 0 || sanitaryLandfillWaste === 0) return 0;
   
-  // Los residuos que no van a relleno sanitario son los orgánicos (que van a compostaje) 
-  // y los reciclables. Los inorgánicos van a relleno sanitario.
-  const wasteNotGoingToLandfill = organicWaste + recyclableWaste;
-  
-  // Calculamos el porcentaje de desviación
-  const deviation = (wasteNotGoingToLandfill / totalWaste) * 100;
+  // La desviación es el porcentaje de residuos reciclables respecto a los residuos de relleno sanitario
+  const deviation = (recyclableWaste / sanitaryLandfillWaste) * 100;
   
   // Redondeamos a 2 decimales
   return Math.round(deviation * 100) / 100;
