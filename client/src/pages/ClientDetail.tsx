@@ -490,6 +490,10 @@ export default function ClientDetail() {
                                 .map((data) => {
                                   const date = new Date(data.date);
                                   const monthYear = `${getMonthName(date).slice(0, 3)} ${date.getFullYear().toString().slice(2)}`;
+                                  
+                                  // Debugging
+                                  console.log(`Procesando dato: ${date.toISOString()} - ${monthYear} - orgánico: ${data.organicWaste}, inorgánico: ${data.inorganicWaste}, reciclable: ${data.recyclableWaste}`);
+                                  
                                   return {
                                     name: monthYear,
                                     organicos: data.organicWaste || 0,
