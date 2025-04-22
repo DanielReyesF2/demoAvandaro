@@ -55,12 +55,12 @@ export default function QuartingAnalysis({ wasteData, clientId }: QuartingAnalys
                     data={quartingResults} 
                     cx="50%" 
                     cy="50%" 
-                    innerRadius={60}
+                    innerRadius={0}
                     outerRadius={90} 
                     fill="#8884d8" 
                     paddingAngle={1} 
                     dataKey="value"
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(1)}%`}
+                    label={false}
                     labelLine={false}
                   >
                     {quartingResults.map((entry, index) => (
@@ -77,14 +77,28 @@ export default function QuartingAnalysis({ wasteData, clientId }: QuartingAnalys
                       padding: '10px 14px',
                     }}
                   />
+                  <Legend 
+                    layout="vertical" 
+                    verticalAlign="middle" 
+                    align="right"
+                    payload={
+                      quartingResults.map((item, index) => ({
+                        id: item.name,
+                        value: `${item.name} ${item.value}%`,
+                        color: item.color,
+                        type: 'square'
+                      }))
+                    }
+                    formatter={(value) => <span className="text-xs">{value}</span>}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </div>
             
-            <div className="mt-4">
-              <div className="bg-gray-50 p-3 rounded-lg">
+            <div className="mt-4 flex justify-center">
+              <div className="bg-gray-50 px-5 py-3 rounded-lg text-center">
                 <div className="text-xs text-gray-500">Potencial Reciclable</div>
-                <div className="text-lg font-semibold text-navy">{recyclablePotential}%</div>
+                <div className="text-2xl font-bold text-navy">{recyclablePotential}%</div>
               </div>
             </div>
           </div>
@@ -104,7 +118,7 @@ export default function QuartingAnalysis({ wasteData, clientId }: QuartingAnalys
                     fill="#8884d8" 
                     paddingAngle={0} 
                     dataKey="value"
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    label={false}
                   >
                     {contaminationData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
@@ -119,6 +133,20 @@ export default function QuartingAnalysis({ wasteData, clientId }: QuartingAnalys
                       border: 'none',
                       padding: '10px 14px',
                     }}
+                  />
+                  <Legend 
+                    layout="vertical" 
+                    verticalAlign="middle" 
+                    align="right"
+                    payload={
+                      contaminationData.map((item, index) => ({
+                        id: item.name,
+                        value: `${item.name} ${item.value}%`,
+                        color: item.color,
+                        type: 'square'
+                      }))
+                    }
+                    formatter={(value) => <span className="text-xs">{value}</span>}
                   />
                 </PieChart>
               </ResponsiveContainer>
