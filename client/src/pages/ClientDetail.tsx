@@ -311,7 +311,6 @@ export default function ClientDetail() {
               <TabsTrigger value="overview">General</TabsTrigger>
               <TabsTrigger value="documents">Documentos</TabsTrigger>
               <TabsTrigger value="analysis">Análisis</TabsTrigger>
-              <TabsTrigger value="alerts">Alertas</TabsTrigger>
             </TabsList>
             <TabsContent value="overview">
               <div className="flex flex-col gap-6">
@@ -486,7 +485,15 @@ export default function ClientDetail() {
                                     (year === 2025 && month <= 2) // Hasta marzo (0-2)
                                   );
                                 })
-                                .reduce((result, data) => {
+                                .reduce<Array<{
+                                  name: string;
+                                  organicos: number;
+                                  inorganicos: number;
+                                  reciclables: number;
+                                  desviacion: number;
+                                  date: Date;
+                                  sortKey: number;
+                                }>>((result, data) => {
                                   const date = new Date(data.date);
                                   const monthYear = `${getMonthName(date).slice(0, 3)} ${date.getFullYear().toString().slice(2)}`;
                                   
@@ -601,60 +608,7 @@ export default function ClientDetail() {
               </Card>
             </TabsContent>
             
-            <TabsContent value="alerts">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Alertas y Notificaciones</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {alerts.length === 0 ? (
-                    <div className="text-center py-10 text-gray-500">
-                      <AlertTriangle className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                      <p>No hay alertas para este cliente</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {alerts.map((alert: any) => (
-                        <Alert 
-                          key={alert.id} 
-                          variant={
-                            alert.type === 'error' ? 'destructive' : 'default'
-                          }
-                          className={alert.resolved ? 'opacity-60' : ''}
-                        >
-                          <div className="flex items-start">
-                            <div className="flex-1">
-                              <AlertTitle className="flex items-center">
-                                {alert.type === 'error' ? (
-                                  <AlertTriangle className="h-4 w-4 mr-2" />
-                                ) : (
-                                  <AlertTriangle className="h-4 w-4 mr-2" />
-                                )}
-                                {alert.type.charAt(0).toUpperCase() + alert.type.slice(1)}
-                                {alert.resolved && (
-                                  <Badge variant="outline" className="ml-2">Resuelta</Badge>
-                                )}
-                              </AlertTitle>
-                              <AlertDescription>
-                                {alert.message}
-                                <div className="mt-1 text-xs text-gray-500">
-                                  {formatDate(new Date(alert.date))}
-                                </div>
-                              </AlertDescription>
-                            </div>
-                            {!alert.resolved && (
-                              <Button size="sm" variant="outline" className="ml-4 mt-2">
-                                Marcar como resuelta
-                              </Button>
-                            )}
-                          </div>
-                        </Alert>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
+
           </Tabs>
         </div>
       </div>
