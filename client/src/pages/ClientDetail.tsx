@@ -139,24 +139,81 @@ export default function ClientDetail() {
   // Process waste data for chart
   const chartData = processWasteDataForChart(wasteData);
   
-  // Calculate summary statistics
-  const totalOrganic = wasteData.reduce((sum, item) => sum + (item.organicWaste || 0), 0);
-  const totalInorganic = wasteData.reduce((sum, item) => sum + (item.inorganicWaste || 0), 0);
-  const totalRecyclable = wasteData.reduce((sum, item) => sum + (item.recyclableWaste || 0), 0);
+  // Calcular detalladamente los totales, mes por mes, para Club Campestre de la Ciudad de México (ID 4)
+  let monthlyData: Record<string, { organic: number, inorganic: number, recyclable: number }> = {};
+  let totalsByYear: Record<string, { organic: number, inorganic: number, recyclable: number }> = {
+    "2024": { organic: 0, inorganic: 0, recyclable: 0 },
+    "2025": { organic: 0, inorganic: 0, recyclable: 0 }
+  };
   
-  // Suma total de todos los residuos (orgánico + inorgánico + reciclable)
-  const calculateTotalWaste = totalOrganic + totalInorganic + totalRecyclable;
+  // Agrupar por mes y año
+  wasteData.forEach(item => {
+    const date = new Date(item.date);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1; // 1-12
+    const key = `${year}-${month.toString().padStart(2, '0')}`;
+    
+    if (!monthlyData[key]) {
+      monthlyData[key] = { organic: 0, inorganic: 0, recyclable: 0 };
+    }
+    
+    // Sumar valores para este mes
+    monthlyData[key].organic += (item.organicWaste || 0);
+    monthlyData[key].inorganic += (item.inorganicWaste || 0);
+    monthlyData[key].recyclable += (item.recyclableWaste || 0);
+    
+    // Sumar al total anual
+    if (totalsByYear[year.toString()]) {
+      totalsByYear[year.toString()].organic += (item.organicWaste || 0);
+      totalsByYear[year.toString()].inorganic += (item.inorganicWaste || 0);
+      totalsByYear[year.toString()].recyclable += (item.recyclableWaste || 0);
+    }
+  });
   
-  // El valor de totalWaste que viene de la base de datos podría incluir o no los reciclables,
-  // así que usamos nuestro cálculo para asegurar consistencia
-  const totalWaste = calculateTotalWaste;
+  // Ordenar los meses cronológicamente
+  const sortedMonthlyData = Object.entries(monthlyData)
+    .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
+    .map(([key, data]) => {
+      const [year, month] = key.split('-');
+      const monthNames = [
+        'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+      ];
+      const monthName = monthNames[parseInt(month) - 1];
+      const total = data.organic + data.inorganic + data.recyclable;
+      
+      return {
+        key,
+        year,
+        month,
+        monthName,
+        ...data,
+        total
+      };
+    });
   
-  // Para debugging - ver la discrepancia
-  console.log("Datos de suma total:", {
+  // Calcular totales generales
+  const totalOrganic = sortedMonthlyData.reduce((sum, item) => sum + item.organic, 0);
+  const totalInorganic = sortedMonthlyData.reduce((sum, item) => sum + item.inorganic, 0);
+  const totalRecyclable = sortedMonthlyData.reduce((sum, item) => sum + item.recyclable, 0);
+  const calculatedTotalWaste = totalOrganic + totalInorganic + totalRecyclable;
+  
+  // Para el UI, utilizamos el total calculado (suma de las partes)
+  const totalWaste = calculatedTotalWaste;
+  
+  // Mostrar detalle en la consola
+  console.log("======= DETALLE DE RESIDUOS POR MES =======");
+  console.table(sortedMonthlyData);
+  
+  console.log("======= DETALLE DE RESIDUOS POR AÑO =======");
+  console.table(totalsByYear);
+  
+  console.log("======= TOTALES FINALES =======");
+  console.table({
     totalOrganic,
     totalInorganic,
     totalRecyclable,
-    calcTotal: calculateTotalWaste,
+    calculatedTotalWaste,
     dbTotal: wasteData.reduce((sum, item) => sum + (item.totalWaste || 0), 0)
   });
   
