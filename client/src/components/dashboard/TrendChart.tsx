@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area } from 'recharts';
+import { useMemo } from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 
 interface TrendChartProps {
   data: Array<{
@@ -11,7 +11,6 @@ interface TrendChartProps {
 }
 
 export default function TrendChart({ data }: TrendChartProps) {
-  const [period, setPeriod] = useState<'monthly' | 'quarterly' | 'yearly'>('monthly');
   
   // Función para agrupar datos por trimestre
   const groupByQuarter = (data: any[]): any[] => {
@@ -129,30 +128,24 @@ export default function TrendChart({ data }: TrendChartProps) {
   
   console.log("Datos originales filtrados:", filteredData);
   
-  // Determinar qué datos mostrar según el período seleccionado
-  let displayData;
-  switch (period) {
-    case 'quarterly':
-      displayData = groupByQuarter(filteredData);
-      break;
-    case 'yearly':
-      displayData = groupByYear(filteredData);
-      break;
-    case 'monthly':
-    default:
-      displayData = filteredData;
-  }
-  console.log("Datos procesados para mostrar:", displayData, "Periodo:", period);
+  // Solo usar vista mensual
+  const displayData = filteredData;
+  console.log("Datos procesados para mostrar:", displayData);
+  
+  // Calcular los promedios para la línea de referencia
+  const avgOrganicWaste = displayData.reduce((sum, item) => sum + item.organicWaste, 0) / displayData.length;
+  const avgInorganicWaste = displayData.reduce((sum, item) => sum + item.inorganicWaste, 0) / displayData.length;
+  const avgRecyclableWaste = displayData.reduce((sum, item) => sum + (item.recyclableWaste || 0), 0) / displayData.length;
   
   // Calcular datos adicionales para estadísticas
   const organicTotal = displayData.reduce((sum, month) => sum + month.organicWaste, 0);
   const inorganicTotal = displayData.reduce((sum, month) => sum + month.inorganicWaste, 0);
-  const recyclableTotal = displayData.reduce((sum, month) => sum + month.recyclableWaste, 0);
+  const recyclableTotal = displayData.reduce((sum, month) => sum + (month.recyclableWaste || 0), 0);
   const totalWaste = organicTotal + inorganicTotal + recyclableTotal;
   
   // Calcular el mes con mayor generación
   const maxMonth = displayData.reduce((max, month) => {
-    const total = month.organicWaste + month.inorganicWaste + month.recyclableWaste;
+    const total = month.organicWaste + month.inorganicWaste + (month.recyclableWaste || 0);
     return total > max.total ? { name: month.month, total } : max;
   }, { name: '', total: 0 });
   
@@ -163,11 +156,11 @@ export default function TrendChart({ data }: TrendChartProps) {
     const lastIndex = displayData.length - 1;
     const currentTotal = displayData[lastIndex].organicWaste + 
                         displayData[lastIndex].inorganicWaste + 
-                        displayData[lastIndex].recyclableWaste;
+                        (displayData[lastIndex].recyclableWaste || 0);
     
     const previousTotal = displayData[lastIndex - 1].organicWaste + 
                          displayData[lastIndex - 1].inorganicWaste + 
-                         displayData[lastIndex - 1].recyclableWaste;
+                         (displayData[lastIndex - 1].recyclableWaste || 0);
     
     const change = ((currentTotal - previousTotal) / previousTotal) * 100;
     return {
@@ -186,40 +179,7 @@ export default function TrendChart({ data }: TrendChartProps) {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 relative">
         <div>
           <h2 className="text-lg font-anton uppercase tracking-wider text-navy">Tendencia de Residuos</h2>
-          <p className="text-xs text-gray-500">Análisis comparativo por período</p>
-        </div>
-        
-        <div className="flex flex-wrap gap-2">
-          <button 
-            className={`px-3 py-1 text-xs font-medium rounded-full transition-all ${
-              period === 'monthly' 
-                ? 'bg-navy text-white shadow-sm' 
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-            onClick={() => setPeriod('monthly')}
-          >
-            Mensual
-          </button>
-          <button 
-            className={`px-3 py-1 text-xs font-medium rounded-full transition-all ${
-              period === 'quarterly' 
-                ? 'bg-navy text-white shadow-sm' 
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-            onClick={() => setPeriod('quarterly')}
-          >
-            Trimestral
-          </button>
-          <button 
-            className={`px-3 py-1 text-xs font-medium rounded-full transition-all ${
-              period === 'yearly' 
-                ? 'bg-navy text-white shadow-sm' 
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-            onClick={() => setPeriod('yearly')}
-          >
-            Anual
-          </button>
+          <p className="text-xs text-gray-500">Análisis mensual enero 2024 - marzo 2025</p>
         </div>
       </div>
       
@@ -359,6 +319,49 @@ export default function TrendChart({ data }: TrendChartProps) {
               activeDot={{ r: 7, stroke: '#ff9933', strokeWidth: 2, fill: 'white' }}
               animationDuration={1500}
               animationEasing="ease-out"
+            />
+            
+            {/* Líneas de promedio */}
+            <ReferenceLine 
+              y={avgOrganicWaste} 
+              stroke="#b5e951" 
+              strokeDasharray="3 3" 
+              strokeWidth={2}
+              label={{ 
+                value: `Promedio: ${Math.round(avgOrganicWaste).toLocaleString('es-ES')} kg`, 
+                position: 'insideBottomRight',
+                fill: '#3a5a14',
+                fontSize: 10,
+                offset: 10,
+              }}
+            />
+            
+            <ReferenceLine 
+              y={avgInorganicWaste} 
+              stroke="#273949" 
+              strokeDasharray="3 3" 
+              strokeWidth={2}
+              label={{ 
+                value: `Promedio: ${Math.round(avgInorganicWaste).toLocaleString('es-ES')} kg`, 
+                position: 'insideBottomLeft',
+                fill: '#273949',
+                fontSize: 10,
+                offset: 10,
+              }}
+            />
+            
+            <ReferenceLine 
+              y={avgRecyclableWaste} 
+              stroke="#ff9933" 
+              strokeDasharray="3 3" 
+              strokeWidth={2}
+              label={{ 
+                value: `Promedio: ${Math.round(avgRecyclableWaste).toLocaleString('es-ES')} kg`, 
+                position: 'insideTopRight',
+                fill: '#b25a0c',
+                fontSize: 10,
+                offset: 10,
+              }}
             />
           </LineChart>
         </ResponsiveContainer>
