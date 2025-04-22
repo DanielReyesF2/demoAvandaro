@@ -472,12 +472,21 @@ export default function ClientDetail() {
                       {/* Gráfico de barras para registros mensuales */}
                       <div>
                         <h3 className="text-lg font-semibold mb-4">Detalle de Registros Mensuales</h3>
-                        <div className="h-[400px]">
+                        <div className="h-[500px]">
                           <ResponsiveContainer width="100%" height="100%">
                             <BarChart
                               data={[...wasteData]
-                                .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                                .slice(0, 6) // Mostrar solo los últimos 6 meses para mayor claridad
+                                .filter(data => {
+                                  // Filtrar datos solo de enero 2024 a marzo 2025
+                                  const date = new Date(data.date);
+                                  const year = date.getFullYear();
+                                  const month = date.getMonth(); // 0-11
+                                  return (
+                                    (year === 2024) || 
+                                    (year === 2025 && month <= 2) // Hasta marzo (0-2)
+                                  );
+                                })
+                                .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()) // Ordenar de más antiguo a más reciente
                                 .map((data) => {
                                   const date = new Date(data.date);
                                   const monthYear = `${getMonthName(date).slice(0, 3)} ${date.getFullYear().toString().slice(2)}`;
@@ -490,15 +499,17 @@ export default function ClientDetail() {
                                     date: date
                                   };
                                 })
-                                .reverse() // Invertir para mostrar de más antiguo a más reciente
                               }
                               margin={{ top: 20, right: 30, left: 20, bottom: 70 }}
                             >
                               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
                               <XAxis 
                                 dataKey="name" 
-                                tick={{ fontSize: 12 }}
-                                height={60}
+                                tick={{ fontSize: 11 }}
+                                angle={-45}
+                                textAnchor="end"
+                                interval={0}
+                                height={80}
                               />
                               <YAxis 
                                 yAxisId="left"
