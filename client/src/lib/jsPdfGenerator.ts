@@ -2,6 +2,8 @@ import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import { Client, WasteData } from '@shared/schema';
 import autoTable from 'jspdf-autotable';
+import { createGradientPattern } from './imageUtils';
+import logoPath from '@assets/Logo-ECONOVA-OF_Blanco.png';
 
 interface ReportData {
   client: Client;
@@ -38,26 +40,82 @@ export async function generateClientPDF(data: ReportData): Promise<Blob> {
     format: 'a4'
   });
   
-  // Configurar fuentes
+  // ===== PORTADA =====
+  // Fondo del encabezado con gradiente
+  doc.setFillColor(39, 57, 73); // Navy
+  doc.rect(0, 0, 210, 297, 'F');
+  
+  // Crear franja de color degradado en la parte superior
+  createGradientPattern(doc, 0, 0, 210, 60, '#273949', '#1a2a3c', 'vertical');
+  
+  // Añadir imagen del logo (centrado en la parte superior)
+  try {
+    doc.addImage(logoPath, 'PNG', 60, 40, 90, 45, undefined, 'FAST');
+  } catch (error) {
+    console.error('Error al añadir el logo:', error);
+  }
+  
+  // Título del reporte
   doc.setFont('helvetica', 'bold');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(28);
+  doc.text('REPORTE DE GESTIÓN', 105, 120, { align: 'center' });
+  doc.text('DE RESIDUOS', 105, 135, { align: 'center' });
   
-  // Cabecera
-  doc.setTextColor(39, 57, 73); // Navy
-  doc.setFontSize(22);
-  doc.text('REPORTE DE GESTIÓN DE RESIDUOS', 15, 20);
+  // Información del periodo
+  doc.setFontSize(18);
+  doc.text(data.period.toUpperCase(), 105, 155, { align: 'center' });
   
+  // Cliente
+  doc.setFont('helvetica', 'normal');
   doc.setFontSize(14);
-  doc.text(data.period, 15, 30);
+  doc.text(data.client.name, 105, 180, { align: 'center' });
   
-  // Línea separadora
-  doc.setDrawColor(181, 233, 81); // Lime
-  doc.setLineWidth(1);
-  doc.line(15, 35, 195, 35);
+  // Diseño gráfico: elementos decorativos
+  doc.setFillColor(181, 233, 81); // Lime
+  doc.circle(105, 210, 25, 'F');
+  
+  // Índice de desviación destacado
+  doc.setTextColor(39, 57, 73); // Navy
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(24);
+  doc.text(`${data.deviation.toFixed(1)}%`, 105, 215, { align: 'center' });
+  
+  doc.setFontSize(10);
+  doc.text('ÍNDICE DE DESVIACIÓN', 105, 225, { align: 'center' });
+  
+  // Pie de página de la portada
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(200, 200, 200);
+  doc.text('ECONOVA © 2025 | Innovando en Gestión Ambiental', 105, 280, { align: 'center' });
+  
+  // ===== CONTENIDO PRINCIPAL =====
+  doc.addPage();
+  
+  // Encabezado con color de fondo
+  doc.setFillColor(39, 57, 73); // Navy
+  doc.rect(0, 0, 210, 25, 'F');
+  
+  // Logo pequeño en el encabezado
+  try {
+    doc.addImage(logoPath, 'PNG', 10, 5, 30, 15, undefined, 'FAST');
+  } catch (error) {
+    console.error('Error al añadir el logo en el encabezado:', error);
+  }
+  
+  // Título en el encabezado
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(14);
+  doc.text('REPORTE DE GESTIÓN DE RESIDUOS', 105, 15, { align: 'center' });
   
   // Información del cliente
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(12);
-  doc.text(`Cliente: ${data.client.name}`, 15, 45);
+  doc.setTextColor(39, 57, 73); // Navy
+  doc.text(`Cliente: ${data.client.name}`, 15, 40);
+  doc.text(`Período: ${data.period}`, 15, 48);
   
   // ==== RESUMEN EJECUTIVO ====
   doc.setFont('helvetica', 'bold');
@@ -206,21 +264,49 @@ export async function generateClientPDF(data: ReportData): Promise<Blob> {
   // Añadir nueva página para el resto del contenido
   doc.addPage();
   
+  // Encabezado con color de fondo (consistente en todas las páginas)
+  doc.setFillColor(39, 57, 73); // Navy
+  doc.rect(0, 0, 210, 25, 'F');
+  
+  // Logo pequeño en el encabezado
+  try {
+    doc.addImage(logoPath, 'PNG', 10, 5, 30, 15, undefined, 'FAST');
+  } catch (error) {
+    console.error('Error al añadir el logo en el encabezado:', error);
+  }
+  
+  // Título en el encabezado
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(16);
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(14);
+  doc.text('REPORTE DE GESTIÓN DE RESIDUOS', 105, 15, { align: 'center' });
+  
+  // Título de la sección
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(20);
   doc.setTextColor(39, 57, 73); // Navy
-  doc.text('ÍNDICE DE DESVIACIÓN', 15, 20);
+  doc.text('ÍNDICE DE DESVIACIÓN', 105, 40, { align: 'center' });
+  
+  // Elemento decorativo
+  doc.setDrawColor(181, 233, 81); // Lime
+  doc.setLineWidth(2);
+  doc.line(75, 45, 135, 45);
+  
+  // Subtítulo
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(12);
+  doc.text('Medición del desempeño en la gestión de residuos', 105, 55, { align: 'center' });
   
   // Crear un indicador visual para el índice de desviación
   doc.setDrawColor(220, 220, 220);
   doc.setLineWidth(15);
-  doc.line(40, 50, 160, 50);
+  doc.line(40, 80, 160, 80);
   
   // Dibujar la línea de progreso
   const deviationWidth = Math.min(120, (data.deviation / 100) * 120);
   doc.setDrawColor(181, 233, 81);
   doc.setLineWidth(15);
-  doc.line(40, 50, 40 + deviationWidth, 50);
+  doc.line(40, 80, 40 + deviationWidth, 80);
   
   // Añadir marcadores
   doc.setFont('helvetica', 'normal');
@@ -228,17 +314,17 @@ export async function generateClientPDF(data: ReportData): Promise<Blob> {
   doc.setTextColor(100, 100, 100);
   
   // Marcadores de porcentaje
-  doc.text('0%', 40, 65);
-  doc.text('25%', 70, 65);
-  doc.text('50%', 100, 65);
-  doc.text('75%', 130, 65);
-  doc.text('100%', 160, 65);
+  doc.text('0%', 40, 95);
+  doc.text('25%', 70, 95);
+  doc.text('50%', 100, 95);
+  doc.text('75%', 130, 95);
+  doc.text('100%', 160, 95);
   
   // Valor actual
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(18);
+  doc.setFontSize(24);
   doc.setTextColor(39, 57, 73);
-  doc.text(`${data.deviation.toFixed(1)}%`, 105, 40, { align: 'center' });
+  doc.text(`${data.deviation.toFixed(1)}%`, 105, 75, { align: 'center' });
   
   // Explicación
   doc.setFont('helvetica', 'normal');
@@ -251,7 +337,7 @@ export async function generateClientPDF(data: ReportData): Promise<Blob> {
     'Cálculo: (Residuos Reciclables / Residuos Totales) × 100'
   ];
   
-  let yPosDeviation = 80;
+  let yPosDeviation = 110;
   deviationExplanation.forEach(line => {
     doc.text(line, 15, yPosDeviation);
     yPosDeviation += 5;
@@ -261,7 +347,7 @@ export async function generateClientPDF(data: ReportData): Promise<Blob> {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(16);
   doc.setTextColor(39, 57, 73);
-  doc.text('IMPACTO AMBIENTAL POSITIVO', 15, 110);
+  doc.text('IMPACTO AMBIENTAL POSITIVO', 15, 140);
   
   // Calcular impacto ambiental
   const paperRecycled = data.recyclableTotal * 0.3; // Asumiendo que el 30% de los reciclables es papel
