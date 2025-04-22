@@ -15,6 +15,7 @@ import FileUploader from '@/components/FileUploader';
 import TrendChart from '@/components/dashboard/TrendChart';
 import SustainabilityBadges from '@/components/dashboard/SustainabilityBadges';
 import EnvironmentalImpact from '@/components/dashboard/EnvironmentalImpact';
+import QuartingAnalysis from '@/components/dashboard/QuartingAnalysis';
 import { Client, Document, WasteData, Alert as AlertType } from '@shared/schema';
 import { 
   ResponsiveContainer, 
@@ -430,8 +431,15 @@ export default function ClientDetail() {
                 {/* Impacto Ambiental - Debajo de Tendencias */}
                 <EnvironmentalImpact wasteData={wasteData} />
                 
-                {/* Sustainability Badges - Debajo de Impacto Ambiental */}
-                <SustainabilityBadges clientId={client.id} />
+                {/* Análisis de Cuarteo - Metodología de auditoría */}
+                <div className="mt-6">
+                  <QuartingAnalysis wasteData={wasteData} clientId={client.id} />
+                </div>
+                
+                {/* Sustainability Badges - Debajo de Análisis de Cuarteo */}
+                <div className="mt-6">
+                  <SustainabilityBadges clientId={client.id} />
+                </div>
               </div>
             </TabsContent>
             
