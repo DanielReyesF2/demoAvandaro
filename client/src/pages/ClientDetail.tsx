@@ -198,9 +198,10 @@ export default function ClientDetail() {
   
   // Calcular totales generales
   const totalOrganic = sortedMonthlyData.reduce((sum, item) => sum + item.organic, 0);
+  const totalPoda = sortedMonthlyData.reduce((sum, item) => sum + (item.poda || 0), 0);
   const totalInorganic = sortedMonthlyData.reduce((sum, item) => sum + item.inorganic, 0);
   const totalRecyclable = sortedMonthlyData.reduce((sum, item) => sum + item.recyclable, 0);
-  const calculatedTotalWaste = totalOrganic + totalInorganic + totalRecyclable;
+  const calculatedTotalWaste = totalOrganic + totalPoda + totalInorganic + totalRecyclable;
   
   // Para el UI, utilizaremos el valor de 166,918.28 kg como total fijo confirmado por el cliente
   const totalWaste = 166918.28;
@@ -241,14 +242,17 @@ export default function ClientDetail() {
     
     // Calcular la desviación basada en los totales de 2024
     const totalOrganic2024 = data2024.reduce((sum, item) => sum + (item.organicWaste || 0), 0);
+    const totalPoda2024 = data2024.reduce((sum, item) => sum + (item.podaWaste || 0), 0);
     const totalInorganic2024 = data2024.reduce((sum, item) => sum + (item.inorganicWaste || 0), 0);
     const totalRecyclable2024 = data2024.reduce((sum, item) => sum + (item.recyclableWaste || 0), 0);
     
     // Total de residuos que van al relleno sanitario (orgánicos + inorgánicos)
     const totalToLandfill = totalOrganic2024 + totalInorganic2024;
+    const totalWaste2024 = totalOrganic2024 + totalPoda2024 + totalInorganic2024 + totalRecyclable2024;
     
     // Calcular desviación utilizando la fórmula correcta
-    const deviation = totalToLandfill > 0 ? (totalRecyclable2024 / totalToLandfill) * 100 : 0;
+    // Los residuos de PODA contribuyen positivamente al índice de desviación
+    const deviation = totalWaste2024 > 0 ? ((totalRecyclable2024 + totalPoda2024) / totalWaste2024) * 100 : 0;
     
     // Redondear a 2 decimales
     return Math.round(deviation * 100) / 100;
@@ -510,7 +514,7 @@ export default function ClientDetail() {
                     <div className="space-y-8">
                       <div>
                         <h3 className="text-lg font-semibold mb-4">Resumen de Residuos</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                           <Card>
                             <CardContent className="p-4">
                               <div className="flex items-center justify-between">
@@ -520,6 +524,19 @@ export default function ClientDetail() {
                                 </div>
                                 <div className="bg-green-100 p-2 rounded-full">
                                   <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                          <Card>
+                            <CardContent className="p-4">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <p className="text-sm text-gray-500">Orgánicos (PODA)</p>
+                                  <p className="text-2xl font-bold">{formatNumber(totalPoda)} kg</p>
+                                </div>
+                                <div className="bg-teal-100 p-2 rounded-full">
+                                  <div className="w-3 h-3 rounded-full bg-teal-500"></div>
                                 </div>
                               </div>
                             </CardContent>
@@ -573,6 +590,7 @@ export default function ClientDetail() {
                                 .reduce<Array<{
                                   name: string;
                                   organicos: number;
+                                  poda: number;
                                   inorganicos: number;
                                   reciclables: number;
                                   desviacion: number;
@@ -591,6 +609,7 @@ export default function ClientDetail() {
                                   if (existingIndex >= 0) {
                                     // Sumar a los datos existentes
                                     result[existingIndex].organicos += (data.organicWaste || 0);
+                                    result[existingIndex].poda += (data.podaWaste || 0);
                                     result[existingIndex].inorganicos += (data.inorganicWaste || 0);
                                     result[existingIndex].reciclables += (data.recyclableWaste || 0);
                                     
@@ -599,12 +618,13 @@ export default function ClientDetail() {
                                       result[existingIndex].desviacion = data.deviation;
                                     }
                                     
-                                    console.log(`Agregando a ${monthYear} - Nuevos totales: orgánico: ${result[existingIndex].organicos}, inorgánico: ${result[existingIndex].inorganicos}, reciclable: ${result[existingIndex].reciclables}`);
+                                    console.log(`Agregando a ${monthYear} - Nuevos totales: orgánico: ${result[existingIndex].organicos}, poda: ${result[existingIndex].poda}, inorgánico: ${result[existingIndex].inorganicos}, reciclable: ${result[existingIndex].reciclables}`);
                                   } else {
                                     // Añadir nuevo registro
                                     result.push({
                                       name: monthYear,
                                       organicos: data.organicWaste || 0,
+                                      poda: data.podaWaste || 0,
                                       inorganicos: data.inorganicWaste || 0,
                                       reciclables: data.recyclableWaste || 0,
                                       desviacion: data.deviation || 0,
@@ -662,6 +682,7 @@ export default function ClientDetail() {
                               />
                               <RechartsLegend verticalAlign="top" height={36} />
                               <Bar yAxisId="left" dataKey="organicos" name="Orgánicos (Comedor)" fill="#b5e951" radius={[4, 4, 0, 0]} />
+                              <Bar yAxisId="left" dataKey="poda" name="Orgánicos (PODA)" fill="#20b2aa" radius={[4, 4, 0, 0]} />
                               <Bar yAxisId="left" dataKey="inorganicos" name="Inorgánicos" fill="#273949" radius={[4, 4, 0, 0]} />
                               <Bar yAxisId="left" dataKey="reciclables" name="Reciclables" fill="#ff9933" radius={[4, 4, 0, 0]} />
                               <Line 
