@@ -73,7 +73,7 @@ export async function generateClientPDF(data: ReportData): Promise<Blob> {
     startY: 80,
     head: [['Tipo de Residuo', 'Cantidad (kg)', 'Porcentaje']],
     body: [
-      ['Orgánicos', formatNumber(data.organicTotal), `${(data.organicTotal / data.totalWaste * 100).toFixed(2)}%`],
+      ['Orgánicos (Comedor)', formatNumber(data.organicTotal), `${(data.organicTotal / data.totalWaste * 100).toFixed(2)}%`],
       ['Inorgánicos', formatNumber(data.inorganicTotal), `${(data.inorganicTotal / data.totalWaste * 100).toFixed(2)}%`],
       ['Reciclables', formatNumber(data.recyclableTotal), `${(data.recyclableTotal / data.totalWaste * 100).toFixed(2)}%`],
       ['TOTAL', formatNumber(data.totalWaste), '100.00%'],
@@ -220,7 +220,7 @@ export async function generateClientPDF(data: ReportData): Promise<Blob> {
     doc.addPage();
     autoTable(doc, {
       startY: 20,
-      head: [['Mes/Año', 'Orgánico (kg)', 'Inorgánico (kg)', 'Reciclable (kg)', 'Total (kg)', 'Desviación']],
+      head: [['Mes/Año', 'Orgánico Comedor (kg)', 'Inorgánico (kg)', 'Reciclable (kg)', 'Total (kg)', 'Desviación']],
       body: monthlyRows,
       headStyles: {
         fillColor: [39, 57, 73], // Navy
@@ -245,7 +245,7 @@ export async function generateClientPDF(data: ReportData): Promise<Blob> {
   } else {
     autoTable(doc, {
       startY: finalY2 + 5,
-      head: [['Mes/Año', 'Orgánico (kg)', 'Inorgánico (kg)', 'Reciclable (kg)', 'Total (kg)', 'Desviación']],
+      head: [['Mes/Año', 'Orgánico Comedor (kg)', 'Inorgánico (kg)', 'Reciclable (kg)', 'Total (kg)', 'Desviación']],
       body: monthlyRows,
       headStyles: {
         fillColor: [39, 57, 73], // Navy

@@ -192,7 +192,21 @@ export default function TrendChart({ data }: TrendChartProps) {
           <div className="text-lg font-semibold text-navy">{totalWaste.toLocaleString('es-ES')} kg</div>
         </div>
         <div className="bg-gray-50 rounded-lg p-3">
-          <div className="text-xs text-gray-500 mb-1">Evolución</div>
+          <div className="text-xs text-gray-500 mb-1">Índice de Desviación</div>
+          <div className="text-lg font-semibold text-green-600">
+            {Math.round((recyclableTotal / (totalWaste - recyclableTotal)) * 100)}%
+          </div>
+          <div className="text-xs text-gray-400 mt-1">Meta: 90%</div>
+        </div>
+        <div className="bg-gray-50 rounded-lg p-3">
+          <div className="text-xs text-gray-500 mb-1">Reducción CO₂</div>
+          <div className="text-lg font-semibold text-navy">
+            {Math.round(recyclableTotal * 2.8).toLocaleString('es-ES')} kg
+          </div>
+          <div className="text-xs text-gray-400 mt-1">Equivale a {Math.round((recyclableTotal * 2.8) / 120)} árboles/año</div>
+        </div>
+        <div className="bg-gray-50 rounded-lg p-3">
+          <div className="text-xs text-gray-500 mb-1">Tendencia</div>
           <div className={`text-lg font-semibold flex items-center ${trend.isPositive ? 'text-red-500' : 'text-green-600'}`}>
             {trend.isPositive ? (
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -203,16 +217,8 @@ export default function TrendChart({ data }: TrendChartProps) {
                 <polyline points="6 9 12 15 18 9" />
               </svg>
             )}
-            {trend.value}%
+            {trend.value}% {trend.isPositive ? 'aumento' : 'reducción'}
           </div>
-        </div>
-        <div className="bg-gray-50 rounded-lg p-3">
-          <div className="text-xs text-gray-500 mb-1">Mayor Volumen</div>
-          <div className="text-lg font-semibold text-navy">{maxMonth.name}</div>
-        </div>
-        <div className="bg-gray-50 rounded-lg p-3">
-          <div className="text-xs text-gray-500 mb-1">Reciclables</div>
-          <div className="text-lg font-semibold text-orange-500">{Math.round(recyclableTotal / totalWaste * 100)}%</div>
         </div>
       </div>
       
@@ -281,7 +287,7 @@ export default function TrendChart({ data }: TrendChartProps) {
                   padding: '3px 6px',
                 }}>
                   {value === 'organicWaste' 
-                    ? 'Orgánicos' 
+                    ? 'Orgánicos (Comedor)' 
                     : value === 'inorganicWaste' 
                       ? 'Inorgánicos' 
                       : 'Reciclables'}
