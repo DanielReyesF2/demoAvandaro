@@ -335,6 +335,7 @@ export default function ClientsGrid({ selectedCategory, selectedPeriod }: Client
                 onClick={() => {
                   // Filtrar datos de este cliente específico
                   const clientWasteData = wasteData.filter(item => item.clientId === client.id);
+                  // Forzar el tipo correcto ya que sabemos que la estructura es compatible
                   generateClientReport(client, clientWasteData);
                 }}
               >
