@@ -228,9 +228,9 @@ export default function ClientsGrid({ selectedCategory, selectedPeriod }: Client
                   <div className="flex items-baseline mt-1">
                     <div className="text-xl font-bold">
                       {organicWaste ? 
-                        new Intl.NumberFormat('es-MX', { maximumFractionDigits: 2 }).format(organicWaste) : 
-                        '0'} 
-                      <span className="text-sm font-normal ml-1">kg</span>
+                        new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(organicWaste/1000) : 
+                        '0.00'} 
+                      <span className="text-sm font-normal ml-1">ton</span>
                     </div>
                     <div className={`ml-auto text-xs ${organicGrowth.positive ? 'text-lime' : 'text-red-500'}`}>
                       {organicGrowth.positive ? '↑' : '↓'} {organicGrowth.value}%
@@ -253,9 +253,9 @@ export default function ClientsGrid({ selectedCategory, selectedPeriod }: Client
                   <div className="flex items-baseline mt-1">
                     <div className="text-xl font-bold">
                       {inorganicWaste ? 
-                        new Intl.NumberFormat('es-MX', { maximumFractionDigits: 2 }).format(inorganicWaste) : 
-                        '0'} 
-                      <span className="text-sm font-normal ml-1">kg</span>
+                        new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(inorganicWaste/1000) : 
+                        '0.00'} 
+                      <span className="text-sm font-normal ml-1">ton</span>
                     </div>
                     <div className={`ml-auto text-xs ${!inorganicGrowth.positive ? 'text-lime' : 'text-red-500'}`}>
                       {inorganicGrowth.positive ? '↑' : '↓'} {inorganicGrowth.value}%
@@ -278,9 +278,9 @@ export default function ClientsGrid({ selectedCategory, selectedPeriod }: Client
                   <div className="flex items-baseline mt-1">
                     <div className="text-xl font-bold">
                       {totalWaste ? 
-                        new Intl.NumberFormat('es-MX', { maximumFractionDigits: 2 }).format(totalWaste) : 
-                        '0'} 
-                      <span className="text-sm font-normal ml-1">kg</span>
+                        new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(totalWaste/1000) : 
+                        '0.00'} 
+                      <span className="text-sm font-normal ml-1">ton</span>
                     </div>
                     <div className={`ml-auto text-xs ${!totalGrowth.positive ? 'text-lime' : 'text-red-500'}`}>
                       {totalGrowth.positive ? '↑' : '↓'} {totalGrowth.value}%
