@@ -32,6 +32,23 @@ export default function QuartingAnalysis({ wasteData, clientId }: QuartingAnalys
   // Fecha de la última auditoría
   const lastAuditDate = new Date(2025, 2, 15);  // 15 de marzo de 2025
   
+  // Custom Legend renderizado con los porcentajes ya incluidos
+  const CustomLegend = ({ payload }: any) => {
+    return (
+      <ul className="text-xs">
+        {payload.map((entry: any, index: number) => (
+          <li key={`item-${index}`} className="flex items-center mb-1">
+            <div 
+              className="w-3 h-3 mr-2" 
+              style={{ backgroundColor: entry.color }} 
+            />
+            <span>{entry.value}</span>
+          </li>
+        ))}
+      </ul>
+    );
+  };
+  
   return (
     <Card>
       <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-800 pb-3">
@@ -48,55 +65,52 @@ export default function QuartingAnalysis({ wasteData, clientId }: QuartingAnalys
           {/* Composición detallada de residuos */}
           <div className="flex flex-col">
             <h3 className="text-sm font-semibold mb-3 text-gray-700">Composición de Residuos</h3>
-            <div className="flex-1 h-[250px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie 
-                    data={quartingResults} 
-                    cx="50%" 
-                    cy="50%" 
-                    innerRadius={0}
-                    outerRadius={90} 
-                    fill="#8884d8" 
-                    paddingAngle={1} 
-                    dataKey="value"
-                    label={false}
-                    labelLine={false}
-                  >
-                    {quartingResults.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip 
-                    formatter={(value) => [`${value}%`, 'Proporción']}
-                    contentStyle={{
-                      backgroundColor: 'white', 
-                      borderRadius: '0.5rem',
-                      boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
-                      border: 'none',
-                      padding: '10px 14px',
-                    }}
-                  />
-                  <Legend 
-                    layout="vertical" 
-                    verticalAlign="middle" 
-                    align="right"
-                    payload={
-                      quartingResults.map((item, index) => ({
-                        id: item.name,
-                        value: `${item.name} ${item.value}%`,
-                        color: item.color,
-                        type: 'square'
-                      }))
-                    }
-                    formatter={(value) => <span className="text-xs">{value}</span>}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
+            <div className="grid grid-cols-8 h-[230px]">
+              <div className="col-span-5">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
+                    <Pie 
+                      data={quartingResults} 
+                      cx="50%" 
+                      cy="50%" 
+                      innerRadius={0}
+                      outerRadius={85} 
+                      paddingAngle={1} 
+                      dataKey="value"
+                      startAngle={180}
+                      endAngle={-180}
+                    >
+                      {quartingResults.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip 
+                      formatter={(value) => [`${value}%`, 'Proporción']}
+                      contentStyle={{
+                        backgroundColor: 'white', 
+                        borderRadius: '0.5rem',
+                        boxShadow: '0 10px 15px -5px rgba(0, 0, 0, 0.1)',
+                        border: 'none',
+                        padding: '6px 8px',
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="col-span-3 flex items-center">
+                <div className="w-full">
+                  {quartingResults.map((item, index) => (
+                    <div key={index} className="flex items-center mb-1 text-xs">
+                      <div className="w-3 h-3 mr-2" style={{ backgroundColor: item.color }} />
+                      <span>{item.name} {item.value}%</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
             
-            <div className="mt-4 flex justify-center">
-              <div className="bg-gray-50 px-5 py-3 rounded-lg text-center">
+            <div className="mt-2 flex justify-center">
+              <div className="bg-gray-50 px-5 py-2 rounded-lg text-center">
                 <div className="text-xs text-gray-500">Potencial Reciclable</div>
                 <div className="text-2xl font-bold text-navy">{recyclablePotential}%</div>
               </div>
@@ -106,53 +120,51 @@ export default function QuartingAnalysis({ wasteData, clientId }: QuartingAnalys
           {/* Análisis de lo enviado a relleno sanitario */}
           <div className="flex flex-col">
             <h3 className="text-sm font-semibold mb-3 text-gray-700">Análisis de Residuos a Relleno Sanitario</h3>
-            <div className="flex-1 h-[250px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie 
-                    data={contaminationData} 
-                    cx="50%" 
-                    cy="50%" 
-                    innerRadius={0}
-                    outerRadius={90} 
-                    fill="#8884d8" 
-                    paddingAngle={0} 
-                    dataKey="value"
-                    label={false}
-                  >
-                    {contaminationData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip 
-                    formatter={(value) => [`${value}%`, 'Proporción']}
-                    contentStyle={{
-                      backgroundColor: 'white', 
-                      borderRadius: '0.5rem',
-                      boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
-                      border: 'none',
-                      padding: '10px 14px',
-                    }}
-                  />
-                  <Legend 
-                    layout="vertical" 
-                    verticalAlign="middle" 
-                    align="right"
-                    payload={
-                      contaminationData.map((item, index) => ({
-                        id: item.name,
-                        value: `${item.name} ${item.value}%`,
-                        color: item.color,
-                        type: 'square'
-                      }))
-                    }
-                    formatter={(value) => <span className="text-xs">{value}</span>}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
+            <div className="grid grid-cols-8 h-[230px]">
+              <div className="col-span-5">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
+                    <Pie 
+                      data={contaminationData} 
+                      cx="50%" 
+                      cy="50%" 
+                      innerRadius={0}
+                      outerRadius={85} 
+                      paddingAngle={0} 
+                      dataKey="value"
+                      startAngle={0}
+                      endAngle={360}
+                    >
+                      {contaminationData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip 
+                      formatter={(value) => [`${value}%`, 'Proporción']}
+                      contentStyle={{
+                        backgroundColor: 'white', 
+                        borderRadius: '0.5rem',
+                        boxShadow: '0 10px 15px -5px rgba(0, 0, 0, 0.1)',
+                        border: 'none',
+                        padding: '6px 8px',
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="col-span-3 flex items-center">
+                <div className="w-full">
+                  {contaminationData.map((item, index) => (
+                    <div key={index} className="flex items-center mb-1 text-xs">
+                      <div className="w-3 h-3 mr-2" style={{ backgroundColor: item.color }} />
+                      <span>{item.name} {item.value}%</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
             
-            <div className="bg-gray-50 p-3 rounded-lg mt-4">
+            <div className="bg-gray-50 p-3 rounded-lg mt-2">
               <div className="text-xs text-gray-500 mb-1">Observaciones</div>
               <div className="text-sm text-gray-700">
                 <p className="mb-1">Se siguen encontrando residuos reciclables dentro de lo que va a relleno sanitario debido a un mal manejo interno.</p>
