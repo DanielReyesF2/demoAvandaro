@@ -342,15 +342,15 @@ export async function generateClientPDF(data: ReportData): Promise<Blob> {
   doc.setTextColor(255, 255, 255);
   doc.text('RESUMEN EJECUTIVO', 105, 187, { align: 'center' });
   
-  // Panel principal para el resumen con diseño mejorado
+  // Panel principal para el resumen con diseño mejorado - más ancho para evitar desbordamiento
   // Fondo con degradado suave para mejor lectura
-  createGradientPattern(doc, 15, 190, 180, 68, COLORS.accent, COLORS.accentDark, 'vertical');
-  doc.roundedRect(15, 190, 180, 68, 4, 4, 'F');
+  createGradientPattern(doc, 15, 190, 180, 75, COLORS.accent, COLORS.accentDark, 'vertical');
+  doc.roundedRect(15, 190, 180, 75, 4, 4, 'F');
   
   // Borde sutil con efecto de profundidad
   doc.setDrawColor(parseInt(COLORS.limeDark.slice(1, 3), 16), parseInt(COLORS.limeDark.slice(3, 5), 16), parseInt(COLORS.limeDark.slice(5, 7), 16), 0.4);
   doc.setLineWidth(0.7);
-  doc.roundedRect(15, 190, 180, 68, 4, 4, 'S');
+  doc.roundedRect(15, 190, 180, 75, 4, 4, 'S');
   
   // Elemento decorativo: pequeño icono ecológico en la esquina
   drawLeafIcon(doc, 25, 200, 0.5);
@@ -399,28 +399,34 @@ export async function generateClientPDF(data: ReportData): Promise<Blob> {
     }
   ];
   
-  // Posicionamiento y estilo para cada punto del resumen
+  // Posicionamiento y estilo para cada punto del resumen - mejorar espaciado
   doc.setTextColor(parseInt(COLORS.darkGray.slice(1, 3), 16), parseInt(COLORS.darkGray.slice(3, 5), 16), parseInt(COLORS.darkGray.slice(5, 7), 16));
   
   let yPos = 205;
   summaryPoints.forEach((point, index) => {
-    // Título del punto
+    // Título del punto - más corto a la izquierda para dar espacio al valor
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(9);
     doc.setTextColor(parseInt(COLORS.navyDark.slice(1, 3), 16), parseInt(COLORS.navyDark.slice(3, 5), 16), parseInt(COLORS.navyDark.slice(5, 7), 16));
-    doc.text(`• ${point.title}:`, 35, yPos);
+    doc.text(`• ${point.title}:`, 25, yPos);
     
-    // Valor con énfasis
+    // Valor con énfasis - alineado a la derecha para evitar solapamiento
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(parseInt(COLORS.navy.slice(1, 3), 16), parseInt(COLORS.navy.slice(3, 5), 16), parseInt(COLORS.navy.slice(5, 7), 16));
-    doc.text(point.value, 135, yPos);
+    // Si el destino final es muy largo, reducir el tamaño de la fuente
+    if (point.title === 'DESTINO FINAL') {
+      doc.setFontSize(8);
+      doc.text(point.value, 185, yPos, { align: 'right' });
+    } else {
+      doc.text(point.value, 185, yPos, { align: 'right' });
+    }
     
     // Descripción adicional si existe
     if (point.description) {
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8);
       doc.setTextColor(parseInt(COLORS.darkGray.slice(1, 3), 16), parseInt(COLORS.darkGray.slice(3, 5), 16), parseInt(COLORS.darkGray.slice(5, 7), 16));
-      doc.text(point.description, 45, yPos + 5);
+      doc.text(point.description, 35, yPos + 5);
     }
     
     yPos += (point.description ? 15 : 10);
