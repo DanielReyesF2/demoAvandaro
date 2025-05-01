@@ -6,7 +6,8 @@ import {
   FileUp, 
   Users, 
   Settings, 
-  LogOut 
+  LogOut,
+  ClipboardEdit
 } from "lucide-react";
 import logoEconova from "../../assets/Logo-ECONOVA-OF_Blanco.png";
 
@@ -82,6 +83,13 @@ export default function Sidebar() {
           isActive={location === "/documents"}
         >
           Documentos
+        </SidebarItem>
+        <SidebarItem 
+          to="/data-entry" 
+          icon={<ClipboardEdit className="w-5 h-5" />} 
+          isActive={location === "/data-entry"}
+        >
+          Registro de Residuos
         </SidebarItem>
         
         <div className="px-4 py-2 mt-6 text-xs uppercase tracking-wider text-gray-400">Administración</div>

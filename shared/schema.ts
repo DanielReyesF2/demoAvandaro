@@ -29,6 +29,7 @@ export const insertDocumentSchema = createInsertSchema(documents).pick({
   fileName: true,
   fileSize: true,
   clientId: true,
+  processed: true,
 });
 
 // Waste data schema - for processed data from PDFs

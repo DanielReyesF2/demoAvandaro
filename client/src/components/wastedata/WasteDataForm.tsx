@@ -68,10 +68,11 @@ export default function WasteDataForm({ clients, onSuccess }: WasteDataFormProps
         podaWaste: data.podaWaste * 1000,
       };
       
-      await apiRequest('/api/waste-data/manual', {
-        method: 'POST',
-        body: JSON.stringify(submitData),
-      });
+      await apiRequest(
+        'POST', 
+        '/api/waste-data/manual', 
+        submitData
+      );
       
       // Invalidar queries para actualizar la data
       queryClient.invalidateQueries({ queryKey: ['/api/waste-data'] });

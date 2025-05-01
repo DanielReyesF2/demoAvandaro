@@ -12,8 +12,14 @@ export default function WasteDataEntry() {
     document.title = "Registro de Residuos | Econova";
   }, []);
   
+  // Definición de interfaz para cliente
+  interface Client {
+    id: number;
+    name: string;
+  }
+  
   // Obtener lista de clientes para el formulario
-  const { data: clients = [] } = useQuery({
+  const { data: clients = [] } = useQuery<Client[]>({
     queryKey: ['/api/clients'],
     staleTime: 60 * 1000, // 1 minuto
   });
