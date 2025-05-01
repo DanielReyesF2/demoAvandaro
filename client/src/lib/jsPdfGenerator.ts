@@ -311,24 +311,28 @@ export async function generateClientPDF(data: ReportData): Promise<Blob> {
   const percentChange = firstHalfAvg > 0 ? ((secondHalfAvg - firstHalfAvg) / firstHalfAvg * 100) : 0;
   const trendDescription = percentChange > 5 ? 'aumento' : percentChange < -5 ? 'reducción' : 'estabilidad';
   
-  // Crear texto del resumen ejecutivo
+  // Crear texto del resumen ejecutivo con líneas más cortas para evitar que se salgan
   const summaryText = [
-    `• Durante el período ${data.period}, ${data.client.name} generó un total de ${formatNumber(totalTons)} toneladas de residuos.`,
+    `• Durante el período ${data.period}, ${data.client.name}`,
+    `  generó un total de ${formatNumber(totalTons)} toneladas de residuos.`,
     `• El Índice de Desviación de Relleno Sanitario fue de ${data.deviation.toFixed(1)}%.`,
-    `• Del total de residuos, ${formatNumber(landfillTons)} toneladas fueron enviadas a relleno sanitario y ${formatNumber(recyclableTons)} a reciclaje.`,
-    `• Se observa una ${trendDescription} en la generación de residuos del ${Math.abs(percentChange).toFixed(1)}% durante el período.`,
-    `• El impacto ambiental positivo equivale a ${formatNumber((recyclableTons * 0.3) * 17)} árboles salvados.`
+    `• Del total de residuos, ${formatNumber(landfillTons)} toneladas fueron enviadas a `,
+    `  relleno sanitario y ${formatNumber(recyclableTons)} a reciclaje.`,
+    `• Se observa una ${trendDescription} en la generación de residuos`,
+    `  del ${Math.abs(percentChange).toFixed(1)}% durante el período.`,
+    `• El impacto ambiental positivo equivale a`,
+    `  ${formatNumber((recyclableTons * 0.3) * 17)} árboles salvados.`
   ];
   
-  // Posicionar el texto del resumen
+  // Posicionar el texto del resumen con mayor espacio vertical
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(10);
+  doc.setFontSize(9); // Fuente más pequeña para mayor legibilidad
   doc.setTextColor(parseInt(COLORS.darkGray.slice(1, 3), 16), parseInt(COLORS.darkGray.slice(3, 5), 16), parseInt(COLORS.darkGray.slice(5, 7), 16));
   
-  let yPos = 197;
+  let yPos = 193;
   summaryText.forEach(line => {
     doc.text(line, 20, yPos);
-    yPos += 10;
+    yPos += 8; // Menor espaciado entre líneas pero más líneas
   });
   
   // Pie de página minimalista
