@@ -53,113 +53,151 @@ function addMinimalistHeader(doc: jsPDF, title: string = 'REPORTE DE GESTIÓN DE
   doc.text(title, 105, 13, { align: 'center' });
 }
 
-// Función para dibujar icono de árbol más detallado
+// Función para dibujar icono de árbol más detallado y alineado correctamente
 function drawTreeIcon(doc: jsPDF, x: number, y: number, size: number = 1) {
+  // Centrar mejor las posiciones
   const trunkWidth = 3 * size;
-  const trunkHeight = 12 * size;
-  const crownRadius = 10 * size;
+  const trunkHeight = 10 * size; // Ligeramente más corto
+  const crownRadius = 8 * size; // Ligeramente más pequeño
   
-  // Tronco
-  doc.setFillColor(120, 80, 40); // Marrón para el tronco
-  doc.rect(x - trunkWidth/2, y - trunkHeight/2, trunkWidth, trunkHeight, 'F');
+  // Posición del tronco perfectamente centrada
+  const trunkX = x - (trunkWidth/2);
+  const trunkY = y - (trunkHeight/2);
+  
+  // Tronco con color más suave
+  doc.setFillColor(140, 100, 60); // Marrón más claro para el tronco
+  doc.rect(trunkX, trunkY, trunkWidth, trunkHeight, 'F');
   
   // Copa del árbol (varias capas para darle forma)
-  doc.setFillColor(60, 160, 60); // Verde oscuro para la base
-  doc.circle(x, y - trunkHeight/2 - crownRadius*0.5, crownRadius, 'F');
+  const crownCenterY = y - (trunkHeight/2) - (crownRadius * 0.5); // Posición más precisa
   
-  doc.setFillColor(76, 175, 80); // Verde medio para el medio
-  doc.circle(x, y - trunkHeight/2 - crownRadius*0.8, crownRadius*0.85, 'F');
+  // Capa base más grande
+  doc.setFillColor(76, 175, 80); // Verde medio
+  doc.circle(x, crownCenterY, crownRadius, 'F');
   
-  doc.setFillColor(100, 190, 90); // Verde claro para la parte superior
-  doc.circle(x, y - trunkHeight/2 - crownRadius*1.1, crownRadius*0.7, 'F');
+  // Capa media
+  doc.setFillColor(100, 190, 90); // Verde claro
+  doc.circle(x, crownCenterY - (crownRadius * 0.2), crownRadius * 0.8, 'F');
+  
+  // Capa superior más pequeña
+  doc.setFillColor(120, 200, 100); // Verde aún más claro
+  doc.circle(x, crownCenterY - (crownRadius * 0.4), crownRadius * 0.6, 'F');
 }
 
-// Función para dibujar icono de gota de agua más detallado
+// Función para dibujar icono de gota de agua más detallado y alineado
 function drawWaterDropIcon(doc: jsPDF, x: number, y: number, size: number = 1) {
-  const dropWidth = 9 * size;
-  const dropHeight = 14 * size;
+  // Tamaños ajustados para mejor proporción
+  const dropWidth = 8 * size;
+  const dropHeight = 12 * size;
   
-  // Sombra para efecto 3D
-  doc.setFillColor(40, 140, 200, 0.5); // Azul con transparencia
-  doc.ellipse(x + 0.5, y + 0.5, dropWidth/2, dropHeight/2, 'F');
+  // Usamos colores más suaves y evitamos colores oscuros
   
-  // Forma principal de la gota
-  doc.setFillColor(52, 152, 219); // Azul principal
+  // Forma principal de la gota primero (sin sombra para evitar problemas de alineación)
+  doc.setFillColor(80, 165, 225); // Azul principal más suave
   doc.ellipse(x, y, dropWidth/2, dropHeight/2, 'F');
   
-  // Brillo para efecto 3D
-  doc.setFillColor(120, 190, 240, 0.7); // Azul claro con transparencia
-  doc.ellipse(x - dropWidth/6, y - dropHeight/6, dropWidth/6, dropHeight/6, 'F');
+  // Brillo para efecto 3D - bien posicionado
+  doc.setFillColor(165, 210, 245); // Azul más claro
+  doc.ellipse(x - dropWidth/8, y - dropHeight/8, dropWidth/4, dropHeight/4, 'F');
+  
+  // Borde suave en lugar de sombra
+  doc.setDrawColor(65, 145, 205);
+  doc.setLineWidth(0.5);
+  doc.ellipse(x, y, dropWidth/2, dropHeight/2, 'S');
 }
 
-// Función para dibujar icono de rayo eléctrico más detallado
+// Función para dibujar icono de rayo eléctrico más detallado y mejor alineado
 function drawLightningIcon(doc: jsPDF, x: number, y: number, size: number = 1) {
-  const boltWidth = 10 * size;
-  const boltHeight = 16 * size;
+  // Ajustar tamaños para una mejor proporción
+  const boltWidth = 9 * size;
+  const boltHeight = 14 * size;
   
-  // Forma principal del rayo - dibujarlo manualmente con triángulos
-  doc.setFillColor(241, 196, 15); // Amarillo brillante
+  // Usar un amarillo más suave para mejor impresión
+  doc.setFillColor(245, 215, 85); // Amarillo más suave
   
-  // Parte superior del rayo (triángulo)
+  // En lugar de usar polygon (que no existe en jsPDF), usamos triángulos
+  // Dibujar el rayo principal con triángulos simples
+  
+  // Parte superior del rayo
   doc.triangle(
-    x, y - boltHeight/2,  // Punta superior
-    x - boltWidth*0.4, y - boltHeight*0.1,  // Esquina izquierda
-    x + boltWidth*0.4, y - boltHeight*0.2,  // Esquina derecha
-    'F'
-  );
+    x, y - boltHeight/2,                   // Punta superior
+    x + boltWidth*0.3, y - boltHeight*0.2, // Esquina derecha superior
+    x - boltWidth*0.4, y - boltHeight*0.2  // Esquina izquierda superior
+  , 'F');
   
-  // Parte media del rayo (triángulo)
+  // Parte central derecha
   doc.triangle(
-    x - boltWidth*0.4, y - boltHeight*0.1,  // Esquina izquierda superior
-    x, y + boltHeight*0.1,  // Punto medio bajo
-    x + boltWidth*0.2, y - boltHeight*0.2,  // Punto medio derecho
-    'F'
-  );
+    x - boltWidth*0.1, y,                 // Punto medio
+    x + boltWidth*0.3, y - boltHeight*0.2, // Punto superior derecho
+    x - boltWidth*0.4, y - boltHeight*0.2  // Punto superior izquierdo
+  , 'F');
   
-  // Parte inferior del rayo (triángulo)
+  // Parte inferior del rayo
   doc.triangle(
-    x - boltWidth*0.6, y + boltHeight*0.3,  // Punta inferior
-    x - boltWidth*0.4, y - boltHeight*0.1,  // Conexión izquierda
-    x, y + boltHeight*0.1,  // Conexión derecha
-    'F'
-  );
+    x - boltWidth*0.1, y,                // Punto medio
+    x + boltWidth*0.4, y + boltHeight/2, // Punta inferior
+    x, y + boltHeight*0.1                // Punto medio inferior
+  , 'F');
   
-  // Brillo para efecto 3D
-  doc.setFillColor(255, 230, 150, 0.7); // Amarillo claro con transparencia
-  doc.circle(x - boltWidth*0.1, y - boltHeight*0.3, boltWidth*0.15, 'F');
+  // Parte inferior izquierda
+  doc.triangle(
+    x - boltWidth*0.1, y,                // Punto medio
+    x, y + boltHeight*0.1,               // Punto medio inferior
+    x - boltWidth*0.4, y - boltHeight*0.2 // Punto superior izquierdo
+  , 'F');
+  
+  // Añadir un brillo para efecto de energía
+  doc.setFillColor(255, 245, 180);
+  doc.circle(x, y - boltHeight*0.25, boltWidth*0.12, 'F');
 }
 
-// Función para dibujar icono de hoja para CO2 más detallado
+// Función para dibujar icono de hoja para CO2 más detallado y correctamente alineado
 function drawLeafIcon(doc: jsPDF, x: number, y: number, size: number = 1) {
+  // Ajustar tamaños para una mejor proporción
   const leafWidth = 8 * size;
-  const leafHeight = 14 * size;
+  const leafHeight = 12 * size; // Ligeramente más corta para mejor proporción
   
-  // Sombra para efecto 3D
-  doc.setFillColor(30, 170, 90, 0.5); // Verde con transparencia
-  doc.ellipse(x + 0.5, y + 0.5, leafWidth/2, leafHeight/2, 'F');
-  
-  // Forma principal de la hoja
-  doc.setFillColor(46, 204, 113); // Verde brillante
+  // Forma principal de la hoja - usar color más suave, evitar colores oscuros
+  doc.setFillColor(100, 190, 130); // Verde medio más suave
   doc.ellipse(x, y, leafWidth/2, leafHeight/2, 'F');
   
+  // Borde suave para mejor definición
+  doc.setDrawColor(80, 170, 110);
+  doc.setLineWidth(0.5);
+  doc.ellipse(x, y, leafWidth/2, leafHeight/2, 'S');
+  
   // Nervio central
-  doc.setDrawColor(30, 150, 70);
-  doc.setLineWidth(0.8 * size);
+  doc.setDrawColor(80, 170, 110); // Verde más suave para nervios
+  doc.setLineWidth(0.7 * size);
   doc.line(x, y - leafHeight/2, x, y + leafHeight/2);
   
-  // Nervios laterales
+  // Nervios laterales más precisos y mejor alineados
   doc.setLineWidth(0.4 * size);
-  const nerveLength = leafWidth * 0.4;
-  const nerveCount = 5;
+  const nerveLength = leafWidth * 0.35;
+  const nerveCount = 4; // Menos nervios para mayor claridad
   const nerveSpacing = leafHeight / (nerveCount + 1);
   
+  // Dibujamos nervios simétricos a cada lado
   for (let i = 1; i <= nerveCount; i++) {
     const yPos = y - leafHeight/2 + i * nerveSpacing;
+    const angle = 20; // Ángulo en grados para los nervios
+    const angleRad = angle * Math.PI / 180;
+    
+    // Calculamos puntos finales con trigonometría para mejor alineación
     // Nervio derecho
-    doc.line(x, yPos, x + nerveLength, yPos - nerveSpacing*0.3);
-    // Nervio izquierdo
-    doc.line(x, yPos, x - nerveLength, yPos - nerveSpacing*0.3);
+    const rightEndX = x + nerveLength * Math.cos(angleRad);
+    const rightEndY = yPos - nerveLength * Math.sin(angleRad);
+    doc.line(x, yPos, rightEndX, rightEndY);
+    
+    // Nervio izquierdo (reflejado)
+    const leftEndX = x - nerveLength * Math.cos(angleRad);
+    const leftEndY = yPos - nerveLength * Math.sin(angleRad);
+    doc.line(x, yPos, leftEndX, leftEndY);
   }
+  
+  // Brillo para efecto 3D
+  doc.setFillColor(140, 230, 170, 0.7);
+  doc.ellipse(x - leafWidth/8, y - leafHeight/6, leafWidth/6, leafHeight/8, 'F');
 }
 
 interface ReportData {
