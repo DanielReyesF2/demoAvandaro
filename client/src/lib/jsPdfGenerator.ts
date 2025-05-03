@@ -5,6 +5,35 @@ import autoTable from 'jspdf-autotable';
 import { createGradientPattern } from './imageUtils';
 import logoPath from '@assets/Logo-ECONOVA-OF_Blanco.png';
 
+// Acciones pendientes para certificación TRUE
+const truePendingActions = [
+  {
+    title: 'Plan de Manejo Integral de Residuos',
+    description: 'Desarrollar un plan documentado de gestión de residuos con objetivos medibles.',
+    status: 'pending' // pending, in-progress, completed
+  },
+  {
+    title: 'Sistema de Compostaje',
+    description: 'Implementar sistema de compostaje propio o contratar proveedor para residuos orgánicos.',
+    status: 'in-progress'
+  },
+  {
+    title: 'Trazabilidad de Residuos',
+    description: 'Establecer sistema de seguimiento para todos los flujos de residuos.',
+    status: 'pending'
+  },
+  {
+    title: 'Capacitación del Personal',
+    description: 'Capacitar a todo el personal en los protocolos de separación y reducción.',
+    status: 'in-progress'
+  },
+  {
+    title: 'Políticas de Compras Sostenibles',
+    description: 'Implementar políticas que prioricen productos con menor generación de residuos.',
+    status: 'pending'
+  }
+];
+
 // Un margen adecuado mejora la legibilidad del documento
 const MARGINS = {
   top: 25,
@@ -163,6 +192,287 @@ function drawLightningIcon(doc: jsPDF, x: number, y: number, size: number = 1) {
   doc.circle(x, y - boltHeight*0.25, boltWidth*0.12, 'F');
 }
 
+// Función para dibujar icono de escudo para la certificación TRUE
+function drawShieldIcon(doc: jsPDF, x: number, y: number, size: number = 1) {
+  // Tamaño del escudo
+  const shieldWidth = 10 * size;
+  const shieldHeight = 12 * size;
+  
+  // Dibujar el contorno del escudo (forma básica)
+  doc.setFillColor(39, 57, 73); // Color navy
+  
+  // Parte superior del escudo (rectángulo con bordes redondeados)
+  doc.roundedRect(
+    x - shieldWidth/2, 
+    y - shieldHeight/2, 
+    shieldWidth, 
+    shieldHeight * 0.6, 
+    1, 
+    1, 
+    'F'
+  );
+  
+  // Parte inferior del escudo (forma de punta)
+  doc.triangle(
+    x - shieldWidth/2, 
+    y - shieldHeight/2 + (shieldHeight * 0.6),
+    x + shieldWidth/2, 
+    y - shieldHeight/2 + (shieldHeight * 0.6),
+    x, 
+    y + shieldHeight/2,
+    'F'
+  );
+  
+  // Decoración interior del escudo
+  doc.setFillColor(181, 233, 81); // Color lime
+  doc.circle(x, y - shieldHeight/6, shieldWidth/4, 'F');
+  
+  // Bordes para dar profundidad
+  doc.setDrawColor(20, 40, 70);
+  doc.setLineWidth(0.2);
+  
+  // Borde parte superior
+  doc.roundedRect(
+    x - shieldWidth/2, 
+    y - shieldHeight/2, 
+    shieldWidth, 
+    shieldHeight * 0.6, 
+    1, 
+    1, 
+    'S'
+  );
+  
+  // Borde parte inferior
+  doc.line(
+    x - shieldWidth/2, 
+    y - shieldHeight/2 + (shieldHeight * 0.6),
+    x, 
+    y + shieldHeight/2
+  );
+  doc.line(
+    x + shieldWidth/2, 
+    y - shieldHeight/2 + (shieldHeight * 0.6),
+    x, 
+    y + shieldHeight/2
+  );
+}
+
+// Función para añadir sección de Certificación TRUE al PDF
+function addTrueCertificationSection(doc: jsPDF, currentDeviation: number) {
+  // Añadir encabezado para la página
+  addMinimalistHeader(doc, 'CERTIFICACIÓN TRUE ZERO WASTE');
+  
+  // Título principal con mayor impacto visual
+  doc.setFillColor(parseInt(COLORS.navy.slice(1, 3), 16), parseInt(COLORS.navy.slice(3, 5), 16), parseInt(COLORS.navy.slice(5, 7), 16));
+  doc.rect(0, 22, 210, 16, 'F');
+  
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(16);
+  doc.text('PLAN DE CERTIFICACIÓN TRUE ZERO WASTE', 105, 33, { align: 'center' });
+  
+  // Línea decorativa verde
+  doc.setFillColor(parseInt(COLORS.lime.slice(1, 3), 16), parseInt(COLORS.lime.slice(3, 5), 16), parseInt(COLORS.lime.slice(5, 7), 16));
+  doc.rect(0, 38, 210, 2, 'F');
+  
+  // Descripción de la certificación
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(11);
+  doc.setTextColor(0, 0, 0);
+  doc.text('La certificación TRUE (Total Resource Use and Efficiency) reconoce a las instalaciones que logran desviar al menos', 15, 50);
+  doc.text('el 90% de sus residuos sólidos del relleno sanitario, incineración y medio ambiente. Este reporte presenta', 15, 57);
+  doc.text('el estado actual y las acciones necesarias para alcanzar la certificación.', 15, 64);
+  
+  // Añadir escudo de certificación en la esquina
+  drawShieldIcon(doc, 185, 55, 2);
+  
+  // Sección de estado actual de la certificación
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(14);
+  doc.setTextColor(parseInt(COLORS.navy.slice(1, 3), 16), parseInt(COLORS.navy.slice(3, 5), 16), parseInt(COLORS.navy.slice(5, 7), 16));
+  doc.text('ESTADO ACTUAL', 15, 80);
+  
+  // Línea decorativa
+  doc.setDrawColor(parseInt(COLORS.lime.slice(1, 3), 16), parseInt(COLORS.lime.slice(3, 5), 16), parseInt(COLORS.lime.slice(5, 7), 16));
+  doc.setLineWidth(0.7);
+  doc.line(15, 82, 80, 82);
+  
+  // Panel para el estado actual
+  doc.setFillColor(245, 247, 250);
+  doc.roundedRect(15, 90, 180, 50, 3, 3, 'F');
+  
+  // Dibujar barra de progreso
+  // Fondo de la barra
+  doc.setFillColor(220, 220, 220);
+  doc.roundedRect(30, 103, 150, 8, 4, 4, 'F');
+  
+  // Progreso actual
+  const progressPercentage = Math.min(100, (currentDeviation / 90) * 100);
+  const progressWidth = 150 * (progressPercentage / 100);
+  
+  // Color según el nivel de progreso
+  let progressColor = COLORS.green;
+  if (currentDeviation < 50) {
+    progressColor = COLORS.coral; // Rojo/coral para nivel crítico
+  } else if (currentDeviation < 75) {
+    progressColor = COLORS.energy; // Amarillo para nivel medio
+  }
+  
+  doc.setFillColor(
+    parseInt(progressColor.slice(1, 3), 16),
+    parseInt(progressColor.slice(3, 5), 16),
+    parseInt(progressColor.slice(5, 7), 16)
+  );
+  doc.roundedRect(30, 103, progressWidth, 8, 4, 4, 'F');
+  
+  // Marcador de meta
+  const targetX = 30 + (150 * 90) / 100;
+  doc.setDrawColor(39, 57, 73); // Navy
+  doc.setLineWidth(1.5);
+  doc.line(targetX, 98, targetX, 116);
+  
+  // Etiqueta de meta
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8);
+  doc.setTextColor(39, 57, 73);
+  doc.text('Meta 90%', targetX - 10, 95);
+  
+  // Indicador de desviación actual
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(13);
+  doc.text('Índice de Desviación Actual:', 30, 130);
+  
+  doc.setFontSize(24);
+  doc.setTextColor(39, 57, 73);
+  doc.text(`${currentDeviation.toFixed(1)}%`, 160, 130, { align: 'center' });
+  
+  // Estado con color
+  doc.setFontSize(12);
+  let statusText = '';
+  
+  if (currentDeviation < 50) {
+    statusText = 'ESTADO: CRÍTICO';
+    doc.setTextColor(220, 38, 38); // Rojo
+  } else if (currentDeviation < 75) {
+    statusText = 'ESTADO: EN PROGRESO';
+    doc.setTextColor(245, 158, 11); // Ámbar
+  } else if (currentDeviation < 90) {
+    statusText = 'ESTADO: CERCANO A META';
+    doc.setTextColor(16, 185, 129); // Verde
+  } else {
+    statusText = 'ESTADO: META ALCANZADA';
+    doc.setTextColor(5, 150, 105); // Verde oscuro
+  }
+  
+  doc.text(statusText, 105, 145, { align: 'center' });
+  
+  // Sección de acciones pendientes
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(14);
+  doc.setTextColor(parseInt(COLORS.navy.slice(1, 3), 16), parseInt(COLORS.navy.slice(3, 5), 16), parseInt(COLORS.navy.slice(5, 7), 16));
+  doc.text('ACCIONES PENDIENTES', 15, 160);
+  
+  // Línea decorativa
+  doc.setDrawColor(parseInt(COLORS.lime.slice(1, 3), 16), parseInt(COLORS.lime.slice(3, 5), 16), parseInt(COLORS.lime.slice(5, 7), 16));
+  doc.setLineWidth(0.7);
+  doc.line(15, 162, 120, 162);
+  
+  // Tabla de acciones pendientes
+  // @ts-ignore
+  autoTable(doc, {
+    startY: 170,
+    head: [['Acción', 'Descripción', 'Estado']],
+    body: truePendingActions.map(action => {
+      let statusText = '';
+      switch (action.status) {
+        case 'completed':
+          statusText = 'Completado';
+          break;
+        case 'in-progress':
+          statusText = 'En progreso';
+          break;
+        case 'pending':
+          statusText = 'Pendiente';
+          break;
+      }
+      return [action.title, action.description, statusText];
+    }),
+    headStyles: {
+      fillColor: [39, 57, 73], // Navy
+      textColor: [255, 255, 255],
+      fontStyle: 'bold'
+    },
+    alternateRowStyles: {
+      fillColor: [245, 245, 250]
+    },
+    columnStyles: {
+      0: { cellWidth: 50 },
+      1: { cellWidth: 100 },
+      2: { cellWidth: 30 }
+    },
+    didDrawPage: (data) => {
+      // Añadir encabezado para cada página adicional si la tabla se extiende
+      if (data.pageCount > 1 && data.cursor.y === data.settings.margin.top) {
+        addMinimalistHeader(doc, 'CERTIFICACIÓN TRUE ZERO WASTE');
+      }
+    }
+  });
+  
+  // Añadir recomendaciones según el nivel actual
+  // Obtener la posición Y después de la tabla
+  const finalY = (doc as any).lastAutoTable.finalY + 10;
+  
+  // Si hay espacio suficiente en la página actual
+  if (finalY < 240) {
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.setTextColor(parseInt(COLORS.navy.slice(1, 3), 16), parseInt(COLORS.navy.slice(3, 5), 16), parseInt(COLORS.navy.slice(5, 7), 16));
+    doc.text('RECOMENDACIONES', 15, finalY);
+    
+    // Línea decorativa
+    doc.setDrawColor(parseInt(COLORS.lime.slice(1, 3), 16), parseInt(COLORS.lime.slice(3, 5), 16), parseInt(COLORS.lime.slice(5, 7), 16));
+    doc.setLineWidth(0.7);
+    doc.line(15, finalY + 2, 110, finalY + 2);
+    
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(0, 0, 0);
+    
+    // Recomendaciones basadas en el nivel actual de desviación
+    let recommendations = [];
+    
+    if (currentDeviation < 50) {
+      recommendations = [
+        '1. Priorizar la implementación del Plan de Manejo Integral de Residuos.',
+        '2. Adquirir tecnología de compostaje para aumentar la desviación de residuos orgánicos.',
+        '3. Implementar sistema de trazabilidad para todos los flujos de residuos.',
+        '4. Capacitar a todo el personal en separación adecuada de residuos en origen.'
+      ];
+    } else if (currentDeviation < 75) {
+      recommendations = [
+        '1. Reforzar los programas de separación en la fuente, especialmente en áreas de cocina.',
+        '2. Aumentar la capacidad de procesamiento de residuos orgánicos para compostaje.',
+        '3. Implementar auditorías internas mensuales para verificar la correcta separación.',
+        '4. Desarrollar políticas de compras sostenibles para reducir residuos desde el origen.'
+      ];
+    } else {
+      recommendations = [
+        '1. Afinar los procesos actuales para incrementar la desviación del 37.18% al 90%.',
+        '2. Completar la documentación requerida para la precertificación.',
+        '3. Desarrollar campañas de comunicación para involucrar a los socios del club.',
+        '4. Programar una pre-auditoría con consultores certificados en TRUE.'
+      ];
+    }
+    
+    // Escribir recomendaciones
+    let yPosition = finalY + 10;
+    recommendations.forEach(recommendation => {
+      doc.text(recommendation, 20, yPosition);
+      yPosition += 7;
+    });
+  }
+}
+
 // Función para dibujar icono de hoja para CO2 más detallado y correctamente alineado
 function drawLeafIcon(doc: jsPDF, x: number, y: number, size: number = 1) {
   // Ajustar tamaños para una mejor proporción
@@ -224,7 +534,7 @@ interface ReportData {
 }
 
 export async function generateClientPDF(data: ReportData): Promise<Blob> {
-  // Crear documento PDF - exactamente 3 páginas
+  // Crear documento PDF - ahora con 4 páginas (agregamos certificación TRUE)
   const doc = new jsPDF({
     orientation: 'portrait',
     unit: 'mm',
@@ -437,7 +747,7 @@ export async function generateClientPDF(data: ReportData): Promise<Blob> {
   doc.setFontSize(9);
   doc.setTextColor(100, 100, 100);
   doc.text('ECONOVA © 2025 | Innovando en Gestión Ambiental', 105, 280, { align: 'center' });
-  doc.text('Página 1 de 3', 185, 290, { align: 'right' });
+  doc.text('Página 1 de 4', 185, 290, { align: 'right' });
 
   // ===== PÁGINA 2: ANÁLISIS VISUAL DE RESIDUOS + ÍNDICE DE DESVIACIÓN =====
   doc.addPage();
@@ -603,7 +913,7 @@ export async function generateClientPDF(data: ReportData): Promise<Blob> {
   doc.text('para reciclaje en lugar de enviarse al relleno sanitario.', 25, 270);
   
   doc.setFontSize(9);
-  doc.text('Página 2 de 3', 185, 290, { align: 'right' });
+  doc.text('Página 2 de 4', 185, 290, { align: 'right' });
 
   // ===== PÁGINA 3: IMPACTO AMBIENTAL + TABLA DE GENERACIÓN + GRÁFICO DE GENERACIÓN MENSUAL =====
   doc.addPage();
@@ -889,7 +1199,26 @@ export async function generateClientPDF(data: ReportData): Promise<Blob> {
   doc.line(15, 280, 195, 280);
   
   doc.text('ECONOVA © 2025 | Innovando en Gestión Ambiental', 105, 286, { align: 'center' });
-  doc.text('Página 3 de 3', 185, 286, { align: 'right' });
+  doc.text('Página 3 de 4', 185, 286, { align: 'right' });
+  
+  // ===== PÁGINA 4: CERTIFICACIÓN TRUE ZERO WASTE =====
+  doc.addPage();
+  
+  // Añadir la sección de certificación TRUE
+  addTrueCertificationSection(doc, data.deviation);
+  
+  // Pie de página con estilo corporativo
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(100, 100, 100);
+  
+  // Línea decorativa para el pie de página
+  doc.setDrawColor(parseInt(COLORS.lime.slice(1, 3), 16), parseInt(COLORS.lime.slice(3, 5), 16), parseInt(COLORS.lime.slice(5, 7), 16), 0.5);
+  doc.setLineWidth(0.5);
+  doc.line(15, 280, 195, 280);
+  
+  doc.text('ECONOVA © 2025 | Innovando en Gestión Ambiental', 105, 286, { align: 'center' });
+  doc.text('Página 4 de 4', 185, 286, { align: 'right' });
   
   // Devolver como blob
   return doc.output('blob');
