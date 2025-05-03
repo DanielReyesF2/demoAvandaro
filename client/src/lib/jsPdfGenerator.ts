@@ -747,7 +747,7 @@ export async function generateClientPDF(data: ReportData): Promise<Blob> {
   doc.setFontSize(9);
   doc.setTextColor(100, 100, 100);
   doc.text('ECONOVA © 2025 | Innovando en Gestión Ambiental', 105, 280, { align: 'center' });
-  doc.text('Página 1 de 4', 185, 290, { align: 'right' });
+  doc.text('Página 1 de 3', 185, 290, { align: 'right' });
 
   // ===== PÁGINA 2: ANÁLISIS VISUAL DE RESIDUOS + ÍNDICE DE DESVIACIÓN =====
   doc.addPage();
@@ -913,7 +913,7 @@ export async function generateClientPDF(data: ReportData): Promise<Blob> {
   doc.text('para reciclaje en lugar de enviarse al relleno sanitario.', 25, 270);
   
   doc.setFontSize(9);
-  doc.text('Página 2 de 4', 185, 290, { align: 'right' });
+  doc.text('Página 2 de 3', 185, 290, { align: 'right' });
 
   // ===== PÁGINA 3: IMPACTO AMBIENTAL + TABLA DE GENERACIÓN + GRÁFICO DE GENERACIÓN MENSUAL =====
   doc.addPage();
@@ -1198,27 +1198,70 @@ export async function generateClientPDF(data: ReportData): Promise<Blob> {
   doc.setLineWidth(0.5);
   doc.line(15, 280, 195, 280);
   
-  doc.text('ECONOVA © 2025 | Innovando en Gestión Ambiental', 105, 286, { align: 'center' });
-  doc.text('Página 3 de 4', 185, 286, { align: 'right' });
+  // Añadir información resumida sobre certificación TRUE en la página 3
+  // Título
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(12);
+  doc.setTextColor(parseInt(COLORS.navy.slice(1, 3), 16), parseInt(COLORS.navy.slice(3, 5), 16), parseInt(COLORS.navy.slice(5, 7), 16));
+  doc.text('CERTIFICACIÓN TRUE ZERO WASTE', 105, 210, { align: 'center' });
   
-  // ===== PÁGINA 4: CERTIFICACIÓN TRUE ZERO WASTE =====
-  doc.addPage();
+  // Línea decorativa
+  doc.setDrawColor(parseInt(COLORS.lime.slice(1, 3), 16), parseInt(COLORS.lime.slice(3, 5), 16), parseInt(COLORS.lime.slice(5, 7), 16));
+  doc.setLineWidth(0.7);
+  doc.line(65, 213, 145, 213);
   
-  // Añadir la sección de certificación TRUE
-  addTrueCertificationSection(doc, data.deviation);
+  // Progreso actual y meta
+  doc.setFillColor(245, 247, 250);
+  doc.roundedRect(15, 220, 180, 40, 3, 3, 'F');
   
-  // Pie de página con estilo corporativo
+  // Indicador desviación actual - simplificado
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(12);
+  doc.setTextColor(parseInt(COLORS.navy.slice(1, 3), 16), parseInt(COLORS.navy.slice(3, 5), 16), parseInt(COLORS.navy.slice(5, 7), 16));
+  doc.text('Desviación actual:', 25, 233);
+  
+  doc.setFontSize(16);
+  doc.text(`${data.deviation.toFixed(1)}%`, 95, 233);
+  
+  // Desviación meta
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(12);
+  doc.text('Meta para certificación:', 115, 233);
+  doc.text('90%', 175, 233);
+  
+  // Acciones clave recomendadas
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.text('Acciones prioritarias recomendadas:', 25, 245);
+  
+  // Lista de acciones
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8);
+  
+  // Recomendaciones específicas basadas en la desviación actual
+  if (data.deviation < 50) {
+    doc.text('1. Lograr respaldo de la alta dirección para priorizar programa de residuos', 30, 252);
+    doc.text('2. Implementar compostero en sitio para residuos de poda y comedor', 30, 258);
+    doc.text('3. Contratar proveedor privado que asegure trazabilidad', 30, 264);
+    doc.text('4. Formar brigada de mínimo 3 personas para gestión interna', 30, 270);
+  } else if (data.deviation < 75) {
+    doc.text('1. Aumentar participación de la alta dirección en el programa', 30, 252);
+    doc.text('2. Ampliar capacidad de compostaje in situ', 30, 258);
+    doc.text('3. Mejorar seguimiento y reportes con proveedor privado', 30, 264);
+    doc.text('4. Capacitar continuamente al personal de gestión de residuos', 30, 270);
+  } else {
+    doc.text('1. Presentar avances y beneficios a la dirección', 30, 252);
+    doc.text('2. Optimizar sistema de compostaje actual', 30, 258);
+    doc.text('3. Revisar mensualmente indicadores con proveedores', 30, 264);
+    doc.text('4. Implementar técnicas avanzadas de separación', 30, 270);
+  }
+  
+  // Pie de página corporativo
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
   doc.setTextColor(100, 100, 100);
-  
-  // Línea decorativa para el pie de página
-  doc.setDrawColor(parseInt(COLORS.lime.slice(1, 3), 16), parseInt(COLORS.lime.slice(3, 5), 16), parseInt(COLORS.lime.slice(5, 7), 16), 0.5);
-  doc.setLineWidth(0.5);
-  doc.line(15, 280, 195, 280);
-  
   doc.text('ECONOVA © 2025 | Innovando en Gestión Ambiental', 105, 286, { align: 'center' });
-  doc.text('Página 4 de 4', 185, 286, { align: 'right' });
+  doc.text('Página 3 de 3', 185, 286, { align: 'right' });
   
   // Devolver como blob
   return doc.output('blob');

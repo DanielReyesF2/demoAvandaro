@@ -307,29 +307,29 @@ export async function generateAndDownloadTrueCertificationReport(
     doc.setFontSize(10);
     doc.setTextColor(0, 0, 0);
     
-    // Recomendaciones basadas en el nivel actual de desviación
+    // Recomendaciones basadas en el nivel actual de desviación y las necesidades específicas del Club
     let recommendations = [];
     
     if (currentDeviation < 50) {
       recommendations = [
-        '1. Priorizar la implementación del Plan de Manejo Integral de Residuos.',
-        '2. Adquirir tecnología de compostaje para aumentar la desviación de residuos orgánicos.',
-        '3. Implementar sistema de trazabilidad para todos los flujos de residuos.',
-        '4. Capacitar a todo el personal en separación adecuada de residuos en origen.'
+        '1. URGENTE: Conseguir respaldo de la alta dirección para priorizar el programa de residuos.',
+        '2. Implementar compostero en sitio para el 100% de los residuos de poda y comedor.',
+        '3. Contratar un proveedor privado para asegurar trazabilidad y destino final adecuado.',
+        '4. Formar una brigada de mínimo 3 personas para la gestión interna de residuos.'
       ];
     } else if (currentDeviation < 75) {
       recommendations = [
-        '1. Reforzar los programas de separación en la fuente, especialmente en áreas de cocina.',
-        '2. Aumentar la capacidad de procesamiento de residuos orgánicos para compostaje.',
-        '3. Implementar auditorías internas mensuales para verificar la correcta separación.',
-        '4. Desarrollar políticas de compras sostenibles para reducir residuos desde el origen.'
+        '1. Involucrar activamente a la alta dirección en el programa de gestión de residuos.',
+        '2. Ampliar capacidad de compostaje in situ para todos los residuos orgánicos.',
+        '3. Negociar con proveedor privado para mejorar la trazabilidad y reportes.',
+        '4. Aumentar personal dedicado a la gestión de residuos y su capacitación.'
       ];
     } else {
       recommendations = [
-        '1. Afinar los procesos actuales para incrementar la desviación del 37.18% al 90%.',
-        '2. Completar la documentación requerida para la precertificación.',
-        '3. Desarrollar campañas de comunicación para involucrar a los socios del club.',
-        '4. Programar una pre-auditoría con consultores certificados en TRUE.'
+        '1. Realizar presentación formal a la alta dirección sobre avances y beneficios.',
+        '2. Optimizar sistema de compostaje y aumentar su capacidad de procesamiento.',
+        '3. Revisar mensualmente indicadores con proveedor privado para asegurar desviación.',
+        '4. Capacitar continuamente a la brigada de gestión de residuos en nuevas técnicas.'
       ];
     }
     

@@ -25,33 +25,33 @@ export const TrueCertification: React.FC<TrueCertificationProps> = ({ currentDev
   const pendingActions = [
     {
       id: 1,
-      title: 'Plan de Manejo Integral de Residuos',
-      description: 'Desarrollar un plan documentado de gestión de residuos con objetivos medibles.',
+      title: 'Priorización Directiva',
+      description: 'Lograr que la alta dirección priorice el programa de gestión de residuos.',
       status: 'pending', // pending, in-progress, completed
     },
     {
       id: 2,
-      title: 'Sistema de Compostaje',
-      description: 'Implementar sistema de compostaje propio o contratar proveedor para residuos orgánicos.',
+      title: 'Compostaje en Sitio',
+      description: 'Implementar compostero para el 100% de los residuos de poda y comedor.',
       status: 'in-progress',
     },
     {
       id: 3,
-      title: 'Trazabilidad de Residuos',
-      description: 'Establecer sistema de seguimiento para todos los flujos de residuos.',
+      title: 'Proveedor Privado',
+      description: 'Invertir en un proveedor privado en lugar del municipal para asegurar destino final y trazabilidad.',
       status: 'pending',
     },
     {
       id: 4,
-      title: 'Capacitación del Personal',
-      description: 'Capacitar a todo el personal en los protocolos de separación y reducción.',
-      status: 'in-progress',
+      title: 'Brigada de Gestión',
+      description: 'Conformar una brigada de mínimo 3 personas dedicadas a la gestión interna de residuos.',
+      status: 'pending',
     },
     {
       id: 5,
-      title: 'Políticas de Compras Sostenibles',
-      description: 'Implementar políticas que prioricen productos con menor generación de residuos.',
-      status: 'pending',
+      title: 'Capacitación del Personal',
+      description: 'Capacitar a todo el personal en los protocolos de separación y reducción.',
+      status: 'in-progress',
     },
   ];
   
