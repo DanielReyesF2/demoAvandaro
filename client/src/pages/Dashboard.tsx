@@ -22,6 +22,7 @@ import TrendChart from '@/components/dashboard/TrendChart';
 import AlertsTable from '@/components/dashboard/AlertsTable';
 import { ClubHeader } from '@/components/dashboard/ClubHeader';
 import { ClubAchievements } from '@/components/dashboard/ClubAchievements';
+import { TrueCertification } from '@/components/dashboard/TrueCertification';
 import { WasteData, Alert } from '@shared/schema';
 
 export default function Dashboard() {
@@ -161,6 +162,9 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
+          
+          {/* Certificación TRUE Zero Waste */}
+          <TrueCertification currentDeviation={summaryData.deviation} />
           
           {/* Logros de sostenibilidad del Club Campestre */}
           <ClubAchievements />
