@@ -1123,72 +1123,7 @@ export async function generateClientPDF(data: ReportData): Promise<Blob> {
     tableWidth: 180, // Ancho fijo para evitar desbordamiento
   });
   
-  // ==== GRÁFICO DE GENERACIÓN MENSUAL ====
-  // Posicionamiento inteligente basado en el espacio disponible
-  const tableRowHeight = 8; // Altura aproximada por fila
-  const tableHeight = monthlyRows.length * tableRowHeight + 15; // +15 para el encabezado
-  const graphStartY = 160 + tableHeight + 10; // 10px de margen después de la tabla
-  
-  // Sólo añadimos el gráfico si hay suficiente espacio
-  if (graphStartY < 240) {
-    // Título para la sección de gráfico
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(12);
-    doc.setTextColor(parseInt(COLORS.navy.slice(1, 3), 16), parseInt(COLORS.navy.slice(3, 5), 16), parseInt(COLORS.navy.slice(5, 7), 16));
-    doc.text('GRÁFICO DE GENERACIÓN MENSUAL', 105, graphStartY + 5, { align: 'center' });
-    
-    // Línea decorativa
-    doc.setDrawColor(parseInt(COLORS.lime.slice(1, 3), 16), parseInt(COLORS.lime.slice(3, 5), 16), parseInt(COLORS.lime.slice(5, 7), 16));
-    doc.setLineWidth(1);
-    doc.line(70, graphStartY + 8, 140, graphStartY + 8);
-    
-    // Marco para el gráfico
-    doc.setFillColor(250, 252, 255);
-    doc.roundedRect(15, graphStartY + 12, 180, 42, 3, 3, 'F');
-    
-    doc.setDrawColor(200, 200, 200);
-    doc.setLineWidth(0.5);
-    doc.roundedRect(15, graphStartY + 12, 180, 42, 3, 3, 'S');
-    
-    // Crear un gráfico de barras más visualmente atractivo
-    const graphStartX = 35;
-    const graphWidth = 140;
-    const barHeight = 5;
-    const maxValue = Math.max(...monthlyRows.map(row => parseFloat(row[4].replace(',', ''))));
-    
-    // Línea base para el gráfico
-    doc.setDrawColor(200, 200, 200);
-    doc.setLineWidth(0.5);
-    doc.line(graphStartX, graphStartY + 46, graphStartX + graphWidth, graphStartY + 46);
-    
-    // Mostrar los meses más recientes primero (hasta 6)
-    const recentMonths = [...monthlyRows].slice(-6).reverse();
-    
-    let yPos = graphStartY + 15;
-    recentMonths.forEach((row, index) => {
-      const monthLabel = row[0];
-      const totalValue = parseFloat(row[4].replace(',', ''));
-      const barWidth = (totalValue / maxValue) * graphWidth;
-      
-      // Etiqueta del mes
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(7);
-      doc.setTextColor(60, 60, 60);
-      doc.text(monthLabel, graphStartX - 5, yPos + 3, { align: 'right' });
-      
-      // Barra con color azul marino de Econova
-      doc.setFillColor(parseInt(COLORS.navy.slice(1, 3), 16), parseInt(COLORS.navy.slice(3, 5), 16), parseInt(COLORS.navy.slice(5, 7), 16));
-      doc.rect(graphStartX, yPos, barWidth, barHeight, 'F');
-      
-      // Valor a la derecha de la barra
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(7);
-      doc.setTextColor(parseInt(COLORS.navy.slice(1, 3), 16), parseInt(COLORS.navy.slice(3, 5), 16), parseInt(COLORS.navy.slice(5, 7), 16));
-      doc.text(`${row[4]} ton`, graphStartX + barWidth + 3, yPos + 3.5);
-      
-      yPos += barHeight + 4; // Espacio entre barras
-    });
-  }
+  // Omitimos el gráfico mensual para dar espacio a la sección de certificación TRUE
   
   // Pie de página con estilo corporativo
   doc.setFont('helvetica', 'normal');
@@ -1201,68 +1136,131 @@ export async function generateClientPDF(data: ReportData): Promise<Blob> {
   doc.line(15, 280, 195, 280);
   
   // Añadir información resumida sobre certificación TRUE en la página 3
-  // Título
+  // Fondo para las siguientes secciones que borra cualquier contenido previo
+  doc.setFillColor(255, 255, 255);
+  doc.rect(0, 135, 210, 130, 'F');
+  
+  // Título de certificación TRUE
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(12);
+  doc.setFontSize(14);
   doc.setTextColor(parseInt(COLORS.navy.slice(1, 3), 16), parseInt(COLORS.navy.slice(3, 5), 16), parseInt(COLORS.navy.slice(5, 7), 16));
-  doc.text('CERTIFICACIÓN TRUE ZERO WASTE', 105, 210, { align: 'center' });
+  doc.text('CERTIFICACIÓN TRUE ZERO WASTE', 105, 150, { align: 'center' });
   
   // Línea decorativa
   doc.setDrawColor(parseInt(COLORS.lime.slice(1, 3), 16), parseInt(COLORS.lime.slice(3, 5), 16), parseInt(COLORS.lime.slice(5, 7), 16));
   doc.setLineWidth(0.7);
-  doc.line(65, 213, 145, 213);
+  doc.line(55, 153, 155, 153);
   
-  // Progreso actual y meta - más compacto
+  // Marco para la visualización del estado
   doc.setFillColor(245, 247, 250);
-  doc.roundedRect(15, 220, 180, 30, 3, 3, 'F');
+  doc.roundedRect(15, 160, 180, 40, 3, 3, 'F');
   
-  // Indicador desviación actual - simplificado
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(10);
-  doc.setTextColor(parseInt(COLORS.navy.slice(1, 3), 16), parseInt(COLORS.navy.slice(3, 5), 16), parseInt(COLORS.navy.slice(5, 7), 16));
-  doc.text('Desviación actual:', 25, 233);
+  // Barrita de progreso
+  doc.setFillColor(220, 220, 220);
+  doc.roundedRect(30, 185, 150, 8, 4, 4, 'F');
   
-  doc.setFontSize(14);
-  doc.text(`${data.deviation.toFixed(1)}%`, 85, 233);
+  // Progreso actual (valor de desviación convertido a %)
+  const progressPercentage = Math.min(100, (data.deviation / 90) * 100);
+  const barWidth = (progressPercentage / 100) * 150;
   
-  // Desviación meta
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(10);
-  doc.text('Meta certificación:', 105, 233);
-  doc.text('90%', 165, 233);
+  // Color según el nivel
+  let barColor = '#74c278'; // Verde para nivel alto
+  if (data.deviation < 50) {
+    barColor = '#ff7f50'; // Naranja para nivel bajo
+  } else if (data.deviation < 75) {
+    barColor = '#ffd166'; // Amarillo para nivel medio
+  }
   
-  // Acciones clave recomendadas - título
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(9);
-  doc.text('Acciones prioritarias para alcanzar certificación:', 25, 255);
+  doc.setFillColor(
+    parseInt(barColor.slice(1, 3), 16),
+    parseInt(barColor.slice(3, 5), 16),
+    parseInt(barColor.slice(5, 7), 16)
+  );
+  doc.roundedRect(30, 185, barWidth, 8, 4, 4, 'F');
   
-  // Lista de acciones - más compacta
+  // Marcador de meta (línea vertical en 90%)
+  const targetX = 30 + (150 * 90) / 100;
+  doc.setDrawColor(39, 57, 73);
+  doc.setLineWidth(1);
+  doc.line(targetX, 180, targetX, 193);
+  
+  // Etiqueta de meta
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8);
+  doc.setFontSize(7);
+  doc.setTextColor(39, 57, 73);
+  doc.text('Meta 90%', targetX, 177);
+  
+  // Indicador desviación actual - valor grande
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+  doc.setTextColor(39, 57, 73);
+  doc.text('Desviación actual:', 25, 172);
+  
+  doc.setFontSize(16);
+  doc.text(`${data.deviation.toFixed(1)}%`, 150, 172, { align: 'center' });
+  
+  // Acciones clave recomendadas - título con mejor formato
+  doc.setFillColor(39, 57, 73);
+  doc.rect(0, 210, 210, 18, 'F');
+  
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(10);
+  doc.setTextColor(255, 255, 255);
+  doc.text('ACCIONES PRIORITARIAS PARA ALCANZAR CERTIFICACIÓN', 105, 222, { align: 'center' });
+  
+  // Lista de acciones - más compacta y con mejor formato
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(0, 0, 0);
+  
+  // Marco para las acciones recomendadas
+  doc.setFillColor(245, 247, 250);
+  doc.roundedRect(15, 235, 180, 35, 3, 3, 'F');
   
   // Recomendaciones específicas basadas en la desviación actual
   // Diseño de dos columnas para ahorrar espacio
   if (data.deviation < 50) {
     // Columna izquierda
-    doc.text('1. Priorizar programa de residuos en la alta dirección', 20, 262);
-    doc.text('2. Implementar compostero en sitio (poda/comedor)', 20, 268);
+    doc.text('1. Priorizar programa de residuos en la', 20, 245);
+    doc.text('   alta dirección', 20, 250);
+    
+    doc.text('2. Implementar compostero en sitio', 20, 260);
+    doc.text('   para residuos de poda y comedor', 20, 265);
+    
     // Columna derecha
-    doc.text('3. Contratar proveedor privado para trazabilidad', 115, 262);
-    doc.text('4. Formar brigada de mínimo 3 personas', 115, 268);
+    doc.text('3. Contratar proveedor privado para', 115, 245);
+    doc.text('   asegurar trazabilidad', 115, 250);
+    
+    doc.text('4. Formar brigada de mínimo 3', 115, 260);
+    doc.text('   personas para gestión interna', 115, 265);
   } else if (data.deviation < 75) {
     // Columna izquierda
-    doc.text('1. Involucrar más a la alta dirección', 20, 262);
-    doc.text('2. Ampliar capacidad de compostaje in situ', 20, 268);
+    doc.text('1. Involucrar más a la alta dirección', 20, 245);
+    doc.text('   en el programa de residuos', 20, 250);
+    
+    doc.text('2. Ampliar capacidad de compostaje', 20, 260);
+    doc.text('   in situ para residuos orgánicos', 20, 265);
+    
     // Columna derecha
-    doc.text('3. Mejorar reportes con proveedor privado', 115, 262);
-    doc.text('4. Aumentar capacitación de personal', 115, 268);
+    doc.text('3. Mejorar reportes con proveedor', 115, 245);
+    doc.text('   privado para trazabilidad', 115, 250);
+    
+    doc.text('4. Aumentar capacitación de personal', 115, 260);
+    doc.text('   dedicado a gestión de residuos', 115, 265);
   } else {
     // Columna izquierda
-    doc.text('1. Presentar avances a la dirección', 20, 262);
-    doc.text('2. Optimizar sistema de compostaje', 20, 268);
+    doc.text('1. Presentar avances a la dirección', 20, 245);
+    doc.text('   sobre logros y beneficios', 20, 250);
+    
+    doc.text('2. Optimizar sistema de compostaje', 20, 260);
+    doc.text('   y aumentar su capacidad', 20, 265);
+    
     // Columna derecha
-    doc.text('3. Revisar indicadores con proveedores', 115, 262);
-    doc.text('4. Implementar técnicas avanzadas', 115, 268);
+    doc.text('3. Revisar indicadores mensuales', 115, 245);
+    doc.text('   con proveedores de servicios', 115, 250);
+    
+    doc.text('4. Implementar técnicas avanzadas', 115, 260);
+    doc.text('   de separación y recuperación', 115, 265);
   }
   
   // Pie de página corporativo
