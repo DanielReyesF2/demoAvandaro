@@ -1,7 +1,6 @@
 import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
-import { Client, WasteData } from '@shared/schema';
 import autoTable from 'jspdf-autotable';
+import { Client, WasteData } from '@shared/schema';
 import { createGradientPattern } from './imageUtils';
 import logoPath from '@assets/Logo-ECONOVA-OF_Blanco.png';
 import cccmLogo from '@assets/CCCM_1754423231662.png';
@@ -386,7 +385,6 @@ function addTrueCertificationSection(doc: jsPDF, currentDeviation: number) {
   doc.line(15, 162, 120, 162);
   
   // Tabla de acciones pendientes
-  // @ts-ignore
   autoTable(doc, {
     startY: 170,
     head: [['Acción', 'Descripción', 'Estado']],
@@ -427,8 +425,8 @@ function addTrueCertificationSection(doc: jsPDF, currentDeviation: number) {
   });
   
   // Añadir recomendaciones según el nivel actual
-  // Obtener la posición Y después de la tabla
-  const finalY = (doc as any).lastAutoTable.finalY + 10;
+  // Obtener la posición Y después de la tabla usando previousAutoTable
+  const finalY = (doc as any).previousAutoTable?.finalY ? (doc as any).previousAutoTable.finalY + 10 : 240;
   
   // Si hay espacio suficiente en la página actual
   if (finalY < 240) {

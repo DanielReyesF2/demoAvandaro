@@ -1,5 +1,5 @@
 import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 import logoPath from '@assets/Logo-ECONOVA-OF_Blanco.png';
 import cccmLogo from '@assets/CCCM_1754423231662.png';
 
@@ -261,8 +261,7 @@ export async function generateAndDownloadTrueCertificationReport(
   doc.line(15, 182, 120, 182);
   
   // Tabla de acciones pendientes
-  // @ts-ignore
-  (doc as any).autoTable({
+  autoTable(doc, {
     startY: 190,
     head: [['Acción', 'Descripción', 'Estado']],
     body: pendingActions.map(action => {
