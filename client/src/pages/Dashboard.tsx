@@ -18,7 +18,8 @@ import {
   Settings,
   Eye
 } from 'lucide-react';
-import TrendChart from '@/components/dashboard/TrendChart';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AlertsTable from '@/components/dashboard/AlertsTable';
 import SummaryCard from '@/components/dashboard/SummaryCard';
 import { ClubHeader } from '@/components/dashboard/ClubHeader';
@@ -51,23 +52,14 @@ export default function Dashboard() {
     deviation: 37.18, // (Reciclable + PODA) / Total × 100
   };
   
-  // Preparar datos para el gráfico - se espera una estructura específica
-  const chartData = [
-    { month: 'Ene 24', organicWaste: 5.52, podaWaste: 16.00, inorganicWaste: 4.55, recyclableWaste: 0.92 },
-    { month: 'Feb 24', organicWaste: 6.19, podaWaste: 0.00, inorganicWaste: 4.06, recyclableWaste: 0.84 },
-    { month: 'Mar 24', organicWaste: 5.94, podaWaste: 0.00, inorganicWaste: 4.10, recyclableWaste: 0.98 },
-    { month: 'Abr 24', organicWaste: 7.42, podaWaste: 16.00, inorganicWaste: 4.39, recyclableWaste: 1.03 },
-    { month: 'May 24', organicWaste: 6.61, podaWaste: 0.00, inorganicWaste: 4.17, recyclableWaste: 1.35 },
-    { month: 'Jun 24', organicWaste: 4.93, podaWaste: 0.00, inorganicWaste: 4.38, recyclableWaste: 0.00 },
-    { month: 'Jul 24', organicWaste: 5.05, podaWaste: 0.00, inorganicWaste: 3.34, recyclableWaste: 0.66 },
-    { month: 'Ago 24', organicWaste: 5.46, podaWaste: 0.00, inorganicWaste: 5.73, recyclableWaste: 0.63 },
-    { month: 'Sep 24', organicWaste: 5.67, podaWaste: 0.00, inorganicWaste: 4.69, recyclableWaste: 2.19 },
-    { month: 'Oct 24', organicWaste: 6.05, podaWaste: 0.00, inorganicWaste: 4.50, recyclableWaste: 0.76 },
-    { month: 'Nov 24', organicWaste: 5.86, podaWaste: 0.00, inorganicWaste: 4.71, recyclableWaste: 0.98 },
-    { month: 'Dic 24', organicWaste: 6.21, podaWaste: 16.00, inorganicWaste: 5.20, recyclableWaste: 1.13 },
-    { month: 'Ene 25', organicWaste: 6.87, podaWaste: 0.00, inorganicWaste: 3.75, recyclableWaste: 1.14 },
-    { month: 'Feb 25', organicWaste: 5.07, podaWaste: 0.00, inorganicWaste: 2.83, recyclableWaste: 5.07 },
-    { month: 'Mar 25', organicWaste: 4.52, podaWaste: 0.00, inorganicWaste: 3.56, recyclableWaste: 3.18 },
+  // Datos para gráfica de barras (formato igual al análisis)
+  const monthlyData = [
+    { name: 'Enero', organicos: 4000, inorganicos: 2400, reciclables: 2400 },
+    { name: 'Febrero', organicos: 3000, inorganicos: 1398, reciclables: 2210 },
+    { name: 'Marzo', organicos: 2000, inorganicos: 9800, reciclables: 2290 },
+    { name: 'Abril', organicos: 2780, inorganicos: 3908, reciclables: 2000 },
+    { name: 'Mayo', organicos: 1890, inorganicos: 4800, reciclables: 2181 },
+    { name: 'Junio', organicos: 2390, inorganicos: 3800, reciclables: 2500 },
   ];
   
   return (
@@ -135,29 +127,49 @@ export default function Dashboard() {
               </div>
             </div>
             
-            <div className="h-[400px]">
-              <TrendChart data={chartData} />
-            </div>
-            
-            {/* Leyenda mejorada */}
-            <div className="mt-4 flex items-center justify-center space-x-6 text-xs">
-              <div className="flex items-center space-x-1">
-                <div className="w-3 h-3 bg-green-500 rounded"></div>
-                <span>Orgánicos</span>
+            <Tabs defaultValue="barChart">
+              <div className="flex items-center justify-between mb-4">
+                <div className="text-lg font-anton tracking-wider text-gray-700">Distribución de Residuos</div>
+                <TabsList>
+                  <TabsTrigger value="barChart">Barras</TabsTrigger>
+                  <TabsTrigger value="pieChart">Circular</TabsTrigger>
+                </TabsList>
               </div>
-              <div className="flex items-center space-x-1">
-                <div className="w-3 h-3 bg-teal-500 rounded"></div>
-                <span>PODA</span>
-              </div>
-              <div className="flex items-center space-x-1">
-                <div className="w-3 h-3 bg-red-500 rounded"></div>
-                <span>Inorgánicos</span>
-              </div>
-              <div className="flex items-center space-x-1">
-                <div className="w-3 h-3 bg-blue-500 rounded"></div>
-                <span>Reciclables</span>
-              </div>
-            </div>
+              <TabsContent value="barChart" className="h-[400px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={monthlyData}
+                    margin={{
+                      top: 20,
+                      right: 30,
+                      left: 20,
+                      bottom: 5,
+                    }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip 
+                      formatter={(value) => [`${value} kg`, undefined]}
+                      contentStyle={{ 
+                        backgroundColor: 'white',
+                        borderRadius: '0.375rem',
+                        boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
+                      }}
+                    />
+                    <Legend />
+                    <Bar dataKey="organicos" name="Orgánicos" fill="#b5e951" />
+                    <Bar dataKey="inorganicos" name="Inorgánicos" fill="#273949" />
+                    <Bar dataKey="reciclables" name="Reciclables" fill="#d97706" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </TabsContent>
+              <TabsContent value="pieChart" className="h-[400px]">
+                <div className="flex items-center justify-center h-full text-gray-500">
+                  Gráfico circular disponible próximamente
+                </div>
+              </TabsContent>
+            </Tabs>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
