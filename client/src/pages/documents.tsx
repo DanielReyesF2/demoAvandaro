@@ -6,9 +6,18 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Eye, Download, Trash2, Upload, FileText } from 'lucide-react';
 import FileUploader from '@/components/FileUploader';
 
+interface Document {
+  id: number;
+  fileName: string;
+  fileSize: number;
+  uploadDate: string;
+  processed: boolean;
+  processingError?: string;
+}
+
 export default function Documents() {
   // Fetch documents
-  const { data: documents, isLoading } = useQuery({
+  const { data: documents, isLoading } = useQuery<Document[]>({
     queryKey: ['/api/documents'],
     refetchOnWindowFocus: false
   });
@@ -47,7 +56,7 @@ export default function Documents() {
           </div>
           
           {/* File Uploader */}
-          <FileUploader />
+          <FileUploader clientId={1} />
           
           {/* Documents Table */}
           <Card className="mt-6">
@@ -59,7 +68,7 @@ export default function Documents() {
                 <div className="flex justify-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-navy"></div>
                 </div>
-              ) : documents && documents.length > 0 ? (
+              ) : documents && Array.isArray(documents) && documents.length > 0 ? (
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -71,7 +80,7 @@ export default function Documents() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {documents.map((doc: any) => (
+                    {documents.map((doc: Document) => (
                       <TableRow key={doc.id}>
                         <TableCell className="font-medium">
                           <div className="flex items-center">
