@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Save, Calculator } from 'lucide-react';
 
@@ -157,6 +157,13 @@ export default function Analysis() {
     ? data.reduce((sum, month) => sum + month.deviationPercentage, 0) / data.length 
     : 0;
 
+  // Cargar datos automáticamente al entrar a la página
+  useEffect(() => {
+    if (data.length === 0) {
+      initializeYear(2025);
+    }
+  }, []);
+
   return (
     <AppLayout>
       <div className="p-5">
@@ -192,22 +199,14 @@ export default function Analysis() {
               </div>
             </div>
 
-            {/* Botones de acción */}
-            <div className="flex justify-center space-x-3">
-              <Button 
-                onClick={() => initializeYear(parseInt(selectedYear))}
-                className="bg-lime hover:bg-lime-dark text-black px-6"
-                size="lg"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Cargar Datos 2025
-              </Button>
+            {/* Botón de acción */}
+            <div className="flex justify-center">
               <Button 
                 className="bg-navy hover:bg-navy-dark text-white px-6"
                 size="lg"
               >
                 <Save className="w-4 h-4 mr-2" />
-                Guardar
+                Exportar Datos
               </Button>
             </div>
           </div>
@@ -373,15 +372,7 @@ export default function Analysis() {
             </Card>
           )}
 
-          {data.length === 0 && (
-            <Card>
-              <CardContent className="p-8 text-center">
-                <Calculator className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No hay datos para 2025</h3>
-                <p className="text-gray-500 mb-4">Haz clic en "Inicializar Año" para ver los datos reales de enero-junio</p>
-              </CardContent>
-            </Card>
-          )}
+
         </div>
       </div>
     </AppLayout>
