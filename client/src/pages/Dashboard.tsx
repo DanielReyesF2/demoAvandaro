@@ -25,6 +25,8 @@ import SummaryCard from '@/components/dashboard/SummaryCard';
 import { ClubHeader } from '@/components/dashboard/ClubHeader';
 import { ClubAchievements } from '@/components/dashboard/ClubAchievements';
 import { TrueCertification } from '@/components/dashboard/TrueCertification';
+import { EnvironmentalImpact } from '@/components/dashboard/EnvironmentalImpact';
+import { MetricsGrid } from '@/components/dashboard/MetricsGrid';
 import { WasteData, Alert } from '@shared/schema';
 
 export default function Dashboard() {
@@ -74,6 +76,12 @@ export default function Dashboard() {
     totalWaste: (totals.totalGenerated / 1000).toFixed(1),
     deviation: ((totals.totalDiverted / totals.totalGenerated) * 100).toFixed(1), // Desviación real
   };
+
+  // Datos para el componente de impacto ambiental
+  const environmentalData = {
+    organicWasteDiverted: realData2025.reduce((acc, month) => acc + month.organicsCompost, 0), // PODA compostada
+    recyclableWasteDiverted: totals.recyclableTotal, // Total de reciclables
+  };
   
   // Datos para gráfica de barras con datos reales (en kg)
   const monthlyData = realData2025.map(month => ({
@@ -89,160 +97,120 @@ export default function Dashboard() {
         <ClubHeader />
         
         <div className="max-w-7xl mx-auto px-4 py-6">
-          {/* Métricas principales - datos reales 2025 */}
-          <div className="grid grid-cols-4 gap-3 mb-6">
-            <SummaryCard
-              title="Desviación Actual"
-              value={`${summaryData.deviation}%`}
-              change={parseFloat(summaryData.deviation) - 45} // Vs año anterior
-              progress={parseFloat(summaryData.deviation)}
-              progressLabel="Meta: 90%"
-              type="deviation"
-            />
-            <SummaryCard
-              title="Orgánicos"
-              value={`${summaryData.organicWaste} ton`}
-              change={12.5} // PODA impacto positivo
-              progress={75}
-              progressLabel="Incluye PODA"
-              type="organic"
-            />
-            <SummaryCard
-              title="Inorgánicos"
-              value={`${summaryData.inorganicWaste} ton`}
-              change={-5.2} // Reducción vs 2024
-              progress={60}
-              progressLabel="Ene-Jun 2025"
-              type="inorganic"
-            />
-            <SummaryCard
-              title="Total Generado"
-              value={`${summaryData.totalWaste} ton`}
-              change={2.8} // Crecimiento moderado
-              progress={85}
-              progressLabel="Ene-Jun 2025"
-              type="total"
-            />
-          </div>
+          {/* Métricas principales mejoradas */}
+          <MetricsGrid 
+            deviation={summaryData.deviation}
+            organicWaste={summaryData.organicWaste}
+            inorganicWaste={summaryData.inorganicWaste}
+            totalWaste={summaryData.totalWaste}
+          />
 
-          {/* Gráfica principal - DESTACADA */}
-          <div className="bg-white border border-gray-100 rounded-xl p-6 mb-6 shadow-sm">
-            <div className="flex items-center justify-between mb-6">
+          {/* Impacto ambiental - SECCIÓN DESTACADA */}
+          <EnvironmentalImpact 
+            organicWasteDiverted={environmentalData.organicWasteDiverted}
+            recyclableWasteDiverted={environmentalData.recyclableWasteDiverted}
+          />
+
+          {/* Gráfica principal mejorada */}
+          <div className="bg-gradient-to-br from-white to-gray-50 border-2 border-navy/10 rounded-xl p-8 mb-6 shadow-lg">
+            <div className="flex items-center justify-between mb-8">
               <div>
-                <h2 className="text-xl font-bold text-gray-900">Análisis de Residuos Sólidos Urbanos</h2>
-                <p className="text-sm text-gray-600 mt-1">Club Campestre Ciudad de México - Tendencia 2024-2025</p>
+                <h2 className="text-2xl font-anton text-gray-800 uppercase tracking-wider">
+                  Análisis Mensual de Residuos
+                </h2>
+                <p className="text-sm text-gray-600 mt-2">
+                  Club Campestre Ciudad de México • Enero - Junio 2025
+                </p>
               </div>
-              <div className="flex items-center space-x-4">
-                <select 
-                  className="text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-navy/20"
-                  value={selectedPeriod}
-                  onChange={(e) => setSelectedPeriod(e.target.value)}
-                >
-                  <option value="year">15 meses</option>
-                  <option value="quarter">Último trimestre</option>
-                  <option value="month">3 meses</option>
-                </select>
-                <div className="text-xs text-gray-500 bg-gray-50 px-3 py-2 rounded-lg">
-                  Última actualización: {new Date().toLocaleDateString('es-MX')}
+              <div className="text-xs text-gray-500 bg-white border border-gray-200 px-4 py-2 rounded-lg shadow-sm">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span>Datos en tiempo real</span>
                 </div>
               </div>
             </div>
             
-            <Tabs defaultValue="barChart">
-              <div className="flex items-center justify-between mb-4">
-                <div className="text-lg font-anton tracking-wider text-gray-700">Distribución de Residuos</div>
-                <TabsList>
-                  <TabsTrigger value="barChart">Barras</TabsTrigger>
-                  <TabsTrigger value="pieChart">Circular</TabsTrigger>
-                </TabsList>
-              </div>
-              <TabsContent value="barChart" className="h-[400px]">
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+              <div className="h-[450px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
                     data={monthlyData}
                     margin={{
-                      top: 20,
-                      right: 30,
+                      top: 30,
+                      right: 40,
                       left: 20,
-                      bottom: 5,
+                      bottom: 20,
                     }}
+                    barCategoryGap="20%"
                   >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip 
-                      formatter={(value) => [`${value} kg`, undefined]}
-                      contentStyle={{ 
-                        backgroundColor: 'white',
-                        borderRadius: '0.375rem',
-                        boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
-                      }}
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" strokeOpacity={0.5} />
+                    <XAxis 
+                      dataKey="name" 
+                      fontSize={12}
+                      fontWeight="500"
+                      stroke="#6b7280"
                     />
-                    <Legend />
-                    <Bar dataKey="organicos" name="Orgánicos" fill="#b5e951" />
-                    <Bar dataKey="inorganicos" name="Inorgánicos" fill="#273949" />
-                    <Bar dataKey="reciclables" name="Reciclables" fill="#d97706" />
+                    <YAxis 
+                      fontSize={12}
+                      stroke="#6b7280"
+                      tickFormatter={(value) => `${(value/1000).toFixed(0)}k`}
+                    />
+                    <Tooltip 
+                      formatter={(value, name) => [`${Number(value).toLocaleString()} kg`, name]}
+                      contentStyle={{ 
+                        backgroundColor: 'white', 
+                        border: '2px solid #273949',
+                        borderRadius: '12px',
+                        fontSize: '13px',
+                        fontWeight: '500',
+                        boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
+                      }}
+                      labelStyle={{ color: '#273949', fontWeight: '600' }}
+                    />
+                    <Legend wrapperStyle={{ fontSize: '14px', fontWeight: '500' }} />
+                    <Bar 
+                      dataKey="organicos" 
+                      fill="#b5e951" 
+                      name="Orgánicos (incluye PODA)"
+                      radius={[4, 4, 0, 0]}
+                    />
+                    <Bar 
+                      dataKey="inorganicos" 
+                      fill="#273949" 
+                      name="Inorgánicos"
+                      radius={[4, 4, 0, 0]}
+                    />
+                    <Bar 
+                      dataKey="reciclables" 
+                      fill="#d97706" 
+                      name="Reciclables"
+                      radius={[4, 4, 0, 0]}
+                    />
                   </BarChart>
                 </ResponsiveContainer>
-              </TabsContent>
-              <TabsContent value="pieChart" className="h-[400px]">
-                <div className="flex items-center justify-center h-full text-gray-500">
-                  Gráfico circular disponible próximamente
+              </div>
+              
+              {/* Notas informativas */}
+              <div className="mt-6 flex flex-wrap gap-4 text-xs text-gray-600">
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-lime rounded"></div>
+                  <span>PODA: Enero +12.8 ton, Abril +25.6 ton</span>
                 </div>
-              </TabsContent>
-            </Tabs>
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-yellow-500 rounded"></div>
+                  <span>Todos los valores en kilogramos</span>
+                </div>
+              </div>
+            </div>
           </div>
 
+          {/* Sección de certificación y logros */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* TRUE Certification - más prominente */}
             <TrueCertification currentDeviation={parseFloat(summaryData.deviation)} />
             
-            {/* Certificaciones y resumen */}
-            <div className="space-y-4">
-              <ClubAchievements />
-              
-              {/* Estadísticas adicionales */}
-              <div className="bg-white border border-gray-100 rounded-lg p-4">
-                <h3 className="font-medium text-gray-900 mb-3">Resumen Anual 2024</h3>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <div className="text-2xl font-bold text-green-600">{summaryData.organicWaste}</div>
-                    <div className="text-gray-500">Toneladas orgánicas</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-red-600">{summaryData.inorganicWaste}</div>
-                    <div className="text-gray-500">Toneladas inorgánicas</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Panel de impacto ambiental */}
-          <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-100 rounded-xl p-6 mb-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Impacto Ambiental Acumulado 2024</h3>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-green-600">89</div>
-                <div className="text-sm text-gray-600">Árboles salvados</div>
-                <div className="text-xs text-gray-500 mt-1">por reciclaje de papel</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-blue-600">47,890</div>
-                <div className="text-sm text-gray-600">Litros de agua ahorrados</div>
-                <div className="text-xs text-gray-500 mt-1">gestión eficiente</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-purple-600">12,456</div>
-                <div className="text-sm text-gray-600">kWh energía ahorrada</div>
-                <div className="text-xs text-gray-500 mt-1">procesos optimizados</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-red-600">85.6</div>
-                <div className="text-sm text-gray-600">Toneladas CO₂ evitadas</div>
-                <div className="text-xs text-gray-500 mt-1">vs. relleno sanitario</div>
-              </div>
-            </div>
+            {/* Certificaciones y logros */}
+            <ClubAchievements />
           </div>
 
           
