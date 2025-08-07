@@ -65,9 +65,6 @@ export default function Dashboard() {
           {/* Header principal */}
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-anton uppercase tracking-wider mb-4 text-[#b5e951]">Sistema  de Gestión Ambiental Integral</h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Club Campestre Ciudad de México - Gestión sustentable unificada
-            </p>
           </div>
 
           {/* Módulos ambientales principales */}
