@@ -190,7 +190,7 @@ export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualiz
           <span className="text-sm font-medium text-gray-700 uppercase tracking-wide">Puntos de Origen</span>
         </div>
 
-        <div className="flex justify-center space-x-20 mb-8">
+        <div className="flex justify-center space-x-24 mb-8">
           <div className="text-center">
             <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-lg mb-2 mx-auto">
               <Building2 className="w-6 h-6 text-white" />
@@ -217,97 +217,124 @@ export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualiz
         </div>
 
         {/* Flow Lines - SVG Background */}
-        <div className="absolute inset-0 pointer-events-none">
-          <svg className="w-full h-full" style={{ height: '300px', top: '140px' }} viewBox="0 0 800 300">
-            {/* Curved flow lines from origins to categories */}
+        <div className="absolute inset-0 pointer-events-none" style={{ top: '100px', height: '250px' }}>
+          <svg className="w-full h-full" viewBox="0 0 900 200" preserveAspectRatio="xMidYMid meet">
             <defs>
               <linearGradient id="greenFlow" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#10b981" stopOpacity="0.4"/>
-                <stop offset="100%" stopColor="#059669" stopOpacity="0.7"/>
+                <stop offset="0%" stopColor="#10b981" stopOpacity="0.3"/>
+                <stop offset="100%" stopColor="#059669" stopOpacity="0.6"/>
               </linearGradient>
               <linearGradient id="blueFlow" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.4"/>
-                <stop offset="100%" stopColor="#2563eb" stopOpacity="0.7"/>
+                <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.3"/>
+                <stop offset="100%" stopColor="#2563eb" stopOpacity="0.6"/>
               </linearGradient>
               <linearGradient id="grayFlow" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#6b7280" stopOpacity="0.4"/>
-                <stop offset="100%" stopColor="#4b5563" stopOpacity="0.7"/>
+                <stop offset="0%" stopColor="#6b7280" stopOpacity="0.3"/>
+                <stop offset="100%" stopColor="#4b5563" stopOpacity="0.6"/>
               </linearGradient>
             </defs>
             
-            {/* Casa Club (left origin) to all three categories */}
+            {/* Smooth curved lines from each origin to each category */}
+            
+            {/* From Casa Club (left) */}
             <path
-              d="M 200 50 Q 150 100 170 150"
+              d="M 150 30 Q 100 90 150 130"
               stroke="url(#greenFlow)"
-              strokeWidth="2.5"
+              strokeWidth="2"
               fill="none"
-              className={`transition-all duration-1000 ${animatingParticles ? 'opacity-100' : 'opacity-60'}`}
+              strokeDasharray="5,3"
+              className={`transition-all duration-1000 ${animatingParticles ? 'opacity-80' : 'opacity-40'}`}
             />
             <path
-              d="M 200 50 Q 250 100 350 150"
+              d="M 150 30 Q 250 90 300 130"
               stroke="url(#blueFlow)"
-              strokeWidth="2.5"
+              strokeWidth="2"
               fill="none"
-              className={`transition-all duration-1000 delay-200 ${animatingParticles ? 'opacity-100' : 'opacity-60'}`}
+              strokeDasharray="5,3"
+              className={`transition-all duration-1000 delay-200 ${animatingParticles ? 'opacity-80' : 'opacity-40'}`}
             />
             <path
-              d="M 200 50 Q 350 100 530 150"
+              d="M 150 30 Q 350 90 450 130"
               stroke="url(#grayFlow)"
-              strokeWidth="2.5"
+              strokeWidth="2"
               fill="none"
-              className={`transition-all duration-1000 delay-400 ${animatingParticles ? 'opacity-100' : 'opacity-60'}`}
+              strokeDasharray="5,3"
+              className={`transition-all duration-1000 delay-400 ${animatingParticles ? 'opacity-80' : 'opacity-40'}`}
             />
 
-            {/* Restaurante (center origin) to all three categories */}
+            {/* From Restaurante (center) */}
             <path
-              d="M 400 50 Q 300 100 170 150"
+              d="M 300 30 Q 200 90 150 130"
               stroke="url(#greenFlow)"
-              strokeWidth="2.5"
+              strokeWidth="2"
               fill="none"
-              className={`transition-all duration-1000 delay-100 ${animatingParticles ? 'opacity-100' : 'opacity-60'}`}
+              strokeDasharray="5,3"
+              className={`transition-all duration-1000 delay-100 ${animatingParticles ? 'opacity-80' : 'opacity-40'}`}
             />
             <path
-              d="M 400 50 Q 400 100 350 150"
+              d="M 300 30 Q 300 90 300 130"
               stroke="url(#blueFlow)"
-              strokeWidth="2.5"
+              strokeWidth="2"
               fill="none"
-              className={`transition-all duration-1000 delay-300 ${animatingParticles ? 'opacity-100' : 'opacity-60'}`}
+              strokeDasharray="5,3"
+              className={`transition-all duration-1000 delay-300 ${animatingParticles ? 'opacity-80' : 'opacity-40'}`}
             />
             <path
-              d="M 400 50 Q 450 100 530 150"
+              d="M 300 30 Q 400 90 450 130"
               stroke="url(#grayFlow)"
-              strokeWidth="2.5"
+              strokeWidth="2"
               fill="none"
-              className={`transition-all duration-1000 delay-500 ${animatingParticles ? 'opacity-100' : 'opacity-60'}`}
+              strokeDasharray="5,3"
+              className={`transition-all duration-1000 delay-500 ${animatingParticles ? 'opacity-80' : 'opacity-40'}`}
             />
 
-            {/* Eventos (right origin) to all three categories */}
+            {/* From Eventos (right) */}
             <path
-              d="M 600 50 Q 450 100 170 150"
+              d="M 450 30 Q 300 90 150 130"
               stroke="url(#greenFlow)"
-              strokeWidth="2.5"
+              strokeWidth="2"
               fill="none"
-              className={`transition-all duration-1000 delay-200 ${animatingParticles ? 'opacity-100' : 'opacity-60'}`}
+              strokeDasharray="5,3"
+              className={`transition-all duration-1000 delay-200 ${animatingParticles ? 'opacity-80' : 'opacity-40'}`}
             />
             <path
-              d="M 600 50 Q 550 100 350 150"
+              d="M 450 30 Q 400 90 300 130"
               stroke="url(#blueFlow)"
-              strokeWidth="2.5"
+              strokeWidth="2"
               fill="none"
-              className={`transition-all duration-1000 delay-400 ${animatingParticles ? 'opacity-100' : 'opacity-60'}`}
+              strokeDasharray="5,3"
+              className={`transition-all duration-1000 delay-400 ${animatingParticles ? 'opacity-80' : 'opacity-40'}`}
             />
             <path
-              d="M 600 50 Q 600 100 530 150"
+              d="M 450 30 Q 500 90 450 130"
               stroke="url(#grayFlow)"
-              strokeWidth="2.5"
+              strokeWidth="2"
               fill="none"
-              className={`transition-all duration-1000 delay-600 ${animatingParticles ? 'opacity-100' : 'opacity-60'}`}
+              strokeDasharray="5,3"
+              className={`transition-all duration-1000 delay-600 ${animatingParticles ? 'opacity-80' : 'opacity-40'}`}
             />
+
+            {/* Animated flow particles */}
+            <circle r="3" fill="#10b981" className={`transition-all duration-1000 ${animatingParticles ? 'opacity-100' : 'opacity-0'}`}>
+              <animateMotion dur="2s" repeatCount="indefinite" begin="0s">
+                <path d="M 150 30 Q 100 90 150 130"/>
+              </animateMotion>
+            </circle>
+            <circle r="3" fill="#3b82f6" className={`transition-all duration-1000 ${animatingParticles ? 'opacity-100' : 'opacity-0'}`}>
+              <animateMotion dur="2s" repeatCount="indefinite" begin="0.5s">
+                <path d="M 300 30 Q 300 90 300 130"/>
+              </animateMotion>
+            </circle>
+            <circle r="3" fill="#6b7280" className={`transition-all duration-1000 ${animatingParticles ? 'opacity-100' : 'opacity-0'}`}>
+              <animateMotion dur="2s" repeatCount="indefinite" begin="1s">
+                <path d="M 450 30 Q 500 90 450 130"/>
+              </animateMotion>
+            </circle>
           </svg>
         </div>
 
         {/* Category Containers */}
-        <div className="flex justify-center space-x-12 relative z-10 mb-8">
+        <div className="flex justify-center space-x-16 relative z-10 mb-8">
           <div className="text-center bg-white rounded-2xl p-6 shadow-lg border-2 border-green-200">
             <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg mb-4 mx-auto">
               <Leaf className="w-8 h-8 text-white" />
