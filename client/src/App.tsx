@@ -7,7 +7,7 @@ import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/Dashboard";
 import Documents from "@/pages/documents";
 import Analysis from "@/pages/analysis";
-import WasteDataEntry from "@/pages/WasteDataEntry";
+import DataEntry from "@/pages/DataEntry";
 
 function Router() {
   return (
@@ -15,7 +15,7 @@ function Router() {
       <Route path="/" component={Dashboard} />
       <Route path="/documents" component={Documents} />
       <Route path="/analysis" component={Analysis} />
-      <Route path="/data-entry" component={WasteDataEntry} />
+      <Route path="/data-entry" component={DataEntry} />
       <Route component={NotFound} />
     </Switch>
   );

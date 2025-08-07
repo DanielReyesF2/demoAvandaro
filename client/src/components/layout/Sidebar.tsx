@@ -63,9 +63,9 @@ export default function Sidebar() {
           Dashboard
         </SidebarItem>
         <SidebarItem 
-          to="/analysis" 
+          to="/data-entry" 
           icon={<BarChart2 className="w-5 h-5" />} 
-          isActive={location === "/analysis"}
+          isActive={location === "/data-entry"}
         >
           Análisis
         </SidebarItem>

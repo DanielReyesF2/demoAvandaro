@@ -32,38 +32,65 @@ export const insertDocumentSchema = createInsertSchema(documents).pick({
   processed: true,
 });
 
-// Waste data schema - for processed data from PDFs
+// Tabla de datos de desviación mensual como requiere la certificadora
+export const monthlyDeviationData = pgTable("monthly_deviation_data", {
+  id: serial("id").primaryKey(),
+  clientId: integer("client_id").references(() => clients.id),
+  year: integer("year").notNull(),
+  month: integer("month").notNull(), // 1-12
+  
+  // Materiales Reciclables (en kg)
+  mixedFile: real("mixed_file").default(0),
+  officePaper: real("office_paper").default(0),
+  magazine: real("magazine").default(0),
+  newspaper: real("newspaper").default(0),
+  cardboard: real("cardboard").default(0),
+  petPlastic: real("pet_plastic").default(0),
+  hdpeBlown: real("hdpe_blown").default(0),
+  hdpeRigid: real("hdpe_rigid").default(0),
+  tinCan: real("tin_can").default(0),
+  aluminum: real("aluminum").default(0),
+  glass: real("glass").default(0),
+  totalRecyclables: real("total_recyclables").default(0),
+  
+  // Orgánicos destinados a composta (en kg)
+  organicsCompost: real("organics_compost").default(18000), // Default 18000 como muestra la tabla
+  totalOrganics: real("total_organics").default(18000),
+  
+  // Reuso (en kg)
+  glassDonation: real("glass_donation").default(0),
+  
+  // Totales calculados
+  totalDiverted: real("total_diverted").default(0), // Total desviado del relleno sanitario
+  totalGenerated: real("total_generated").default(0), // Total generado
+  deviationPercentage: real("deviation_percentage").default(0), // Porcentaje de desviación
+  
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const insertMonthlyDeviationDataSchema = createInsertSchema(monthlyDeviationData).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  totalRecyclables: true,
+  totalOrganics: true,
+  totalDiverted: true,
+  deviationPercentage: true,
+});
+
+// Legacy waste data schema - keeping for existing data
 export const wasteData = pgTable("waste_data", {
   id: serial("id").primaryKey(),
   documentId: integer("document_id").references(() => documents.id),
   clientId: integer("client_id").references(() => clients.id),
   date: timestamp("date").notNull(),
-  organicWaste: real("organic_waste"), // in kg - Residuos orgánicos de comedor
-  podaWaste: real("poda_waste"), // in kg - Residuos orgánicos de PODA
-  inorganicWaste: real("inorganic_waste"), // in kg
-  recyclableWaste: real("recyclable_waste"), // in kg
-  totalWaste: real("total_waste"), // in kg
-  deviation: real("deviation"), // percentage deviation
-  
-  // Desglose de reciclables
-  cardboard: real("cardboard"), // Cartón
-  paper: real("paper"), // Papel
-  newspaper: real("newspaper"), // Periódico
-  plasticPET: real("plastic_pet"), // Plástico PET
-  plasticOther: real("plastic_other"), // Otros plásticos
-  metalAluminum: real("metal_aluminum"), // Aluminio
-  glass: real("glass"), // Vidrio
-  hasDetailedRecyclables: boolean("has_detailed_recyclables").default(false),
-  
-  // Impacto ambiental
-  treesSaved: real("trees_saved"), // árboles salvados
-  waterSaved: real("water_saved"), // litros de agua ahorrados
-  energySaved: real("energy_saved"), // kW de energía eléctrica ahorrada
-  fuelSaved: real("fuel_saved"), // litros de combustible ahorrados
-  wasteDiverted: real("waste_diverted"), // m³ de basura evitados
-  redMudAvoided: real("red_mud_avoided"), // kg de fango rojo evitado
-  notes: text("notes"),
-  rawData: json("raw_data").$type<Record<string, any>>(), // Store raw extracted data
+  organicWaste: real("organic_waste"),
+  inorganicWaste: real("inorganic_waste"),
+  recyclableWaste: real("recyclable_waste"),
+  totalWaste: real("total_waste"),
+  deviation: real("deviation"),
+  rawData: json("raw_data").$type<Record<string, any>>(),
 });
 
 export const insertWasteDataSchema = createInsertSchema(wasteData).pick({
@@ -71,29 +98,10 @@ export const insertWasteDataSchema = createInsertSchema(wasteData).pick({
   clientId: true,
   date: true,
   organicWaste: true,
-  podaWaste: true,
   inorganicWaste: true,
   recyclableWaste: true,
   totalWaste: true,
   deviation: true,
-  // Desglose de reciclables
-  cardboard: true,
-  paper: true,
-  newspaper: true,
-  plasticPET: true,
-  plasticOther: true,
-  metalAluminum: true,
-  glass: true,
-  hasDetailedRecyclables: true,
-  // Campos de impacto ambiental
-  treesSaved: true,
-  waterSaved: true,
-  energySaved: true,
-  fuelSaved: true,
-  wasteDiverted: true,
-  redMudAvoided: true,
-  notes: true,
-  rawData: true,
 });
 
 // Alerts schema
@@ -123,6 +131,9 @@ export type InsertDocument = z.infer<typeof insertDocumentSchema>;
 
 export type WasteData = typeof wasteData.$inferSelect;
 export type InsertWasteData = z.infer<typeof insertWasteDataSchema>;
+
+export type MonthlyDeviationData = typeof monthlyDeviationData.$inferSelect;
+export type InsertMonthlyDeviationData = z.infer<typeof insertMonthlyDeviationDataSchema>;
 
 export type Alert = typeof alerts.$inferSelect;
 export type InsertAlert = z.infer<typeof insertAlertSchema>;
