@@ -453,10 +453,9 @@ export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualiz
           ))}
         </div>
       </div>
-      
       {/* Detailed Subcategory Breakdown - Professional Sales Presentation */}
       <div className="bg-white rounded-2xl p-6 border border-gray-200">
-        <h3 className="text-xl font-anton text-gray-800 uppercase mb-6 text-center">Clasificación Detallada por Subcategorías</h3>
+        <h3 className="text-xl font-anton uppercase mb-6 text-center text-[#b5e951]">Clasificación Detallada por CATEGORÍAS</h3>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Inorgánicos Detallados */}
