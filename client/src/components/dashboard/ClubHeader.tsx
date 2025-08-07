@@ -5,12 +5,12 @@ import cccmLogo from '@assets/CCCM_1754423231662.png';
 export const ClubHeader = () => {
   return (
     <div className="bg-white border-b border-gray-100 mb-6">
-      <div className="px-6 py-4 flex items-center justify-between">
+      <div className="px-6 py-6 flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <img 
             src={cccmLogo} 
             alt="Club Campestre" 
-            className="h-10 w-10 rounded"
+            className="h-16 w-16 rounded-lg shadow-sm"
           />
           
         </div>
