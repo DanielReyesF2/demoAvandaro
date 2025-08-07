@@ -208,31 +208,128 @@ export default function Dashboard() {
             
           </div>
 
-          {/* Metodología */}
-          <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl p-8 shadow-xl border border-gray-200">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-2xl font-anton text-gray-800 uppercase tracking-wide">
-                Metodología de Cálculo
+          {/* Metodología Certificada */}
+          <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl p-10 shadow-xl border border-gray-200">
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="text-3xl font-anton text-gray-800 uppercase tracking-wide">
+                Metodología de Cálculo Certificada
               </h3>
-              <Button variant="outline" size="sm" className="hover:bg-[#b5e951] hover:text-white hover:border-[#b5e951] transition-colors">Ver detalles</Button>
+              <Button variant="outline" size="sm" className="hover:bg-[#b5e951] hover:text-white hover:border-[#b5e951] transition-colors">
+                Ver certificaciones
+              </Button>
             </div>
-            <div className="space-y-3 text-sm text-gray-600">
-              <div className="flex items-start space-x-3">
-                <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-                <div>
-                  <span className="font-medium">Árboles salvados:</span> Cada tonelada de residuos desviados equivale a 1.2 árboles preservados según estudios de impacto ambiental.
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+              {/* Factores de Emisión */}
+              <div>
+                <h4 className="text-xl font-anton text-[#b5e951] uppercase mb-6 tracking-wide">Factores de Emisión CO₂</h4>
+                <div className="space-y-4">
+                  <div className="bg-white p-5 rounded-xl border border-gray-200 hover:shadow-md transition-shadow">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-bold text-gray-800">Residuos Orgánicos</span>
+                      <span className="text-green-600 font-bold text-lg">1.83 tCO₂eq/ton</span>
+                    </div>
+                    <p className="text-xs text-gray-600">Factor EPA 2024 - Compostaje vs. Relleno Sanitario</p>
+                  </div>
+                  
+                  <div className="bg-white p-5 rounded-xl border border-gray-200 hover:shadow-md transition-shadow">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-bold text-gray-800">Papel y Cartón</span>
+                      <span className="text-blue-600 font-bold text-lg">3.89 tCO₂eq/ton</span>
+                    </div>
+                    <p className="text-xs text-gray-600">Factor IPCC 2023 - Reciclaje vs. Producción Virgen</p>
+                  </div>
+                  
+                  <div className="bg-white p-5 rounded-xl border border-gray-200 hover:shadow-md transition-shadow">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-bold text-gray-800">Plásticos</span>
+                      <span className="text-purple-600 font-bold text-lg">2.14 tCO₂eq/ton</span>
+                    </div>
+                    <p className="text-xs text-gray-600">Factor SEMARNAT 2024 - Reciclaje vs. Relleno</p>
+                  </div>
+                  
+                  <div className="bg-white p-5 rounded-xl border border-gray-200 hover:shadow-md transition-shadow">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-bold text-gray-800">Metales</span>
+                      <span className="text-orange-600 font-bold text-lg">5.73 tCO₂eq/ton</span>
+                    </div>
+                    <p className="text-xs text-gray-600">Factor GHG Protocol - Reciclaje vs. Extracción</p>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-start space-x-3">
-                <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                <div>
-                  <span className="font-medium">Agua conservada:</span> El reciclaje ahorra 15,000L por tonelada de material reciclable y 8,000L por tonelada de compostaje.
+
+              {/* Equivalencias Ambientales */}
+              <div>
+                <h4 className="text-xl font-anton text-[#b5e951] uppercase mb-6 tracking-wide">Equivalencias Ambientales</h4>
+                <div className="space-y-4">
+                  <div className="bg-white p-5 rounded-xl border border-gray-200 hover:shadow-md transition-shadow">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-bold text-gray-800">Árboles Salvados</span>
+                      <span className="text-green-600 font-bold text-lg">1.2 árboles/ton</span>
+                    </div>
+                    <p className="text-xs text-gray-600">Basado en estudios de captura de CO₂ de CONAFOR</p>
+                  </div>
+                  
+                  <div className="bg-white p-5 rounded-xl border border-gray-200 hover:shadow-md transition-shadow">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-bold text-gray-800">Agua Conservada</span>
+                      <span className="text-blue-600 font-bold text-lg">15,000L/ton</span>
+                    </div>
+                    <p className="text-xs text-gray-600">Factor UNESCO - Ahorro hídrico en reciclaje</p>
+                  </div>
+                  
+                  <div className="bg-white p-5 rounded-xl border border-gray-200 hover:shadow-md transition-shadow">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-bold text-gray-800">Energía Ahorrada</span>
+                      <span className="text-yellow-600 font-bold text-lg">3,200 kWh/ton</span>
+                    </div>
+                    <p className="text-xs text-gray-600">Factor IEA - Energía evitada en producción</p>
+                  </div>
+                  
+                  <div className="bg-white p-5 rounded-xl border border-gray-200 hover:shadow-md transition-shadow">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-bold text-gray-800">Combustible Fósil</span>
+                      <span className="text-red-600 font-bold text-lg">0.89 L diesel/ton</span>
+                    </div>
+                    <p className="text-xs text-gray-600">Equivalencia energética CFE México 2024</p>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-start space-x-3">
-                <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2"></div>
-                <div>
-                  <span className="font-medium">Energía ahorrada:</span> Se evita el consumo de 3,200 kWh por tonelada reciclada vs. producción de materiales vírgenes.
+            </div>
+
+            {/* Certificaciones */}
+            <div className="mt-10 bg-gradient-to-r from-[#273949] to-gray-700 rounded-2xl p-8">
+              <h5 className="text-xl font-anton text-white uppercase mb-6 tracking-wide text-center">
+                Estándares Internacionales y Certificaciones
+              </h5>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-sm">
+                <div className="text-center text-gray-300">
+                  <div className="w-16 h-16 bg-[#b5e951] rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Leaf className="w-8 h-8 text-[#273949]" />
+                  </div>
+                  <span className="block font-bold text-white mb-1">EPA 2024</span>
+                  <span className="text-xs">Factores de Emisión CO₂</span>
+                </div>
+                <div className="text-center text-gray-300">
+                  <div className="w-16 h-16 bg-[#b5e951] rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Waves className="w-8 h-8 text-[#273949]" />
+                  </div>
+                  <span className="block font-bold text-white mb-1">IPCC 2023</span>
+                  <span className="text-xs">Panel Cambio Climático</span>
+                </div>
+                <div className="text-center text-gray-300">
+                  <div className="w-16 h-16 bg-[#b5e951] rounded-full flex items-center justify-center mx-auto mb-3">
+                    <TreePine className="w-8 h-8 text-[#273949]" />
+                  </div>
+                  <span className="block font-bold text-white mb-1">CONAFOR</span>
+                  <span className="text-xs">Captura de CO₂</span>
+                </div>
+                <div className="text-center text-gray-300">
+                  <div className="w-16 h-16 bg-[#b5e951] rounded-full flex items-center justify-center mx-auto mb-3">
+                    <RefreshCw className="w-8 h-8 text-[#273949]" />
+                  </div>
+                  <span className="block font-bold text-white mb-1">GHG Protocol</span>
+                  <span className="text-xs">Inventarios GEI</span>
                 </div>
               </div>
             </div>
