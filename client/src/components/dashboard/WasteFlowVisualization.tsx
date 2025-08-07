@@ -190,7 +190,7 @@ export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualiz
           <span className="text-sm font-medium text-gray-700 uppercase tracking-wide">Puntos de Origen</span>
         </div>
 
-        <div className="flex justify-center space-x-12 mb-8">
+        <div className="flex justify-center space-x-20 mb-8">
           <div className="text-center">
             <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-lg mb-2 mx-auto">
               <Building2 className="w-6 h-6 text-white" />
@@ -218,42 +218,88 @@ export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualiz
 
         {/* Flow Lines - SVG Background */}
         <div className="absolute inset-0 pointer-events-none">
-          <svg className="w-full h-full" style={{ height: '400px', top: '80px' }}>
+          <svg className="w-full h-full" style={{ height: '300px', top: '140px' }} viewBox="0 0 800 300">
             {/* Curved flow lines from origins to categories */}
             <defs>
               <linearGradient id="greenFlow" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#10b981" stopOpacity="0.3"/>
-                <stop offset="100%" stopColor="#059669" stopOpacity="0.8"/>
+                <stop offset="0%" stopColor="#10b981" stopOpacity="0.4"/>
+                <stop offset="100%" stopColor="#059669" stopOpacity="0.7"/>
               </linearGradient>
               <linearGradient id="blueFlow" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.3"/>
-                <stop offset="100%" stopColor="#2563eb" stopOpacity="0.8"/>
+                <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.4"/>
+                <stop offset="100%" stopColor="#2563eb" stopOpacity="0.7"/>
               </linearGradient>
               <linearGradient id="grayFlow" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#6b7280" stopOpacity="0.3"/>
-                <stop offset="100%" stopColor="#4b5563" stopOpacity="0.8"/>
+                <stop offset="0%" stopColor="#6b7280" stopOpacity="0.4"/>
+                <stop offset="100%" stopColor="#4b5563" stopOpacity="0.7"/>
               </linearGradient>
             </defs>
             
-            {/* Animated flow lines */}
+            {/* Casa Club (left origin) to all three categories */}
             <path
-              d="M 200 50 Q 300 150 150 250"
+              d="M 200 50 Q 150 100 170 150"
               stroke="url(#greenFlow)"
-              strokeWidth="3"
+              strokeWidth="2.5"
               fill="none"
               className={`transition-all duration-1000 ${animatingParticles ? 'opacity-100' : 'opacity-60'}`}
             />
             <path
-              d="M 400 50 Q 450 150 380 250"
+              d="M 200 50 Q 250 100 350 150"
               stroke="url(#blueFlow)"
-              strokeWidth="3"
+              strokeWidth="2.5"
+              fill="none"
+              className={`transition-all duration-1000 delay-200 ${animatingParticles ? 'opacity-100' : 'opacity-60'}`}
+            />
+            <path
+              d="M 200 50 Q 350 100 530 150"
+              stroke="url(#grayFlow)"
+              strokeWidth="2.5"
+              fill="none"
+              className={`transition-all duration-1000 delay-400 ${animatingParticles ? 'opacity-100' : 'opacity-60'}`}
+            />
+
+            {/* Restaurante (center origin) to all three categories */}
+            <path
+              d="M 400 50 Q 300 100 170 150"
+              stroke="url(#greenFlow)"
+              strokeWidth="2.5"
+              fill="none"
+              className={`transition-all duration-1000 delay-100 ${animatingParticles ? 'opacity-100' : 'opacity-60'}`}
+            />
+            <path
+              d="M 400 50 Q 400 100 350 150"
+              stroke="url(#blueFlow)"
+              strokeWidth="2.5"
               fill="none"
               className={`transition-all duration-1000 delay-300 ${animatingParticles ? 'opacity-100' : 'opacity-60'}`}
             />
             <path
-              d="M 600 50 Q 650 150 750 250"
+              d="M 400 50 Q 450 100 530 150"
               stroke="url(#grayFlow)"
-              strokeWidth="3"
+              strokeWidth="2.5"
+              fill="none"
+              className={`transition-all duration-1000 delay-500 ${animatingParticles ? 'opacity-100' : 'opacity-60'}`}
+            />
+
+            {/* Eventos (right origin) to all three categories */}
+            <path
+              d="M 600 50 Q 450 100 170 150"
+              stroke="url(#greenFlow)"
+              strokeWidth="2.5"
+              fill="none"
+              className={`transition-all duration-1000 delay-200 ${animatingParticles ? 'opacity-100' : 'opacity-60'}`}
+            />
+            <path
+              d="M 600 50 Q 550 100 350 150"
+              stroke="url(#blueFlow)"
+              strokeWidth="2.5"
+              fill="none"
+              className={`transition-all duration-1000 delay-400 ${animatingParticles ? 'opacity-100' : 'opacity-60'}`}
+            />
+            <path
+              d="M 600 50 Q 600 100 530 150"
+              stroke="url(#grayFlow)"
+              strokeWidth="2.5"
               fill="none"
               className={`transition-all duration-1000 delay-600 ${animatingParticles ? 'opacity-100' : 'opacity-60'}`}
             />
@@ -261,7 +307,7 @@ export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualiz
         </div>
 
         {/* Category Containers */}
-        <div className="flex justify-center space-x-8 relative z-10 mb-8">
+        <div className="flex justify-center space-x-12 relative z-10 mb-8">
           <div className="text-center bg-white rounded-2xl p-6 shadow-lg border-2 border-green-200">
             <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg mb-4 mx-auto">
               <Leaf className="w-8 h-8 text-white" />
