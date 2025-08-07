@@ -175,7 +175,7 @@ export default function Residuos() {
               <TabsContent value="monthly">
                 <div className="h-[400px]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={monthlyData}>
+                    <BarChart data={monthlyData}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" strokeOpacity={0.5} />
                       <XAxis dataKey="name" fontSize={12} stroke="#6b7280" />
                       <YAxis fontSize={12} stroke="#6b7280" tickFormatter={(value) => `${(value/1000).toFixed(0)}t`} />
@@ -190,10 +190,10 @@ export default function Residuos() {
                         }}
                       />
                       <Legend />
-                      <Area dataKey="organicos" stackId="1" stroke="#b5e951" fill="#b5e951" name="Orgánicos" />
-                      <Area dataKey="reciclables" stackId="1" stroke="#d97706" fill="#d97706" name="Reciclables" />
-                      <Area dataKey="inorganicos" stackId="1" stroke="#273949" fill="#273949" name="Inorgánicos" />
-                    </AreaChart>
+                      <Bar dataKey="organicos" fill="#b5e951" name="Orgánicos" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="reciclables" fill="#d97706" name="Reciclables" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="inorganicos" fill="#273949" name="Inorgánicos" radius={[4, 4, 0, 0]} />
+                    </BarChart>
                   </ResponsiveContainer>
                 </div>
               </TabsContent>
