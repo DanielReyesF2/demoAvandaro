@@ -49,7 +49,7 @@ const wasteFlows: WasteFlow[] = [
     partner: 'Reoil',
     volume: 0.8,
     description: 'Aceite usado de cocinas convertido a biodiesel sostenible',
-    origins: ['Restaurante', 'Casa Club', 'Cocinas de eventos']
+    origins: ['Restaurante', 'Casa Club', 'Cocinas de eventos', 'Campo', 'Canchas de Tennis', 'Canchas de Padel']
   },
   {
     id: 'grasa-cascaras',
@@ -62,7 +62,7 @@ const wasteFlows: WasteFlow[] = [
     partner: 'TEDISD Innovative Group',
     volume: 3.2,
     description: 'Grasas de cocina y cáscaras de frutas procesadas sustainably',
-    origins: ['Restaurante principal', 'Cocina Casa Club', 'Área de preparación']
+    origins: ['Restaurante principal', 'Cocina Casa Club', 'Área de preparación', 'Campo', 'Canchas de Tennis', 'Canchas de Padel']
   },
   {
     id: 'organicos-complejos',
@@ -75,7 +75,7 @@ const wasteFlows: WasteFlow[] = [
     partner: 'ORKA',
     volume: 17.6,
     description: 'Pan, pescados, carne, huevo, queso, pollo, pasta, arroz, frutas, azúcar, salsas, papa, caña, conchas, aceites, café',
-    origins: ['Restaurante', 'Casa Club', 'Eventos especiales', 'Cocinas auxiliares']
+    origins: ['Restaurante', 'Casa Club', 'Eventos especiales', 'Cocinas auxiliares', 'Campo', 'Canchas de Tennis', 'Canchas de Padel']
   },
 
   // RECICLABLES - Clasificación profesional detallada
@@ -90,7 +90,7 @@ const wasteFlows: WasteFlow[] = [
     partner: 'Recupera (Centros de Reciclaje)',
     volume: 2.1,
     description: 'Papel, periódico, revistas, cartón - proceso completo de refabricación',
-    origins: ['Oficinas administrativas', 'Casa Club', 'Recepción']
+    origins: ['Oficinas administrativas', 'Casa Club', 'Recepción', 'Campo', 'Canchas de Tennis', 'Canchas de Padel']
   },
   {
     id: 'vidrio-sat-timbrado',
@@ -103,7 +103,7 @@ const wasteFlows: WasteFlow[] = [
     partner: 'Cerrando el Ciclo',
     volume: 1.2,
     description: 'Vidrio certificado SAT para proceso de refabricación industrial',
-    origins: ['Bar y restaurante', 'Eventos especiales', 'Áreas VIP']
+    origins: ['Bar y restaurante', 'Eventos especiales', 'Áreas VIP', 'Campo', 'Canchas de Tennis', 'Canchas de Padel']
   },
   {
     id: 'plasticos-polipropileno',
@@ -116,7 +116,7 @@ const wasteFlows: WasteFlow[] = [
     partner: 'Verde Ciudad',
     volume: 1.9,
     description: 'Vidrio PET HDPE, plástico duro, aluminio, tapas de polipropileno',
-    origins: ['Casa Club', 'Restaurante', 'Áreas comunes', 'Eventos']
+    origins: ['Casa Club', 'Restaurante', 'Áreas comunes', 'Eventos', 'Campo', 'Canchas de Tennis', 'Canchas de Padel']
   },
 
   // INORGÁNICOS - Sistema completo de manejo
@@ -131,7 +131,7 @@ const wasteFlows: WasteFlow[] = [
     partner: 'eWaste Group',
     volume: 0.3,
     description: 'Blancos, losa, objetos perdidos, mobiliario, equipos electrónicos',
-    origins: ['Oficinas administrativas', 'Sistemas Casa Club', 'Mantenimiento']
+    origins: ['Oficinas administrativas', 'Sistemas Casa Club', 'Mantenimiento', 'Campo', 'Canchas de Tennis', 'Canchas de Padel']
   },
   {
     id: 'cartuchos-nikken-especializados',
@@ -144,7 +144,7 @@ const wasteFlows: WasteFlow[] = [
     partner: 'NIKKEN',
     volume: 0.1,
     description: 'Cartuchos de tinta y tóner para remanufactura especializada',
-    origins: ['Oficinas', 'Centros de impresión', 'Administración']
+    origins: ['Oficinas', 'Centros de impresión', 'Administración', 'Campo', 'Canchas de Tennis', 'Canchas de Padel']
   },
   {
     id: 'residuos-generales-controlados',
@@ -157,7 +157,7 @@ const wasteFlows: WasteFlow[] = [
     partner: 'Amistad Cristiano / KREY',
     volume: 5.8,
     description: 'Reprocesamiento y Compostaje cuando es iniciado - disposición controlada',
-    origins: ['Casa Club general', 'Mantenimiento', 'Áreas comunes']
+    origins: ['Casa Club general', 'Mantenimiento', 'Áreas comunes', 'Campo', 'Canchas de Tennis', 'Canchas de Padel']
   }
 ];
 
