@@ -156,343 +156,127 @@ export default function Analysis() {
     <AppLayout>
       <div className="p-5">
         <div className="mx-auto max-w-7xl">
-          {/* Header */}
-          <div className="md:flex md:items-center md:justify-between mb-6">
-            <div className="flex-1 min-w-0">
-              <h1 className="text-2xl font-anton text-gray-800 uppercase tracking-wider">Análisis TRUE ZERO WASTE</h1>
-              <p className="mt-1 text-sm text-gray-500">Tabla de 12 meses como requiere la certificadora</p>
-            </div>
-            <div className="mt-4 flex md:mt-0 md:ml-4 space-x-2">
-              <div className="text-lg font-anton text-gray-800">
-                Año: 2025
+          {/* Header Simplificado */}
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-anton text-gray-800 uppercase tracking-wider mb-2">
+              TRUE ZERO WASTE 2025
+            </h1>
+            <p className="text-gray-600 mb-6">Club Campestre Ciudad de México</p>
+            
+            {/* Indicador Principal */}
+            <div className="bg-white rounded-xl shadow-lg p-6 mb-6 max-w-md mx-auto">
+              <div className="text-sm text-gray-500 mb-2">Índice de Desviación al Relleno</div>
+              <div className={`text-4xl font-anton ${averageDeviation <= 10 ? 'text-green-600' : 'text-red-600'}`}>
+                {averageDeviation.toFixed(1)}%
               </div>
+              <div className="text-xs text-gray-500 mt-2">
+                Meta: máximo 10%
+              </div>
+            </div>
+
+            {/* Botones de acción */}
+            <div className="flex justify-center space-x-3">
               <Button 
                 onClick={() => initializeYear(parseInt(selectedYear))}
-                className="bg-lime hover:bg-lime-dark text-black"
+                className="bg-lime hover:bg-lime-dark text-black px-6"
+                size="lg"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Inicializar Año
+                Cargar Datos 2025
               </Button>
-              <Button className="bg-navy hover:bg-navy-dark text-white">
+              <Button 
+                className="bg-navy hover:bg-navy-dark text-white px-6"
+                size="lg"
+              >
                 <Save className="w-4 h-4 mr-2" />
                 Guardar
               </Button>
             </div>
           </div>
 
-          {/* Indicador de desviación actual */}
-          <Card className="mb-6">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="text-lg font-anton">
-                  Índice de Desviación Promedio (al relleno sanitario): 
-                  <span className={`ml-2 text-2xl ${averageDeviation <= 10 ? 'text-green-600' : 'text-red-600'}`}>
-                    {averageDeviation.toFixed(1)}%
-                  </span>
-                </div>
-                <div className="text-sm text-gray-600">
-                  Meta TRUE ZERO WASTE: máximo 10% al relleno
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
           {/* Tabla de datos */}
           {data.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg font-anton tracking-wider">
-                  Datos de Desviación: 12 meses - {selectedYear}
+            <Card className="shadow-lg">
+              <CardHeader className="bg-gray-50">
+                <CardTitle className="text-center text-xl font-anton tracking-wider text-gray-800">
+                  Registro Mensual de Residuos
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-0">
+              <CardContent className="p-4">
                 <div className="overflow-x-auto">
-                  <Table>
+                  <Table className="text-sm">
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="bg-gray-100 font-bold">Materiales</TableHead>
+                        <TableHead className="bg-navy text-white font-bold">Categoría</TableHead>
                         {months.map((month, index) => (
-                          <TableHead key={index} className="bg-gray-100 text-center font-bold min-w-20">
-                            {month}
+                          <TableHead key={index} className="bg-navy text-white text-center font-bold text-xs">
+                            {month.slice(0,3)}
                           </TableHead>
                         ))}
-                        <TableHead className="bg-green-100 text-center font-bold">Total</TableHead>
+                        <TableHead className="bg-lime text-black text-center font-bold">Total</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {/* Sección Reciclaje */}
-                      <TableRow className="bg-green-50">
-                        <TableCell colSpan={14} className="font-bold text-center bg-green-200">
-                          Reciclaje
+                      {/* Datos principales simplificados */}
+                      <TableRow className="hover:bg-gray-50">
+                        <TableCell className="font-medium text-green-700">🌱 Orgánicos</TableCell>
+                        {data.map((month, index) => (
+                          <TableCell key={index} className="text-center font-medium">
+                            {month.organicsCompost.toLocaleString()}
+                          </TableCell>
+                        ))}
+                        <TableCell className="text-center font-bold text-green-700">
+                          {calculateTotals('organicsCompost').toLocaleString()}
                         </TableCell>
                       </TableRow>
-                      
-                      <TableRow>
-                        <TableCell className="font-medium">Mixed File</TableCell>
+
+                      <TableRow className="hover:bg-gray-50">
+                        <TableCell className="font-medium text-blue-700">♻️ Reciclables</TableCell>
                         {data.map((month, index) => (
-                          <TableCell key={index} className="p-1">
-                            <Input
-                              type="number"
-                              value={month.mixedFile}
-                              onChange={(e) => updateValue(index, 'mixedFile', parseFloat(e.target.value) || 0)}
-                              className="w-16 h-8 text-xs"
-                            />
+                          <TableCell key={index} className="text-center font-medium">
+                            {month.totalRecyclables.toLocaleString()}
                           </TableCell>
                         ))}
-                        <TableCell className="text-center font-bold">{calculateTotals('mixedFile')}</TableCell>
+                        <TableCell className="text-center font-bold text-blue-700">
+                          {calculateTotals('totalRecyclables').toLocaleString()}
+                        </TableCell>
                       </TableRow>
 
-                      <TableRow>
-                        <TableCell className="font-medium">Office Paper</TableCell>
-                        {data.map((month, index) => (
-                          <TableCell key={index} className="p-1">
-                            <Input
-                              type="number"
-                              value={month.officePaper}
-                              onChange={(e) => updateValue(index, 'officePaper', parseFloat(e.target.value) || 0)}
-                              className="w-16 h-8 text-xs"
-                            />
-                          </TableCell>
-                        ))}
-                        <TableCell className="text-center font-bold">{calculateTotals('officePaper')}</TableCell>
-                      </TableRow>
-
-                      <TableRow>
-                        <TableCell className="font-medium">Magazine</TableCell>
-                        {data.map((month, index) => (
-                          <TableCell key={index} className="p-1">
-                            <Input
-                              type="number"
-                              value={month.magazine}
-                              onChange={(e) => updateValue(index, 'magazine', parseFloat(e.target.value) || 0)}
-                              className="w-16 h-8 text-xs"
-                            />
-                          </TableCell>
-                        ))}
-                        <TableCell className="text-center font-bold">{calculateTotals('magazine')}</TableCell>
-                      </TableRow>
-
-                      <TableRow>
-                        <TableCell className="font-medium">Newspaper</TableCell>
-                        {data.map((month, index) => (
-                          <TableCell key={index} className="p-1">
-                            <Input
-                              type="number"
-                              value={month.newspaper}
-                              onChange={(e) => updateValue(index, 'newspaper', parseFloat(e.target.value) || 0)}
-                              className="w-16 h-8 text-xs"
-                            />
-                          </TableCell>
-                        ))}
-                        <TableCell className="text-center font-bold">{calculateTotals('newspaper')}</TableCell>
-                      </TableRow>
-
-                      <TableRow>
-                        <TableCell className="font-medium">Cardboard</TableCell>
-                        {data.map((month, index) => (
-                          <TableCell key={index} className="p-1">
-                            <Input
-                              type="number"
-                              value={month.cardboard}
-                              onChange={(e) => updateValue(index, 'cardboard', parseFloat(e.target.value) || 0)}
-                              className="w-16 h-8 text-xs"
-                            />
-                          </TableCell>
-                        ))}
-                        <TableCell className="text-center font-bold">{calculateTotals('cardboard')}</TableCell>
-                      </TableRow>
-
-                      <TableRow>
-                        <TableCell className="font-medium">PET (Polyethylene Terephthalate)</TableCell>
-                        {data.map((month, index) => (
-                          <TableCell key={index} className="p-1">
-                            <Input
-                              type="number"
-                              value={month.petPlastic}
-                              onChange={(e) => updateValue(index, 'petPlastic', parseFloat(e.target.value) || 0)}
-                              className="w-16 h-8 text-xs"
-                            />
-                          </TableCell>
-                        ))}
-                        <TableCell className="text-center font-bold">{calculateTotals('petPlastic')}</TableCell>
-                      </TableRow>
-
-                      <TableRow>
-                        <TableCell className="font-medium">HDPE (Blown)</TableCell>
-                        {data.map((month, index) => (
-                          <TableCell key={index} className="p-1">
-                            <Input
-                              type="number"
-                              value={month.hdpeBlown}
-                              onChange={(e) => updateValue(index, 'hdpeBlown', parseFloat(e.target.value) || 0)}
-                              className="w-16 h-8 text-xs"
-                            />
-                          </TableCell>
-                        ))}
-                        <TableCell className="text-center font-bold">{calculateTotals('hdpeBlown')}</TableCell>
-                      </TableRow>
-
-                      <TableRow>
-                        <TableCell className="font-medium">HDPE (Rigid)</TableCell>
-                        {data.map((month, index) => (
-                          <TableCell key={index} className="p-1">
-                            <Input
-                              type="number"
-                              value={month.hdpeRigid}
-                              onChange={(e) => updateValue(index, 'hdpeRigid', parseFloat(e.target.value) || 0)}
-                              className="w-16 h-8 text-xs"
-                            />
-                          </TableCell>
-                        ))}
-                        <TableCell className="text-center font-bold">{calculateTotals('hdpeRigid')}</TableCell>
-                      </TableRow>
-
-                      <TableRow>
-                        <TableCell className="font-medium">Tin Can</TableCell>
-                        {data.map((month, index) => (
-                          <TableCell key={index} className="p-1">
-                            <Input
-                              type="number"
-                              value={month.tinCan}
-                              onChange={(e) => updateValue(index, 'tinCan', parseFloat(e.target.value) || 0)}
-                              className="w-16 h-8 text-xs"
-                            />
-                          </TableCell>
-                        ))}
-                        <TableCell className="text-center font-bold">{calculateTotals('tinCan')}</TableCell>
-                      </TableRow>
-
-                      <TableRow>
-                        <TableCell className="font-medium">Aluminum</TableCell>
-                        {data.map((month, index) => (
-                          <TableCell key={index} className="p-1">
-                            <Input
-                              type="number"
-                              value={month.aluminum}
-                              onChange={(e) => updateValue(index, 'aluminum', parseFloat(e.target.value) || 0)}
-                              className="w-16 h-8 text-xs"
-                            />
-                          </TableCell>
-                        ))}
-                        <TableCell className="text-center font-bold">{calculateTotals('aluminum')}</TableCell>
-                      </TableRow>
-
-                      <TableRow>
-                        <TableCell className="font-medium">Glass</TableCell>
-                        {data.map((month, index) => (
-                          <TableCell key={index} className="p-1">
-                            <Input
-                              type="number"
-                              value={month.glass}
-                              onChange={(e) => updateValue(index, 'glass', parseFloat(e.target.value) || 0)}
-                              className="w-16 h-8 text-xs"
-                            />
-                          </TableCell>
-                        ))}
-                        <TableCell className="text-center font-bold">{calculateTotals('glass')}</TableCell>
-                      </TableRow>
-
-                      <TableRow className="bg-green-100">
-                        <TableCell className="font-bold">Total reciclaje</TableCell>
+                      <TableRow className="bg-green-50">
+                        <TableCell className="font-bold text-green-800">✅ Total Desviado</TableCell>
                         {data.map((month, index) => (
                           <TableCell key={index} className="text-center font-bold">
-                            {month.totalRecyclables}
+                            {month.totalDiverted.toLocaleString()}
                           </TableCell>
                         ))}
-                        <TableCell className="text-center font-bold">{calculateTotals('totalRecyclables')}</TableCell>
-                      </TableRow>
-
-                      {/* Sección Orgánicos */}
-                      <TableRow className="bg-green-50">
-                        <TableCell colSpan={14} className="font-bold text-center bg-green-200">
-                          Orgánicos destinados a composta
+                        <TableCell className="text-center font-bold text-green-800">
+                          {calculateTotals('totalDiverted').toLocaleString()}
                         </TableCell>
                       </TableRow>
 
-                      <TableRow>
-                        <TableCell className="font-medium">Orgánicos de comedor/jardinería</TableCell>
-                        {data.map((month, index) => (
-                          <TableCell key={index} className="p-1">
-                            <Input
-                              type="number"
-                              value={month.organicsCompost}
-                              onChange={(e) => updateValue(index, 'organicsCompost', parseFloat(e.target.value) || 0)}
-                              className="w-16 h-8 text-xs"
-                            />
-                          </TableCell>
-                        ))}
-                        <TableCell className="text-center font-bold">{calculateTotals('organicsCompost')}</TableCell>
-                      </TableRow>
-
-                      <TableRow className="bg-green-100">
-                        <TableCell className="font-bold">Total orgánicos</TableCell>
+                      <TableRow className="bg-gray-100">
+                        <TableCell className="font-bold">📊 Total Generado</TableCell>
                         {data.map((month, index) => (
                           <TableCell key={index} className="text-center font-bold">
-                            {month.totalOrganics}
+                            {month.totalGenerated.toLocaleString()}
                           </TableCell>
                         ))}
-                        <TableCell className="text-center font-bold">{calculateTotals('totalOrganics')}</TableCell>
-                      </TableRow>
-
-                      {/* Sección Reuso */}
-                      <TableRow className="bg-blue-50">
-                        <TableCell colSpan={14} className="font-bold text-center bg-blue-200">
-                          Reuso
+                        <TableCell className="text-center font-bold">
+                          {calculateTotals('totalGenerated').toLocaleString()}
                         </TableCell>
                       </TableRow>
 
-                      <TableRow>
-                        <TableCell className="font-medium">Vidrio donación</TableCell>
-                        {data.map((month, index) => (
-                          <TableCell key={index} className="p-1">
-                            <Input
-                              type="number"
-                              value={month.glassDonation}
-                              onChange={(e) => updateValue(index, 'glassDonation', parseFloat(e.target.value) || 0)}
-                              className="w-16 h-8 text-xs"
-                            />
-                          </TableCell>
-                        ))}
-                        <TableCell className="text-center font-bold">{calculateTotals('glassDonation')}</TableCell>
-                      </TableRow>
-
-                      {/* Resumen y porcentajes */}
                       <TableRow className="bg-yellow-100">
-                        <TableCell className="font-bold">Total Desviado</TableCell>
+                        <TableCell className="font-bold text-red-800">🗑️ Al Relleno (%)</TableCell>
                         {data.map((month, index) => (
                           <TableCell key={index} className="text-center font-bold">
-                            {month.totalDiverted}
-                          </TableCell>
-                        ))}
-                        <TableCell className="text-center font-bold">{calculateTotals('totalDiverted')}</TableCell>
-                      </TableRow>
-
-                      <TableRow>
-                        <TableCell className="font-medium">Total Generado</TableCell>
-                        {data.map((month, index) => (
-                          <TableCell key={index} className="p-1">
-                            <Input
-                              type="number"
-                              value={month.totalGenerated}
-                              onChange={(e) => updateValue(index, 'totalGenerated', parseFloat(e.target.value) || 0)}
-                              className="w-16 h-8 text-xs bg-yellow-50"
-                            />
-                          </TableCell>
-                        ))}
-                        <TableCell className="text-center font-bold">{calculateTotals('totalGenerated')}</TableCell>
-                      </TableRow>
-
-                      <TableRow className="bg-red-100">
-                        <TableCell className="font-bold">% Desviación</TableCell>
-                        {data.map((month, index) => (
-                          <TableCell key={index} className="text-center font-bold">
-                            <span className={month.deviationPercentage <= 10 ? 'text-green-600' : 'text-red-600'}>
+                            <span className={`text-lg ${month.deviationPercentage <= 10 ? 'text-green-600' : 'text-red-600'}`}>
                               {month.deviationPercentage.toFixed(1)}%
                             </span>
                           </TableCell>
                         ))}
                         <TableCell className="text-center font-bold">
-                          <span className={averageDeviation <= 10 ? 'text-green-600' : 'text-red-600'}>
+                          <span className={`text-lg ${averageDeviation <= 10 ? 'text-green-600' : 'text-red-600'}`}>
                             {averageDeviation.toFixed(1)}%
                           </span>
                         </TableCell>
