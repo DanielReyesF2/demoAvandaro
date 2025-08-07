@@ -208,59 +208,32 @@ export default function Dashboard() {
             
           </div>
 
-          {/* Metodología y acciones rápidas */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Metodología */}
-            <div className="lg:col-span-2 bg-gradient-to-br from-white to-gray-50 rounded-3xl p-8 shadow-xl border border-gray-200">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-2xl font-anton text-gray-800 uppercase tracking-wide">
-                  Metodología de Cálculo
-                </h3>
-                <Button variant="outline" size="sm" className="hover:bg-[#b5e951] hover:text-white hover:border-[#b5e951] transition-colors">Ver detalles</Button>
-              </div>
-              <div className="space-y-3 text-sm text-gray-600">
-                <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-                  <div>
-                    <span className="font-medium">Árboles salvados:</span> Cada tonelada de residuos desviados equivale a 1.2 árboles preservados según estudios de impacto ambiental.
-                  </div>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                  <div>
-                    <span className="font-medium">Agua conservada:</span> El reciclaje ahorra 15,000L por tonelada de material reciclable y 8,000L por tonelada de compostaje.
-                  </div>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2"></div>
-                  <div>
-                    <span className="font-medium">Energía ahorrada:</span> Se evita el consumo de 3,200 kWh por tonelada reciclada vs. producción de materiales vírgenes.
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Acciones rápidas */}
-            <div className="bg-gradient-to-br from-[#273949] to-gray-800 rounded-3xl p-8 shadow-xl text-white">
-              <h3 className="text-2xl font-anton text-white uppercase tracking-wide mb-6">
-                Acciones Rápidas
+          {/* Metodología */}
+          <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl p-8 shadow-xl border border-gray-200">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-anton text-gray-800 uppercase tracking-wide">
+                Metodología de Cálculo
               </h3>
-              <div className="space-y-4">
-                <Link href="/data-entry">
-                  <Button className="w-full bg-[#b5e951] hover:bg-[#9ed13c] text-[#273949] font-bold py-3 rounded-xl transition-all duration-300 hover:scale-105">
-                    Registrar Datos
-                  </Button>
-                </Link>
-                <Link href="/documents">
-                  <Button variant="outline" className="w-full border-2 border-white text-white hover:bg-white hover:text-[#273949] py-3 rounded-xl transition-all duration-300">
-                    Subir Documentos
-                  </Button>
-                </Link>
-                <Link href="/reports">
-                  <Button variant="outline" className="w-full border-2 border-white text-white hover:bg-white hover:text-[#273949] py-3 rounded-xl transition-all duration-300">
-                    Generar Reportes
-                  </Button>
-                </Link>
+              <Button variant="outline" size="sm" className="hover:bg-[#b5e951] hover:text-white hover:border-[#b5e951] transition-colors">Ver detalles</Button>
+            </div>
+            <div className="space-y-3 text-sm text-gray-600">
+              <div className="flex items-start space-x-3">
+                <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                <div>
+                  <span className="font-medium">Árboles salvados:</span> Cada tonelada de residuos desviados equivale a 1.2 árboles preservados según estudios de impacto ambiental.
+                </div>
+              </div>
+              <div className="flex items-start space-x-3">
+                <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                <div>
+                  <span className="font-medium">Agua conservada:</span> El reciclaje ahorra 15,000L por tonelada de material reciclable y 8,000L por tonelada de compostaje.
+                </div>
+              </div>
+              <div className="flex items-start space-x-3">
+                <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2"></div>
+                <div>
+                  <span className="font-medium">Energía ahorrada:</span> Se evita el consumo de 3,200 kWh por tonelada reciclada vs. producción de materiales vírgenes.
+                </div>
               </div>
             </div>
           </div>
