@@ -13,7 +13,6 @@ export const ClubHeader = () => {
             className="h-10 w-10 rounded"
           />
           <div>
-            <h1 className="font-semibold text-gray-900">Club Campestre CDMX</h1>
             <p className="text-sm text-gray-500">Gestión de Residuos</p>
           </div>
         </div>
