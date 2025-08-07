@@ -13,7 +13,12 @@ import {
   Utensils,
   Newspaper,
   Wine,
-  Battery
+  Battery,
+  Building2,
+  ChefHat,
+  Users,
+  MapPin,
+  MoveRight
 } from 'lucide-react';
 
 interface WasteFlow {
@@ -27,6 +32,7 @@ interface WasteFlow {
   partner: string;
   volume: number; // toneladas mensuales promedio
   description: string;
+  origins: string[]; // puntos de origen específicos
 }
 
 const wasteFlows: WasteFlow[] = [
@@ -41,7 +47,8 @@ const wasteFlows: WasteFlow[] = [
     destination: 'Biodegradación',
     partner: 'ORKA',
     volume: 8.5,
-    description: 'Restos de comida del restaurante y eventos'
+    description: 'Restos de comida del restaurante y eventos',
+    origins: ['Restaurante', 'Cocina principal', 'Eventos especiales']
   },
   {
     id: 'organicos-jardineria',
@@ -53,7 +60,8 @@ const wasteFlows: WasteFlow[] = [
     destination: 'Compostaje',
     partner: 'Club interno',
     volume: 12.3,
-    description: 'Poda de árboles y mantenimiento de áreas verdes'
+    description: 'Poda de árboles y mantenimiento de áreas verdes',
+    origins: ['Áreas verdes Casa Club', 'Jardines del complejo', 'Campo de golf']
   },
   {
     id: 'organicos-aceite',
@@ -65,7 +73,8 @@ const wasteFlows: WasteFlow[] = [
     destination: 'Biodiesel',
     partner: 'Reoil',
     volume: 0.8,
-    description: 'Aceite usado de cocinas y restaurante'
+    description: 'Aceite usado de cocinas y restaurante',
+    origins: ['Cocina principal', 'Restaurante', 'Bar y cafetería']
   },
   
   // Reciclables
@@ -79,7 +88,8 @@ const wasteFlows: WasteFlow[] = [
     destination: 'Reprocesamiento',
     partner: 'KREY',
     volume: 2.1,
-    description: 'Documentos, cajas de cartón y material impreso'
+    description: 'Documentos, cajas de cartón y material impreso',
+    origins: ['Oficinas administrativas', 'Recepción Casa Club', 'Área de eventos']
   },
   {
     id: 'reciclable-plastico',
@@ -91,7 +101,8 @@ const wasteFlows: WasteFlow[] = [
     destination: 'Reciclaje',
     partner: 'Recupera',
     volume: 1.9,
-    description: 'Botellas y envases plásticos reciclables'
+    description: 'Botellas y envases plásticos reciclables',
+    origins: ['Restaurante', 'Bar', 'Áreas comunes Casa Club']
   },
   {
     id: 'reciclable-vidrio',
@@ -103,7 +114,8 @@ const wasteFlows: WasteFlow[] = [
     destination: 'Refabricación',
     partner: 'Grupo eWaste',
     volume: 1.2,
-    description: 'Botellas de vidrio y cristalería'
+    description: 'Botellas de vidrio y cristalería',
+    origins: ['Bar y restaurante', 'Eventos especiales', 'Áreas de servicio']
   },
   
   // Inorgánicos
@@ -117,7 +129,8 @@ const wasteFlows: WasteFlow[] = [
     destination: 'Recuperación de Metales',
     partner: 'Nikken',
     volume: 0.3,
-    description: 'Equipos electrónicos y componentes'
+    description: 'Equipos electrónicos y componentes',
+    origins: ['Oficinas administrativas', 'Sistemas Casa Club', 'Equipos obsoletos']
   },
   {
     id: 'inorganico-general',
@@ -129,7 +142,8 @@ const wasteFlows: WasteFlow[] = [
     destination: 'Relleno Sanitario',
     partner: 'SGA',
     volume: 5.8,
-    description: 'Residuos no reciclables o contaminados'
+    description: 'Residuos no reciclables o contaminados',
+    origins: ['Casa Club general', 'Oficinas', 'Áreas de mantenimiento']
   }
 ];
 
@@ -166,9 +180,67 @@ export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualiz
         <h2 className="text-3xl font-anton text-gray-800 uppercase tracking-wide mb-3">
           Flujos de Residuos Dinámicos
         </h2>
-        <p className="text-lg text-gray-600 mb-4">
+        <p className="text-lg text-gray-600 mb-6">
           Visualización interactiva del sistema integral de gestión de residuos
         </p>
+
+        {/* Origen Sources */}
+        <div className="bg-gradient-to-r from-blue-50 via-green-50 to-purple-50 rounded-2xl p-6 mb-6 border border-gray-200">
+          <div className="flex items-center justify-center mb-4">
+            <MapPin className="w-5 h-5 text-gray-600 mr-2" />
+            <span className="text-lg font-anton text-gray-700 uppercase tracking-wide">Puntos de Origen</span>
+          </div>
+          <div className="flex items-center justify-center space-x-8 flex-wrap gap-y-4">
+            <div className="flex items-center space-x-2">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-md">
+                <Building2 className="w-5 h-5 text-white" />
+              </div>
+              <div className="text-center">
+                <div className="text-sm font-medium text-gray-800">Casa Club</div>
+                <div className="text-xs text-gray-500">Oficinas & Servicios</div>
+              </div>
+            </div>
+            
+            <div className={`flex items-center space-x-1 transition-all duration-700 ${
+              animatingParticles ? 'opacity-100' : 'opacity-70'
+            }`}>
+              <MoveRight className="w-4 h-4 text-gray-400" />
+              <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+              <div className="w-1 h-1 bg-gray-500 rounded-full"></div>
+              <MoveRight className="w-4 h-4 text-gray-400" />
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-md">
+                <ChefHat className="w-5 h-5 text-white" />
+              </div>
+              <div className="text-center">
+                <div className="text-sm font-medium text-gray-800">Restaurante</div>
+                <div className="text-xs text-gray-500">Cocina & Bar</div>
+              </div>
+            </div>
+
+            <div className={`flex items-center space-x-1 transition-all duration-700 delay-150 ${
+              animatingParticles ? 'opacity-100' : 'opacity-70'
+            }`}>
+              <MoveRight className="w-4 h-4 text-gray-400" />
+              <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+              <div className="w-1 h-1 bg-gray-500 rounded-full"></div>
+              <MoveRight className="w-4 h-4 text-gray-400" />
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-md">
+                <Users className="w-5 h-5 text-white" />
+              </div>
+              <div className="text-center">
+                <div className="text-sm font-medium text-gray-800">Eventos</div>
+                <div className="text-xs text-gray-500">Áreas Comunes</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="inline-flex items-center space-x-6 text-sm">
           <div className="flex items-center">
             <div className="w-3 h-3 bg-green-500 rounded-full mr-2 animate-pulse"></div>
@@ -234,15 +306,24 @@ export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualiz
                   </div>
                 </div>
 
-                {/* Destination Info */}
+                {/* Expanded Info */}
                 <div className={`mt-3 pt-3 border-t border-green-100 transition-all duration-300 ${
-                  selectedFlow === flow.id ? 'opacity-100 max-h-20' : 'opacity-0 max-h-0 overflow-hidden'
+                  selectedFlow === flow.id ? 'opacity-100 max-h-32' : 'opacity-0 max-h-0 overflow-hidden'
                 }`}>
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-green-600 font-medium">{flow.destination}</span>
-                    <span className="text-gray-500">{flow.partner}</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-green-600 font-medium">{flow.destination}</span>
+                      <span className="text-gray-500">{flow.partner}</span>
+                    </div>
+                    <p className="text-xs text-gray-600">{flow.description}</p>
+                    <div className="flex items-start space-x-2">
+                      <MapPin className="w-3 h-3 text-gray-400 mt-0.5 flex-shrink-0" />
+                      <div className="text-xs text-gray-500">
+                        <span className="font-medium">Origen: </span>
+                        {flow.origins.join(', ')}
+                      </div>
+                    </div>
                   </div>
-                  <p className="text-xs text-gray-600 mt-1">{flow.description}</p>
                 </div>
               </div>
             ))}
@@ -300,15 +381,24 @@ export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualiz
                   </div>
                 </div>
 
-                {/* Destination Info */}
+                {/* Expanded Info */}
                 <div className={`mt-3 pt-3 border-t border-blue-100 transition-all duration-300 ${
-                  selectedFlow === flow.id ? 'opacity-100 max-h-20' : 'opacity-0 max-h-0 overflow-hidden'
+                  selectedFlow === flow.id ? 'opacity-100 max-h-32' : 'opacity-0 max-h-0 overflow-hidden'
                 }`}>
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-blue-600 font-medium">{flow.destination}</span>
-                    <span className="text-gray-500">{flow.partner}</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-blue-600 font-medium">{flow.destination}</span>
+                      <span className="text-gray-500">{flow.partner}</span>
+                    </div>
+                    <p className="text-xs text-gray-600">{flow.description}</p>
+                    <div className="flex items-start space-x-2">
+                      <MapPin className="w-3 h-3 text-gray-400 mt-0.5 flex-shrink-0" />
+                      <div className="text-xs text-gray-500">
+                        <span className="font-medium">Origen: </span>
+                        {flow.origins.join(', ')}
+                      </div>
+                    </div>
                   </div>
-                  <p className="text-xs text-gray-600 mt-1">{flow.description}</p>
                 </div>
               </div>
             ))}
@@ -366,15 +456,24 @@ export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualiz
                   </div>
                 </div>
 
-                {/* Destination Info */}
+                {/* Expanded Info */}
                 <div className={`mt-3 pt-3 border-t border-gray-100 transition-all duration-300 ${
-                  selectedFlow === flow.id ? 'opacity-100 max-h-20' : 'opacity-0 max-h-0 overflow-hidden'
+                  selectedFlow === flow.id ? 'opacity-100 max-h-32' : 'opacity-0 max-h-0 overflow-hidden'
                 }`}>
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-gray-600 font-medium">{flow.destination}</span>
-                    <span className="text-gray-500">{flow.partner}</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-gray-600 font-medium">{flow.destination}</span>
+                      <span className="text-gray-500">{flow.partner}</span>
+                    </div>
+                    <p className="text-xs text-gray-600">{flow.description}</p>
+                    <div className="flex items-start space-x-2">
+                      <MapPin className="w-3 h-3 text-gray-400 mt-0.5 flex-shrink-0" />
+                      <div className="text-xs text-gray-500">
+                        <span className="font-medium">Origen: </span>
+                        {flow.origins.join(', ')}
+                      </div>
+                    </div>
                   </div>
-                  <p className="text-xs text-gray-600 mt-1">{flow.description}</p>
                 </div>
               </div>
             ))}
