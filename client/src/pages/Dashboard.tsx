@@ -75,12 +75,12 @@ export default function Dashboard() {
     deviation: ((totals.totalDiverted / totals.totalGenerated) * 100).toFixed(1), // Desviación real
   };
   
-  // Datos para gráfica de barras con datos reales
+  // Datos para gráfica de barras con datos reales (en kg)
   const monthlyData = realData2025.map(month => ({
     name: month.month.slice(0, 3), // Ene, Feb, etc.
-    organicos: Math.round((month.organicsToLandfill + month.organicsCompost) / 1000 * 10) / 10, // Convertir a toneladas
-    inorganicos: Math.round(month.inorganicNonRecyclable / 1000 * 10) / 10,
-    reciclables: Math.round(month.recyclables / 1000 * 10) / 10,
+    organicos: Math.round(month.organicsToLandfill + month.organicsCompost), // Mantener en kg
+    inorganicos: Math.round(month.inorganicNonRecyclable),
+    reciclables: Math.round(month.recyclables),
   }));
   
   return (
