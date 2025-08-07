@@ -308,17 +308,7 @@ export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualiz
           </div>
         </div>
 
-        {/* Stats Banner */}
-        <div className="flex justify-center space-x-8 text-center mb-8">
-          <div className="flex items-center">
-            <div className="w-3 h-3 bg-green-500 rounded-full mr-2 animate-pulse"></div>
-            <span className="text-green-600 font-medium">{diversionRate.toFixed(1)}% Desviado del relleno</span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
-            <span className="text-gray-600">{totalVolume.toFixed(1)} ton/mes total</span>
-          </div>
-        </div>
+        
       </div>
       {/* Detailed Flow Items */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
