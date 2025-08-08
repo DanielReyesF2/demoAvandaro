@@ -767,28 +767,6 @@ export default function ResiduosExcel() {
                             </div>
                           </td>
                         </tr>
-                        <tr className={`${
-                          kpis.deviationPercentage >= 70 ? 'bg-lime-50' : 
-                          kpis.deviationPercentage >= 50 ? 'bg-amber-50' : 'bg-red-50'
-                        }`}>
-                          <td className="p-4 font-bold text-xl text-navy">Resultado Final</td>
-                          <td colSpan={12} className="text-center">
-                            <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${
-                              kpis.deviationPercentage >= 70 ? 'bg-lime-100 text-lime-800' : 
-                              kpis.deviationPercentage >= 50 ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'
-                            }`}>
-                              <CheckCircle className="h-4 w-4" />
-                              {kpis.deviationPercentage >= 70 ? 'Certificación TRUE Zero Waste Alcanzada' : 
-                               kpis.deviationPercentage >= 50 ? 'En Progreso hacia Certificación' : 'Situación Crítica - Acción Inmediata Requerida'}
-                            </div>
-                          </td>
-                          <td className={`p-4 text-center font-bold text-3xl ${
-                            kpis.deviationPercentage >= 70 ? 'text-lime-800 bg-lime-200' : 
-                            kpis.deviationPercentage >= 50 ? 'text-amber-800 bg-amber-200' : 'text-red-800 bg-red-200'
-                          } rounded-lg`}>
-                            {kpis.deviationPercentage.toFixed(1)}%
-                          </td>
-                        </tr>
                       </tbody>
                     </table>
                   </div>
