@@ -236,27 +236,92 @@ export default function ResiduosExcel() {
     const kpis = calculateKPIs();
     const totals = getSectionTotals();
 
-    // Simple header
-    const addHeader = () => {
-      pdf.setFont('helvetica', 'bold');
-      pdf.setFontSize(16);
-      pdf.setTextColor(0, 0, 0);
-      pdf.text('REPORTE DE GESTIÓN DE RESIDUOS', pageWidth / 2, 25, { align: 'center' });
+    // Get current month (up to which month to show data)
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth(); // 0-indexed (0 = January, 7 = August)
+    const currentMonthName = MONTH_LABELS[currentMonth];
+    const monthsToShow = currentMonth + 1; // +1 because months are 0-indexed
+
+    // Professional cover page with ECONOVA branding
+    const addCoverPage = () => {
+      // Navy background header
+      pdf.setFillColor(39, 57, 73); // Navy color
+      pdf.rect(0, 0, pageWidth, 80, 'F');
       
+      // Lime accent bar
+      pdf.setFillColor(181, 233, 81); // Lime color  
+      pdf.rect(0, 75, pageWidth, 5, 'F');
+      
+      // ECONOVA logo placeholder (simplified text version)
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(24);
+      pdf.setTextColor(255, 255, 255);
+      pdf.text('ECONOVA', pageWidth / 2, 35, { align: 'center' });
+      
+      // Add dotted border around logo area
+      pdf.setDrawColor(255, 255, 255);
+      pdf.setLineDashPattern([2, 2], 0);
+      pdf.rect(pageWidth/2 - 40, 15, 80, 30, 'D');
+      pdf.setLineDashPattern([], 0); // Reset line pattern
+      
+      // White content area
+      pdf.setFillColor(255, 255, 255);
+      pdf.rect(0, 80, pageWidth, pageHeight - 80, 'F');
+      
+      // Main title with dotted border
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(18);
+      pdf.setTextColor(39, 57, 73);
+      pdf.text('REPORTE DE GESTIÓN DE RESIDUOS', pageWidth / 2, 140, { align: 'center' });
+      
+      // Add dotted border around title
+      pdf.setDrawColor(181, 233, 81);
+      pdf.setLineDashPattern([3, 3], 0);
+      pdf.rect(40, 125, pageWidth - 80, 25, 'D');
+      pdf.setLineDashPattern([], 0);
+      
+      // Subtitle
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(14);
+      pdf.text('Club Campestre de la Ciudad de México', pageWidth / 2, 170, { align: 'center' });
+      
+      // Period
       pdf.setFontSize(12);
-      pdf.text('Club Campestre de la Ciudad de México', pageWidth / 2, 35, { align: 'center' });
+      const startMonth = 'enero';
+      pdf.text(`${startMonth} de ${selectedYear} - ${currentMonthName} de ${selectedYear}`, pageWidth / 2, 185, { align: 'center' });
+      
+      // Footer
+      pdf.setFontSize(10);
+      pdf.setTextColor(100, 100, 100);
+      pdf.text('ECONOVA © 2025 | Innovando en Gestión Ambiental', pageWidth / 2, pageHeight - 30, { align: 'center' });
+    };
+
+    // Simple header for content pages
+    const addContentHeader = () => {
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(14);
+      pdf.setTextColor(39, 57, 73);
+      pdf.text('REPORTE DE GESTIÓN DE RESIDUOS', pageWidth / 2, 25, { align: 'center' });
       
       pdf.setFont('helvetica', 'normal');
       pdf.setFontSize(10);
-      const startMonth = 'enero';
-      const endMonth = 'diciembre'; 
-      pdf.text(`${startMonth} de ${selectedYear} - ${endMonth} de ${selectedYear}`, pageWidth / 2, 45, { align: 'center' });
+      pdf.setTextColor(100, 100, 100);
+      pdf.text(`Cliente: Club Campestre de la Ciudad de México`, margin, 35);
+      pdf.text(`Período: enero de ${selectedYear} - ${currentMonthName} de ${selectedYear}`, pageWidth - margin, 35, { align: 'right' });
+      
+      // Separator line
+      pdf.setDrawColor(220, 220, 220);
+      pdf.line(margin, 40, pageWidth - margin, 40);
     };
 
-    // Page 1 - Key Indicators
-    addHeader();
+    // Cover Page
+    addCoverPage();
     
-    let yPos = 70;
+    // Page 2 - Key Indicators
+    pdf.addPage();
+    addContentHeader();
+    
+    let yPos = 60;
     
     // Key indicators section
     pdf.setFont('helvetica', 'bold');
@@ -270,20 +335,20 @@ export default function ResiduosExcel() {
     const boxWidth = 50;
     const boxHeight = 35;
     const spacing = 5;
-    const startX = (pageWidth - (3 * boxWidth + 2 * spacing)) / 2;
+    const kpiStartX = (pageWidth - (3 * boxWidth + 2 * spacing)) / 2;
     
     // Deviation percentage
     pdf.setFillColor(240, 240, 240);
-    pdf.roundedRect(startX, yPos, boxWidth, boxHeight, 3, 3, 'F');
+    pdf.roundedRect(kpiStartX, yPos, boxWidth, boxHeight, 3, 3, 'F');
     pdf.setFont('helvetica', 'bold');
     pdf.setFontSize(18);
     pdf.setTextColor(0, 0, 0);
-    pdf.text(`${kpis.deviationPercentage.toFixed(1)}%`, startX + boxWidth/2, yPos + 15, { align: 'center' });
+    pdf.text(`${kpis.deviationPercentage.toFixed(1)}%`, kpiStartX + boxWidth/2, yPos + 15, { align: 'center' });
     pdf.setFontSize(9);
-    pdf.text('ÍNDICE DE DESVIACIÓN', startX + boxWidth/2, yPos + 25, { align: 'center' });
+    pdf.text('ÍNDICE DE DESVIACIÓN', kpiStartX + boxWidth/2, yPos + 25, { align: 'center' });
     
     // Total tonnage
-    const box2X = startX + boxWidth + spacing;
+    const box2X = kpiStartX + boxWidth + spacing;
     pdf.roundedRect(box2X, yPos, boxWidth, boxHeight, 3, 3, 'F');
     pdf.setFontSize(18);
     pdf.text(`${(kpis.totalWeight / 1000).toFixed(2)}`, box2X + boxWidth/2, yPos + 15, { align: 'center' });
@@ -291,7 +356,7 @@ export default function ResiduosExcel() {
     pdf.text('TONELADAS TOTALES', box2X + boxWidth/2, yPos + 25, { align: 'center' });
     
     // Recycled tonnage
-    const box3X = startX + 2 * (boxWidth + spacing);
+    const box3X = kpiStartX + 2 * (boxWidth + spacing);
     pdf.roundedRect(box3X, yPos, boxWidth, boxHeight, 3, 3, 'F');
     pdf.setFontSize(18);
     pdf.text(`${(kpis.totalCircular / 1000).toFixed(2)}`, box3X + boxWidth/2, yPos + 15, { align: 'center' });
@@ -311,12 +376,15 @@ export default function ResiduosExcel() {
     
     const summaryItems = [
       `• GENERACIÓN TOTAL: ${(kpis.totalWeight / 1000).toFixed(2)} ton.`,
-      `     Durante el período ${selectedYear}`,
+      `     Durante el período enero - ${currentMonthName} de ${selectedYear}`,
       '',
       `• DESVIACIÓN: ${kpis.deviationPercentage.toFixed(1)}%`,
       '     Índice de Desviación de Relleno Sanitario',
       '',
       `• DESTINO FINAL: ${(kpis.totalLandfill / 1000).toFixed(2)} ton. a relleno, ${(kpis.totalCircular / 1000).toFixed(2)} ton. circulares`,
+      '',
+      `• TENDENCIA: Datos disponibles hasta ${currentMonthName}`,
+      '     Seguimiento mes a mes del desempeño ambiental',
       '',
       `• IMPACTO AMBIENTAL: ${Math.round(kpis.totalCircular * 0.017)} árboles salvados`,
       '     Por reciclaje y economía circular'
@@ -332,13 +400,13 @@ export default function ResiduosExcel() {
     pdf.setFontSize(9);
     pdf.setTextColor(100, 100, 100);
     pdf.text('ECONOVA © 2025 | Innovando en Gestión Ambiental', pageWidth / 2, yPos, { align: 'center' });
-    pdf.text('Página 1 de 2', pageWidth - margin, yPos, { align: 'right' });
+    pdf.text('Página 2 de 4', pageWidth - margin, yPos, { align: 'right' });
     
-    // Page 2 - Visual Analysis
+    // Page 3 - Visual Analysis
     pdf.addPage();
-    addHeader();
+    addContentHeader();
     
-    yPos = 70;
+    yPos = 60;
     pdf.setFont('helvetica', 'bold');
     pdf.setFontSize(14);
     pdf.setTextColor(0, 0, 0);
@@ -347,14 +415,14 @@ export default function ResiduosExcel() {
     yPos += 25;
     
     // Visual bars for waste categories
-    const categories = [
-      { name: 'Reciclables', value: totals.recyclingTotal, color: [76, 175, 80] },
-      { name: 'Compost', value: totals.compostTotal, color: [255, 193, 7] },
-      { name: 'Reuso', value: totals.reuseTotal, color: [33, 150, 243] },
-      { name: 'Relleno Sanitario', value: totals.landfillTotal, color: [244, 67, 54] }
+    const wasteCategories = [
+      { name: 'Reciclables', value: totals.recyclingTotal, color: [76, 175, 80] as [number, number, number] },
+      { name: 'Compost', value: totals.compostTotal, color: [255, 193, 7] as [number, number, number] },
+      { name: 'Reuso', value: totals.reuseTotal, color: [33, 150, 243] as [number, number, number] },
+      { name: 'Relleno Sanitario', value: totals.landfillTotal, color: [244, 67, 54] as [number, number, number] }
     ];
     
-    categories.forEach(category => {
+    wasteCategories.forEach(category => {
       const percentage = kpis.totalWeight > 0 ? (category.value / kpis.totalWeight) * 100 : 0;
       const barWidth = (percentage / 100) * (pageWidth - 2 * margin - 60);
       
@@ -392,7 +460,7 @@ export default function ResiduosExcel() {
     pdf.circle(centerX, yPos + radius, radius, 'D');
     
     // Progress arc (simplified as partial circle)
-    const deviationColor = kpis.deviationPercentage >= 70 ? [76, 175, 80] : 
+    const deviationColor: [number, number, number] = kpis.deviationPercentage >= 70 ? [76, 175, 80] : 
                           kpis.deviationPercentage >= 50 ? [255, 193, 7] : [244, 67, 54];
     pdf.setDrawColor(...deviationColor);
     pdf.setLineWidth(8);
@@ -427,12 +495,117 @@ export default function ResiduosExcel() {
     pdf.text(`para economía circular en lugar de enviarse al relleno sanitario.`, 
              pageWidth / 2, yPos + 8, { align: 'center' });
     
-    // Footer page 2
+    // Footer page 3
     yPos = pageHeight - 30;
     pdf.setFontSize(9);
     pdf.setTextColor(100, 100, 100);
     pdf.text('ECONOVA © 2025 | Innovando en Gestión Ambiental', pageWidth / 2, yPos, { align: 'center' });
-    pdf.text('Página 2 de 2', pageWidth - margin, yPos, { align: 'right' });
+    pdf.text('Página 3 de 4', pageWidth - margin, yPos, { align: 'right' });
+    
+    // Page 4 - Monthly Data Table (only current months)
+    pdf.addPage();
+    addContentHeader();
+    
+    yPos = 60;
+    
+    // Table title
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(14);
+    pdf.setTextColor(39, 57, 73);
+    pdf.text('TABLA DE GENERACIÓN MENSUAL', pageWidth / 2, yPos, { align: 'center' });
+    
+    yPos += 20;
+    
+    // Table headers
+    const colWidth = 25;
+    const tableStartX = 20;
+    let currentX = tableStartX;
+    
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(9);
+    pdf.setTextColor(0, 0, 0);
+    
+    // Month/Year column
+    pdf.text('Mes/Año', currentX, yPos);
+    currentX += 30;
+    
+    // Category columns (only show current months)
+    const tableCategories = ['Reciclable', 'Compost', 'Reuso', 'R. Sanitario', 'Total', 'Desv.'];
+    tableCategories.forEach(category => {
+      pdf.text(category, currentX, yPos, { align: 'center' });
+      currentX += colWidth;
+    });
+    
+    yPos += 8;
+    
+    // Table rows (only current months)
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(8);
+    
+    for (let i = 0; i < monthsToShow; i++) {
+      currentX = tableStartX;
+      
+      // Month name and year
+      pdf.text(`${MONTH_LABELS[i]} ${selectedYear}`, currentX, yPos);
+      currentX += 30;
+      
+      // Get monthly totals
+      const monthRecycling = getSectionTotal('recycling', i) || 0;
+      const monthCompost = getSectionTotal('compost', i) || 0; 
+      const monthReuse = getSectionTotal('reuse', i) || 0;
+      const monthLandfill = getSectionTotal('landfill', i) || 0;
+      const monthTotal = monthRecycling + monthCompost + monthReuse + monthLandfill;
+      const monthCircular = monthRecycling + monthCompost + monthReuse;
+      const monthDeviation = monthTotal > 0 ? (monthCircular / monthTotal) * 100 : 0;
+      
+      // Data columns
+      const values = [
+        (monthRecycling / 1000).toFixed(2),
+        (monthCompost / 1000).toFixed(2), 
+        (monthReuse / 1000).toFixed(2),
+        (monthLandfill / 1000).toFixed(2),
+        (monthTotal / 1000).toFixed(2),
+        `${monthDeviation.toFixed(1)}%`
+      ];
+      
+      values.forEach(value => {
+        pdf.text(value, currentX, yPos, { align: 'center' });
+        currentX += colWidth;
+      });
+      
+      yPos += 8;
+    }
+    
+    yPos += 15;
+    
+    // Summary row
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(9);
+    currentX = tableStartX;
+    
+    pdf.text('TOTALES', currentX, yPos);
+    currentX += 30;
+    
+    const summaryValues = [
+      (totals.recyclingTotal / 1000).toFixed(2),
+      (totals.compostTotal / 1000).toFixed(2),
+      (totals.reuseTotal / 1000).toFixed(2), 
+      (totals.landfillTotal / 1000).toFixed(2),
+      (kpis.totalWeight / 1000).toFixed(2),
+      `${kpis.deviationPercentage.toFixed(1)}%`
+    ];
+    
+    summaryValues.forEach(value => {
+      pdf.text(value, currentX, yPos, { align: 'center' });
+      currentX += colWidth;
+    });
+    
+    // Footer page 4
+    yPos = pageHeight - 30;
+    pdf.setFontSize(9);
+    pdf.setTextColor(100, 100, 100);
+    pdf.text('ECONOVA © 2025 | Innovando en Gestión Ambiental', pageWidth / 2, yPos, { align: 'center' });
+    pdf.text('Página 4 de 4', pageWidth - margin, yPos, { align: 'right' });
     
     // Save
     const filename = `Reporte_CCCM_${selectedYear}_${new Date().toISOString().split('T')[0]}.pdf`;
