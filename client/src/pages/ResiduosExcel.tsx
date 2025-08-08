@@ -220,6 +220,231 @@ export default function ResiduosExcel() {
     }));
   };
 
+  // Generate Clean PDF Report (like original design)
+  const generateCleanPDF = () => {
+    if (!wasteData) return;
+
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    });
+    
+    const pageWidth = 210;
+    const pageHeight = 297;
+    const margin = 20;
+    const kpis = calculateKPIs();
+    const totals = getSectionTotals();
+
+    // Simple header
+    const addHeader = () => {
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(16);
+      pdf.setTextColor(0, 0, 0);
+      pdf.text('REPORTE DE GESTIÓN DE RESIDUOS', pageWidth / 2, 25, { align: 'center' });
+      
+      pdf.setFontSize(12);
+      pdf.text('Club Campestre de la Ciudad de México', pageWidth / 2, 35, { align: 'center' });
+      
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(10);
+      const startMonth = 'enero';
+      const endMonth = 'diciembre'; 
+      pdf.text(`${startMonth} de ${selectedYear} - ${endMonth} de ${selectedYear}`, pageWidth / 2, 45, { align: 'center' });
+    };
+
+    // Page 1 - Key Indicators
+    addHeader();
+    
+    let yPos = 70;
+    
+    // Key indicators section
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(14);
+    pdf.setTextColor(0, 0, 0);
+    pdf.text('INDICADORES CLAVE', pageWidth / 2, yPos, { align: 'center' });
+    
+    yPos += 25;
+    
+    // Three main KPI boxes
+    const boxWidth = 50;
+    const boxHeight = 35;
+    const spacing = 5;
+    const startX = (pageWidth - (3 * boxWidth + 2 * spacing)) / 2;
+    
+    // Deviation percentage
+    pdf.setFillColor(240, 240, 240);
+    pdf.roundedRect(startX, yPos, boxWidth, boxHeight, 3, 3, 'F');
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(18);
+    pdf.setTextColor(0, 0, 0);
+    pdf.text(`${kpis.deviationPercentage.toFixed(1)}%`, startX + boxWidth/2, yPos + 15, { align: 'center' });
+    pdf.setFontSize(9);
+    pdf.text('ÍNDICE DE DESVIACIÓN', startX + boxWidth/2, yPos + 25, { align: 'center' });
+    
+    // Total tonnage
+    const box2X = startX + boxWidth + spacing;
+    pdf.roundedRect(box2X, yPos, boxWidth, boxHeight, 3, 3, 'F');
+    pdf.setFontSize(18);
+    pdf.text(`${(kpis.totalWeight / 1000).toFixed(2)}`, box2X + boxWidth/2, yPos + 15, { align: 'center' });
+    pdf.setFontSize(9);
+    pdf.text('TONELADAS TOTALES', box2X + boxWidth/2, yPos + 25, { align: 'center' });
+    
+    // Recycled tonnage
+    const box3X = startX + 2 * (boxWidth + spacing);
+    pdf.roundedRect(box3X, yPos, boxWidth, boxHeight, 3, 3, 'F');
+    pdf.setFontSize(18);
+    pdf.text(`${(kpis.totalCircular / 1000).toFixed(2)}`, box3X + boxWidth/2, yPos + 15, { align: 'center' });
+    pdf.setFontSize(9);
+    pdf.text('TONELADAS CIRCULARES', box3X + boxWidth/2, yPos + 25, { align: 'center' });
+    
+    yPos += 60;
+    
+    // Executive Summary
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(14);
+    pdf.text('RESUMEN EJECUTIVO', pageWidth / 2, yPos, { align: 'center' });
+    
+    yPos += 20;
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(10);
+    
+    const summaryItems = [
+      `• GENERACIÓN TOTAL: ${(kpis.totalWeight / 1000).toFixed(2)} ton.`,
+      `     Durante el período ${selectedYear}`,
+      '',
+      `• DESVIACIÓN: ${kpis.deviationPercentage.toFixed(1)}%`,
+      '     Índice de Desviación de Relleno Sanitario',
+      '',
+      `• DESTINO FINAL: ${(kpis.totalLandfill / 1000).toFixed(2)} ton. a relleno, ${(kpis.totalCircular / 1000).toFixed(2)} ton. circulares`,
+      '',
+      `• IMPACTO AMBIENTAL: ${Math.round(kpis.totalCircular * 0.017)} árboles salvados`,
+      '     Por reciclaje y economía circular'
+    ];
+    
+    summaryItems.forEach(item => {
+      pdf.text(item, margin, yPos);
+      yPos += 8;
+    });
+    
+    // Footer
+    yPos = pageHeight - 30;
+    pdf.setFontSize(9);
+    pdf.setTextColor(100, 100, 100);
+    pdf.text('ECONOVA © 2025 | Innovando en Gestión Ambiental', pageWidth / 2, yPos, { align: 'center' });
+    pdf.text('Página 1 de 2', pageWidth - margin, yPos, { align: 'right' });
+    
+    // Page 2 - Visual Analysis
+    pdf.addPage();
+    addHeader();
+    
+    yPos = 70;
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(14);
+    pdf.setTextColor(0, 0, 0);
+    pdf.text('ANÁLISIS VISUAL DE RESIDUOS', pageWidth / 2, yPos, { align: 'center' });
+    
+    yPos += 25;
+    
+    // Visual bars for waste categories
+    const categories = [
+      { name: 'Reciclables', value: totals.recyclingTotal, color: [76, 175, 80] },
+      { name: 'Compost', value: totals.compostTotal, color: [255, 193, 7] },
+      { name: 'Reuso', value: totals.reuseTotal, color: [33, 150, 243] },
+      { name: 'Relleno Sanitario', value: totals.landfillTotal, color: [244, 67, 54] }
+    ];
+    
+    categories.forEach(category => {
+      const percentage = kpis.totalWeight > 0 ? (category.value / kpis.totalWeight) * 100 : 0;
+      const barWidth = (percentage / 100) * (pageWidth - 2 * margin - 60);
+      
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(11);
+      pdf.setTextColor(0, 0, 0);
+      pdf.text(category.name, margin, yPos);
+      
+      pdf.setFillColor(...category.color);
+      pdf.roundedRect(margin + 60, yPos - 5, barWidth, 8, 2, 2, 'F');
+      
+      pdf.setFontSize(10);
+      pdf.text(`${(category.value / 1000).toFixed(2)} ton (${percentage.toFixed(1)}%)`, 
+               margin + 70 + barWidth, yPos, { align: 'left' });
+      
+      yPos += 20;
+    });
+    
+    yPos += 20;
+    
+    // Deviation indicator
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(12);
+    pdf.text('ÍNDICE DE DESVIACIÓN', pageWidth / 2, yPos, { align: 'center' });
+    
+    yPos += 15;
+    
+    // Circular progress bar simulation
+    const centerX = pageWidth / 2;
+    const radius = 30;
+    
+    // Background circle
+    pdf.setDrawColor(220, 220, 220);
+    pdf.setLineWidth(8);
+    pdf.circle(centerX, yPos + radius, radius, 'D');
+    
+    // Progress arc (simplified as partial circle)
+    const deviationColor = kpis.deviationPercentage >= 70 ? [76, 175, 80] : 
+                          kpis.deviationPercentage >= 50 ? [255, 193, 7] : [244, 67, 54];
+    pdf.setDrawColor(...deviationColor);
+    pdf.setLineWidth(8);
+    
+    // Draw progress (simplified)
+    const progressAngle = (kpis.deviationPercentage / 100) * 360;
+    for (let i = 0; i < progressAngle; i += 2) {
+      const angle = (i * Math.PI) / 180;
+      const x1 = centerX + (radius - 4) * Math.cos(angle - Math.PI/2);
+      const y1 = yPos + radius + (radius - 4) * Math.sin(angle - Math.PI/2);
+      const x2 = centerX + (radius + 4) * Math.cos(angle - Math.PI/2);
+      const y2 = yPos + radius + (radius + 4) * Math.sin(angle - Math.PI/2);
+      pdf.line(x1, y1, x2, y2);
+    }
+    
+    // Percentage in center
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(16);
+    pdf.setTextColor(...deviationColor);
+    pdf.text(`${kpis.deviationPercentage.toFixed(1)}%`, centerX, yPos + radius, { align: 'center' });
+    
+    yPos += 80;
+    
+    // Status
+    const statusText = kpis.deviationPercentage >= 70 ? 'EXCELENTE' : 
+                      kpis.deviationPercentage >= 50 ? 'BUENO' : 'MEJORABLE';
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(10);
+    pdf.setTextColor(100, 100, 100);
+    pdf.text(`El Índice de Desviación representa el porcentaje de residuos que se recuperan`, 
+             pageWidth / 2, yPos, { align: 'center' });
+    pdf.text(`para economía circular en lugar de enviarse al relleno sanitario.`, 
+             pageWidth / 2, yPos + 8, { align: 'center' });
+    
+    // Footer page 2
+    yPos = pageHeight - 30;
+    pdf.setFontSize(9);
+    pdf.setTextColor(100, 100, 100);
+    pdf.text('ECONOVA © 2025 | Innovando en Gestión Ambiental', pageWidth / 2, yPos, { align: 'center' });
+    pdf.text('Página 2 de 2', pageWidth - margin, yPos, { align: 'right' });
+    
+    // Save
+    const filename = `Reporte_CCCM_${selectedYear}_${new Date().toISOString().split('T')[0]}.pdf`;
+    pdf.save(filename);
+
+    toast({
+      title: "Reporte PDF Generado",
+      description: `Reporte limpio de ${selectedYear} descargado exitosamente`,
+      variant: "default",
+    });
+  };
+
   // Generate PDF Report
   const generatePDFReport = () => {
     if (!wasteData) return;
@@ -1023,7 +1248,7 @@ export default function ResiduosExcel() {
                 
                 <div className="flex items-center gap-2">
                   <Button
-                    onClick={generatePDFReport}
+                    onClick={generateCleanPDF}
                     disabled={!wasteData}
                     className="bg-navy hover:bg-navy/90 text-white"
                   >
