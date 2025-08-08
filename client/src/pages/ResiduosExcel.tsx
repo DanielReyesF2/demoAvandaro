@@ -892,37 +892,33 @@ export default function ResiduosExcel() {
                         </h3>
                         <div className="space-y-3">
                           <div className="bg-lime-50 rounded-lg p-4 border border-lime-200">
-                            <div className="font-semibold text-lime-800 mb-2">Programa Integral Zero Waste</div>
+                            <div className="font-semibold text-lime-800 mb-2">App Trazabilidad Econova</div>
                             <ul className="text-sm text-lime-700 space-y-1">
-                              <li>• Auditoría completa de residuos en 48 horas</li>
-                              <li>• Plan personalizado para alcanzar 90% en 6 meses</li>
-                              <li>• Capacitación certificada del personal</li>
-                              <li>• Monitoreo mensual con dashboard en tiempo real</li>
+                              <li>• Control en tiempo real del sistema de gestión</li>
+                              <li>• Reportes automáticos y alertas de desviación</li>
+                              <li>• Dashboard ejecutivo para toma de decisiones</li>
+                              <li>• Integración con pesaje automático IoT</li>
                             </ul>
                           </div>
                           
                           <div className="bg-navy/5 rounded-lg p-4 border border-navy/20">
-                            <div className="font-semibold text-navy mb-2">Tecnología Econova</div>
+                            <div className="font-semibold text-navy mb-2">Servicios Synergy</div>
                             <ul className="text-sm text-navy/80 space-y-1">
-                              <li>• Sistema de pesaje automático IoT</li>
-                              <li>• App móvil para reportes instantáneos</li>
-                              <li>• Contenedores inteligentes con sensores</li>
-                              <li>• Certificación digital TRUE Zero Waste</li>
+                              <li>• Gestión integral de agua y energía</li>
+                              <li>• Optimización de sistemas PTAR y laguna</li>
+                              <li>• Monitoreo de eficiencia energética</li>
+                              <li>• Implementación de energías renovables</li>
                             </ul>
                           </div>
                           
-                          <div className="bg-white rounded-lg p-4 border border-gray-200">
-                            <div className="font-semibold text-gray-800 mb-2">Impacto Esperado</div>
-                            <div className="grid grid-cols-2 gap-4 text-sm">
-                              <div className="text-center p-2 bg-lime-100 rounded">
-                                <div className="font-bold text-lime-800">90%+</div>
-                                <div className="text-lime-600">Desviación</div>
-                              </div>
-                              <div className="text-center p-2 bg-green-100 rounded">
-                                <div className="font-bold text-green-800">Certificación</div>
-                                <div className="text-green-600">TRUE Zero Waste</div>
-                              </div>
-                            </div>
+                          <div className="bg-white rounded-lg p-4 border border-amber-200">
+                            <div className="font-semibold text-amber-800 mb-2">Composta en Sitio</div>
+                            <ul className="text-sm text-amber-700 space-y-1">
+                              <li>• Centro de compostaje institucional CCCM</li>
+                              <li>• Procesamiento de residuos orgánicos y PODA</li>
+                              <li>• Reducción del 80% de envío a relleno sanitario</li>
+                              <li>• Producción de composta para áreas verdes</li>
+                            </ul>
                           </div>
                         </div>
                       </div>
@@ -931,13 +927,21 @@ export default function ResiduosExcel() {
                     {/* Call to Action */}
                     <div className="mt-6 text-center">
                       <div className="bg-gradient-to-r from-lime-500 to-navy p-6 rounded-xl text-white">
-                        <div className="text-xl font-bold mb-2">¿Listo para transformar tu gestión de residuos?</div>
+                        <div className="text-xl font-bold mb-2">Implementación Inmediata</div>
                         <div className="text-sm text-white/80 mb-4">
-                          Contacta a Econova para implementar un plan personalizado y alcanzar la certificación TRUE Zero Waste
+                          Activa estos servicios Econova para alcanzar 90% de desviación y certificación TRUE Zero Waste
                         </div>
-                        <Button className="bg-white text-navy hover:bg-gray-100 font-semibold">
-                          Solicitar Consultoría Gratuita
-                        </Button>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                          <Button className="bg-white text-navy hover:bg-gray-100 font-semibold text-sm">
+                            Activar App Trazabilidad
+                          </Button>
+                          <Button className="bg-white text-navy hover:bg-gray-100 font-semibold text-sm">
+                            Contratar Synergy
+                          </Button>
+                          <Button className="bg-white text-navy hover:bg-gray-100 font-semibold text-sm">
+                            Implementar Composta
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </CardContent>
