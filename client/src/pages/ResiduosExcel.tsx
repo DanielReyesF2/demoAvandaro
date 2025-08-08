@@ -687,7 +687,7 @@ export default function ResiduosExcel() {
                                       Metodología Certificada TRUE Zero Waste
                                     </div>
                                   </div>
-                                  <p className="text-sm text-navy/70">Certificación TRUE Zero Waste - Estándar Internacional</p>
+                                  
                                 </div>
 
                                 {/* Visual Formula Flow */}
