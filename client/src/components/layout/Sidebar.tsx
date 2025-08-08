@@ -12,7 +12,8 @@ import {
   Droplets,
   RotateCcw,
   Table,
-  Download
+  Download,
+  Save
 } from "lucide-react";
 import logoEconova from "../../assets/Logo-ECONOVA-OF_Blanco.png";
 
@@ -67,6 +68,15 @@ export default function Sidebar() {
           isActive={location === "/"}
         >
           Dashboard General
+        </SidebarItem>
+        
+        <div className="px-4 py-2 mt-4 text-xs uppercase tracking-wider text-gray-400">Registro</div>
+        <SidebarItem 
+          to="/registro-diario" 
+          icon={<Save className="w-5 h-5" />} 
+          isActive={location === "/registro-diario"}
+        >
+          Registro Diario
         </SidebarItem>
         
         <div className="px-4 py-2 mt-4 text-xs uppercase tracking-wider text-gray-400">Módulos</div>

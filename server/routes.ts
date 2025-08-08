@@ -547,6 +547,127 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Rutas para registro diario - MVP para demostrar tiempo real
+  
+  // POST /api/daily-waste - Guardar registro diario
+  app.post('/api/daily-waste', async (req: Request, res: Response) => {
+    try {
+      const { type, material, kg, location, notes, date } = req.body;
+      
+      if (!type || !material || !kg || !location) {
+        return res.status(400).json({ message: "Faltan campos requeridos" });
+      }
+
+      const recordDate = new Date(date || new Date());
+      const year = recordDate.getFullYear();
+      const month = recordDate.getMonth() + 1;
+
+      // Obtener o crear mes
+      let monthRecord = await storage.getMonth(year, month);
+      if (!monthRecord) {
+        const monthLabels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+        monthRecord = await storage.createMonth({
+          year,
+          month,
+          label: `${monthLabels[month - 1]} ${year}`
+        });
+      }
+
+      // Guardar entrada según el tipo
+      let entry;
+      switch (type) {
+        case 'recycling':
+          entry = await storage.upsertRecyclingEntry({
+            monthId: monthRecord.id,
+            material,
+            kg: parseFloat(kg)
+          });
+          break;
+        case 'compost':
+          entry = await storage.upsertCompostEntry({
+            monthId: monthRecord.id,
+            category: material,
+            kg: parseFloat(kg)
+          });
+          break;
+        case 'reuse':
+          entry = await storage.upsertReuseEntry({
+            monthId: monthRecord.id,
+            category: material,
+            kg: parseFloat(kg)
+          });
+          break;
+        case 'landfill':
+          entry = await storage.upsertLandfillEntry({
+            monthId: monthRecord.id,
+            wasteType: material,
+            kg: parseFloat(kg)
+          });
+          break;
+        default:
+          return res.status(400).json({ message: "Tipo de residuo inválido" });
+      }
+
+      res.status(201).json({
+        message: "Registro guardado exitosamente",
+        entry,
+        location,
+        notes
+      });
+
+    } catch (error) {
+      console.error("Error saving daily waste entry:", error);
+      res.status(500).json({ message: "Error al guardar registro" });
+    }
+  });
+
+  // GET /api/daily-totals/:date - Obtener totales del día
+  app.get('/api/daily-totals/:date', async (req: Request, res: Response) => {
+    try {
+      const { date } = req.params;
+      const targetDate = new Date(date);
+      const year = targetDate.getFullYear();
+      const month = targetDate.getMonth() + 1;
+
+      // Por ahora, como es MVP, simulamos datos del mes actual
+      // En implementación real, tendríamos una tabla de registros diarios
+      const monthRecord = await storage.getMonth(year, month);
+      
+      if (!monthRecord) {
+        return res.json({
+          recycling: 0,
+          compost: 0,
+          reuse: 0,
+          landfill: 0
+        });
+      }
+
+      // Obtener entradas del mes y simular distribución diaria
+      const [recyclingEntries, compostEntries, reuseEntries, landfillEntries] = await Promise.all([
+        storage.getRecyclingEntries(monthRecord.id),
+        storage.getCompostEntries(monthRecord.id),
+        storage.getReuseEntries(monthRecord.id),
+        storage.getLandfillEntries(monthRecord.id)
+      ]);
+
+      // Calcular totales (simulando datos del día actual como 3% del mes)
+      const dayFactor = 0.03; // 3% del total mensual para simular el día actual
+      
+      const totals = {
+        recycling: recyclingEntries.reduce((sum, e) => sum + e.kg, 0) * dayFactor,
+        compost: compostEntries.reduce((sum, e) => sum + e.kg, 0) * dayFactor,
+        reuse: reuseEntries.reduce((sum, e) => sum + e.kg, 0) * dayFactor,
+        landfill: landfillEntries.reduce((sum, e) => sum + e.kg, 0) * dayFactor
+      };
+
+      res.json(totals);
+
+    } catch (error) {
+      console.error("Error fetching daily totals:", error);
+      res.status(500).json({ message: "Error al obtener totales del día" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
