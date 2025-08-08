@@ -803,33 +803,7 @@ export default function ResiduosExcel() {
                   
                   <CardContent className="p-6">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      {/* Current Status Alert */}
-                      <div className="lg:col-span-2">
-                        <div className={`p-4 rounded-xl border-l-4 ${
-                          kpis.deviationPercentage < 50 ? 
-                            'bg-red-50 border-red-500 text-red-800' :
-                            'bg-amber-50 border-amber-500 text-amber-800'
-                        }`}>
-                          <div className="flex items-center gap-3">
-                            <AlertCircle className="h-6 w-6 flex-shrink-0" />
-                            <div>
-                              <div className="font-bold text-lg">
-                                {kpis.deviationPercentage < 50 ? 
-                                  'ALERTA CRÍTICA: ' :
-                                  'ATENCIÓN: '
-                                }
-                                Nivel actual {kpis.deviationPercentage.toFixed(1)}% - Meta 90%
-                              </div>
-                              <div className="text-sm mt-1">
-                                {kpis.deviationPercentage < 50 ? 
-                                  'Se requiere incrementar la desviación en ' + (90 - kpis.deviationPercentage).toFixed(1) + ' puntos porcentuales mediante acciones inmediatas.' :
-                                  'Estás en el camino correcto. Faltan ' + (90 - kpis.deviationPercentage).toFixed(1) + ' puntos para alcanzar la meta.'
-                                }
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                      
 
                       {/* Priority Actions */}
                       <div>
