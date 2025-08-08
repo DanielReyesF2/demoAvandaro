@@ -25,7 +25,8 @@ import {
   Target,
   CheckCircle,
   AlertCircle,
-  Download
+  Download,
+  Loader2
 } from 'lucide-react';
 
 // Types for the Excel replication
@@ -964,8 +965,33 @@ export default function ResiduosExcel() {
           {/* Excel-style Table */}
           <Card className="mb-6">
             <CardHeader>
-              <CardTitle className="text-navy">Tabla Interactiva de Trazabilidad</CardTitle>
-              <p className="text-gray-600">Datos editables por categoría y mes</p>
+              <div className="flex justify-between items-start">
+                <div>
+                  <CardTitle className="text-navy">Tabla Interactiva de Trazabilidad</CardTitle>
+                  <p className="text-gray-600">Datos editables por categoría y mes</p>
+                </div>
+                <div className="flex gap-2">
+                  {Object.keys(editedData).length > 0 && (
+                    <Button
+                      onClick={handleSave}
+                      disabled={updateMutation.isPending}
+                      className="bg-lime text-navy hover:bg-lime/80 font-semibold"
+                    >
+                      {updateMutation.isPending ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Guardando...
+                        </>
+                      ) : (
+                        <>
+                          <Save className="mr-2 h-4 w-4" />
+                          Guardar Cambios
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
