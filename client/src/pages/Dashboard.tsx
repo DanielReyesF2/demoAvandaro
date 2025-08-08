@@ -165,7 +165,7 @@ export default function Dashboard() {
                   </div>
                   <ArrowRight className="w-6 h-6 text-gray-400 group-hover:text-green-500 group-hover:translate-x-1 transition-all" />
                 </div>
-                <div className="text-4xl font-anton text-green-600 mb-2">{processedData.wasteDeviation}%</div>
+                <div className="text-4xl font-anton text-green-600 mb-2">{processedData.wasteDeviation.toFixed(1)}%</div>
                 <div className="text-sm text-gray-500 mb-2 uppercase tracking-wide">Desviación del Relleno</div>
                 <div className="text-lg font-bold text-gray-900 mb-1">Residuos</div>
                 <div className="text-sm text-gray-600">TRUE Zero Waste en progreso</div>
