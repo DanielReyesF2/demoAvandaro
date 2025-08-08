@@ -768,21 +768,6 @@ export default function ResiduosExcel() {
                                   </div>
                                 </div>
 
-                                {/* Mathematical Formula Display */}
-                                <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
-                                  <div className="text-center">
-                                    <div className="text-sm text-gray-600 mb-2">Fórmula matemática:</div>
-                                    <div className="font-mono text-lg text-navy bg-navy/5 rounded-lg p-3 inline-block">
-                                      % = (Total Circular ÷ Total Residuos) × 100
-                                    </div>
-                                  </div>
-                                  <div className="mt-3 text-center">
-                                    <div className="text-sm text-gray-600">Aplicando los valores actuales:</div>
-                                    <div className="font-mono text-sm text-gray-700 bg-gray-50 rounded-lg p-3 mt-2">
-                                      ({kpis.totalCircular.toLocaleString('es-ES', { maximumFractionDigits: 1 })} ÷ {kpis.totalWeight.toLocaleString('es-ES', { maximumFractionDigits: 1 })}) × 100 = <span className="font-bold text-navy">{kpis.deviationPercentage.toFixed(1)}%</span>
-                                    </div>
-                                  </div>
-                                </div>
 
                                 {/* Certification Badge */}
                                 <div className="text-center mt-4">
