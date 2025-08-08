@@ -800,17 +800,7 @@ export default function ResiduosExcel() {
             {kpis.deviationPercentage < 70 && (
               <div className="lg:col-span-4 mt-6">
                 <Card className="border-2 border-lime-200 bg-gradient-to-r from-lime-50 via-white to-navy/5">
-                  <CardHeader className="bg-gradient-to-r from-lime-500 to-navy text-white">
-                    <CardTitle className="flex items-center gap-3">
-                      <div className="p-2 bg-white/20 rounded-full">
-                        <Target className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <div className="text-lg font-bold">Plan de Acción Econova</div>
-                        <div className="text-sm text-white/80">Recomendaciones para alcanzar la meta del 90%</div>
-                      </div>
-                    </CardTitle>
-                  </CardHeader>
+                  
                   <CardContent className="p-6">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                       {/* Current Status Alert */}
