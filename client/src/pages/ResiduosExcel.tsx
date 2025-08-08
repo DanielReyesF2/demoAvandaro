@@ -8,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import AppLayout from '@/components/layout/AppLayout';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 import { 
   ChevronDown, 
   ChevronRight, 
@@ -22,7 +24,8 @@ import {
   ArrowRight,
   Target,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Download
 } from 'lucide-react';
 
 // Types for the Excel replication
@@ -209,6 +212,287 @@ export default function ResiduosExcel() {
     }));
   };
 
+  // Generate PDF Report
+  const generatePDFReport = () => {
+    if (!wasteData) return;
+
+    const pdf = new jsPDF('landscape', 'mm', 'a4');
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const margin = 20;
+    const kpis = calculateKPIs();
+    const totals = getSectionTotals();
+
+    // Header
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(18);
+    pdf.setTextColor(39, 57, 73); // Navy color
+    pdf.text('REPORTE DE TRAZABILIDAD DE RESIDUOS', pageWidth / 2, 25, { align: 'center' });
+    
+    pdf.setFontSize(12);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text(`Club Campestre Ciudad de México - Año ${selectedYear}`, pageWidth / 2, 35, { align: 'center' });
+    pdf.text(`Generado el: ${new Date().toLocaleDateString('es-ES')}`, pageWidth / 2, 42, { align: 'center' });
+
+    // KPIs Section
+    let yPos = 55;
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(14);
+    pdf.text('INDICADORES CLAVE DE DESEMPEÑO (KPI)', margin, yPos);
+    
+    yPos += 10;
+    const kpiData = [
+      ['Indicador', 'Valor', 'Meta', 'Estado'],
+      ['Total Circular (kg)', kpis.totalCircular.toLocaleString('es-ES', { maximumFractionDigits: 1 }), '-', 'Activo'],
+      ['Total Relleno Sanitario (kg)', kpis.totalLandfill.toLocaleString('es-ES', { maximumFractionDigits: 1 }), 'Minimizar', 'Monitoreo'],
+      ['Total Generado (kg)', kpis.totalWeight.toLocaleString('es-ES', { maximumFractionDigits: 1 }), '-', 'Registro'],
+      ['% Desviación de Relleno', `${kpis.deviationPercentage.toFixed(1)}%`, '≥70%', kpis.deviationPercentage >= 70 ? 'Excelente' : kpis.deviationPercentage >= 50 ? 'Bueno' : 'Mejorable']
+    ];
+
+    (pdf as any).autoTable({
+      startY: yPos,
+      head: [kpiData[0]],
+      body: kpiData.slice(1),
+      theme: 'grid',
+      headStyles: { fillColor: [39, 57, 73], textColor: 255, fontStyle: 'bold' },
+      bodyStyles: { fontSize: 10 },
+      columnStyles: {
+        0: { fontStyle: 'bold', cellWidth: 70 },
+        1: { halign: 'right', cellWidth: 50 },
+        2: { halign: 'center', cellWidth: 30 },
+        3: { halign: 'center', cellWidth: 40 }
+      },
+      margin: { left: margin, right: margin }
+    });
+
+    yPos = (pdf as any).lastAutoTable.finalY + 15;
+
+    // Detailed Data Table - Recycling
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(12);
+    pdf.text('RECICLAJE (kg)', margin, yPos);
+    yPos += 8;
+
+    const recyclingData = [['Material', ...MONTH_LABELS, 'Total']];
+    wasteData.materials.recycling.forEach(material => {
+      const row = [material];
+      MONTH_LABELS.forEach((_, monthIndex) => {
+        row.push(getValue('recycling', material, monthIndex).toString());
+      });
+      row.push(getRowTotal('recycling', material).toLocaleString('es-ES', { maximumFractionDigits: 1 }));
+      recyclingData.push(row);
+    });
+
+    // Add totals row
+    const recyclingTotalsRow = ['TOTAL RECICLAJE'];
+    MONTH_LABELS.forEach((_, monthIndex) => {
+      let monthTotal = 0;
+      wasteData.materials.recycling.forEach(material => {
+        monthTotal += getValue('recycling', material, monthIndex);
+      });
+      recyclingTotalsRow.push(monthTotal.toLocaleString('es-ES', { maximumFractionDigits: 1 }));
+    });
+    recyclingTotalsRow.push(totals.recyclingTotal.toLocaleString('es-ES', { maximumFractionDigits: 1 }));
+    recyclingData.push(recyclingTotalsRow);
+
+    (pdf as any).autoTable({
+      startY: yPos,
+      head: [recyclingData[0]],
+      body: recyclingData.slice(1, -1),
+      foot: [recyclingData[recyclingData.length - 1]],
+      theme: 'grid',
+      headStyles: { fillColor: [34, 197, 94], textColor: 255, fontSize: 8, fontStyle: 'bold' },
+      bodyStyles: { fontSize: 7 },
+      footStyles: { fillColor: [34, 197, 94], textColor: 255, fontSize: 8, fontStyle: 'bold' },
+      columnStyles: {
+        0: { fontStyle: 'bold', cellWidth: 35 },
+        ...Object.fromEntries(MONTH_LABELS.map((_, i) => [i + 1, { halign: 'right', cellWidth: 18 }])),
+        13: { halign: 'right', cellWidth: 25, fontStyle: 'bold' }
+      },
+      margin: { left: margin, right: margin }
+    });
+
+    // Add new page for remaining sections
+    pdf.addPage();
+    yPos = 25;
+
+    // Compost Section
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(12);
+    pdf.text('COMPOSTA (kg)', margin, yPos);
+    yPos += 8;
+
+    const compostData = [['Categoría', ...MONTH_LABELS, 'Total']];
+    wasteData.materials.compost.forEach(category => {
+      const row = [category];
+      MONTH_LABELS.forEach((_, monthIndex) => {
+        row.push(getValue('compost', category, monthIndex).toString());
+      });
+      row.push(getRowTotal('compost', category).toLocaleString('es-ES', { maximumFractionDigits: 1 }));
+      compostData.push(row);
+    });
+
+    const compostTotalsRow = ['TOTAL COMPOSTA'];
+    MONTH_LABELS.forEach((_, monthIndex) => {
+      let monthTotal = 0;
+      wasteData.materials.compost.forEach(category => {
+        monthTotal += getValue('compost', category, monthIndex);
+      });
+      compostTotalsRow.push(monthTotal.toLocaleString('es-ES', { maximumFractionDigits: 1 }));
+    });
+    compostTotalsRow.push(totals.compostTotal.toLocaleString('es-ES', { maximumFractionDigits: 1 }));
+    compostData.push(compostTotalsRow);
+
+    (pdf as any).autoTable({
+      startY: yPos,
+      head: [compostData[0]],
+      body: compostData.slice(1, -1),
+      foot: [compostData[compostData.length - 1]],
+      theme: 'grid',
+      headStyles: { fillColor: [245, 158, 11], textColor: 255, fontSize: 8, fontStyle: 'bold' },
+      bodyStyles: { fontSize: 7 },
+      footStyles: { fillColor: [245, 158, 11], textColor: 255, fontSize: 8, fontStyle: 'bold' },
+      columnStyles: {
+        0: { fontStyle: 'bold', cellWidth: 35 },
+        ...Object.fromEntries(MONTH_LABELS.map((_, i) => [i + 1, { halign: 'right', cellWidth: 18 }])),
+        13: { halign: 'right', cellWidth: 25, fontStyle: 'bold' }
+      },
+      margin: { left: margin, right: margin }
+    });
+
+    yPos = (pdf as any).lastAutoTable.finalY + 15;
+
+    // Reuse Section
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(12);
+    pdf.text('REUSO (kg)', margin, yPos);
+    yPos += 8;
+
+    const reuseData = [['Categoría', ...MONTH_LABELS, 'Total']];
+    wasteData.materials.reuse.forEach(category => {
+      const row = [category];
+      MONTH_LABELS.forEach((_, monthIndex) => {
+        row.push(getValue('reuse', category, monthIndex).toString());
+      });
+      row.push(getRowTotal('reuse', category).toLocaleString('es-ES', { maximumFractionDigits: 1 }));
+      reuseData.push(row);
+    });
+
+    const reuseTotalsRow = ['TOTAL REUSO'];
+    MONTH_LABELS.forEach((_, monthIndex) => {
+      let monthTotal = 0;
+      wasteData.materials.reuse.forEach(category => {
+        monthTotal += getValue('reuse', category, monthIndex);
+      });
+      reuseTotalsRow.push(monthTotal.toLocaleString('es-ES', { maximumFractionDigits: 1 }));
+    });
+    reuseTotalsRow.push(totals.reuseTotal.toLocaleString('es-ES', { maximumFractionDigits: 1 }));
+    reuseData.push(reuseTotalsRow);
+
+    (pdf as any).autoTable({
+      startY: yPos,
+      head: [reuseData[0]],
+      body: reuseData.slice(1, -1),
+      foot: [reuseData[reuseData.length - 1]],
+      theme: 'grid',
+      headStyles: { fillColor: [59, 130, 246], textColor: 255, fontSize: 8, fontStyle: 'bold' },
+      bodyStyles: { fontSize: 7 },
+      footStyles: { fillColor: [59, 130, 246], textColor: 255, fontSize: 8, fontStyle: 'bold' },
+      columnStyles: {
+        0: { fontStyle: 'bold', cellWidth: 35 },
+        ...Object.fromEntries(MONTH_LABELS.map((_, i) => [i + 1, { halign: 'right', cellWidth: 18 }])),
+        13: { halign: 'right', cellWidth: 25, fontStyle: 'bold' }
+      },
+      margin: { left: margin, right: margin }
+    });
+
+    yPos = (pdf as any).lastAutoTable.finalY + 15;
+
+    // Landfill Section
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(12);
+    pdf.text('RELLENO SANITARIO (kg)', margin, yPos);
+    yPos += 8;
+
+    const landfillData = [['Tipo', ...MONTH_LABELS, 'Total']];
+    wasteData.materials.landfill.forEach(wasteType => {
+      const row = [wasteType];
+      MONTH_LABELS.forEach((_, monthIndex) => {
+        row.push(getValue('landfill', wasteType, monthIndex).toString());
+      });
+      row.push(getRowTotal('landfill', wasteType).toLocaleString('es-ES', { maximumFractionDigits: 1 }));
+      landfillData.push(row);
+    });
+
+    const landfillTotalsRow = ['TOTAL RELLENO'];
+    MONTH_LABELS.forEach((_, monthIndex) => {
+      let monthTotal = 0;
+      wasteData.materials.landfill.forEach(wasteType => {
+        monthTotal += getValue('landfill', wasteType, monthIndex);
+      });
+      landfillTotalsRow.push(monthTotal.toLocaleString('es-ES', { maximumFractionDigits: 1 }));
+    });
+    landfillTotalsRow.push(totals.landfillTotal.toLocaleString('es-ES', { maximumFractionDigits: 1 }));
+    landfillData.push(landfillTotalsRow);
+
+    (pdf as any).autoTable({
+      startY: yPos,
+      head: [landfillData[0]],
+      body: landfillData.slice(1, -1),
+      foot: [landfillData[landfillData.length - 1]],
+      theme: 'grid',
+      headStyles: { fillColor: [239, 68, 68], textColor: 255, fontSize: 8, fontStyle: 'bold' },
+      bodyStyles: { fontSize: 7 },
+      footStyles: { fillColor: [239, 68, 68], textColor: 255, fontSize: 8, fontStyle: 'bold' },
+      columnStyles: {
+        0: { fontStyle: 'bold', cellWidth: 35 },
+        ...Object.fromEntries(MONTH_LABELS.map((_, i) => [i + 1, { halign: 'right', cellWidth: 18 }])),
+        13: { halign: 'right', cellWidth: 25, fontStyle: 'bold' }
+      },
+      margin: { left: margin, right: margin }
+    });
+
+    // Footer with methodology
+    yPos = (pdf as any).lastAutoTable.finalY + 20;
+    if (yPos > pageHeight - 50) {
+      pdf.addPage();
+      yPos = 25;
+    }
+
+    // Certification methodology
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(14);
+    pdf.text('METODOLOGÍA TRUE ZERO WASTE', margin, yPos);
+    yPos += 10;
+
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(10);
+    const methodologyText = [
+      `Fórmula: % Desviación = (Total Circular ÷ Total Residuos) × 100`,
+      `Donde: Total Circular = Reciclaje + Composta + Reuso`,
+      ``,
+      `Resultado actual: ${kpis.deviationPercentage.toFixed(1)}% - ${kpis.deviationPercentage >= 70 ? 'EXCELENTE' : kpis.deviationPercentage >= 50 ? 'BUENO' : 'MEJORABLE'}`,
+      `Meta institucional: ≥70% para certificación TRUE Zero Waste`,
+      ``,
+      `Este reporte fue generado automáticamente por el Sistema ECONOVA`,
+      `Fecha de generación: ${new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}`
+    ];
+
+    methodologyText.forEach(line => {
+      pdf.text(line, margin, yPos);
+      yPos += 6;
+    });
+
+    // Save the PDF
+    const filename = `Reporte_Trazabilidad_Residuos_${selectedYear}_${new Date().toISOString().split('T')[0]}.pdf`;
+    pdf.save(filename);
+
+    toast({
+      title: "✅ Reporte PDF generado",
+      description: `Se ha descargado el reporte completo de trazabilidad de residuos ${selectedYear}`,
+    });
+  };
+
   // Save changes
   const handleSave = () => {
     if (!wasteData || Object.keys(editedData).length === 0) return;
@@ -374,23 +658,36 @@ export default function ResiduosExcel() {
                   </Select>
                 </div>
                 
-                <Button
-                  onClick={handleSave}
-                  disabled={!hasChanges || updateMutation.isPending}
-                  className="bg-lime-500 hover:bg-lime-600 text-navy"
-                >
-                  {updateMutation.isPending ? (
+                <div className="flex items-center gap-2">
+                  <Button
+                    onClick={generatePDFReport}
+                    disabled={!wasteData}
+                    className="bg-navy hover:bg-navy/90 text-white"
+                  >
                     <div className="flex items-center gap-2">
-                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-navy border-t-transparent"></div>
-                      Guardando...
+                      <Download className="h-4 w-4" />
+                      Descargar PDF
                     </div>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <Save className="h-4 w-4" />
-                      Actualizar
-                    </div>
-                  )}
-                </Button>
+                  </Button>
+                  
+                  <Button
+                    onClick={handleSave}
+                    disabled={!hasChanges || updateMutation.isPending}
+                    className="bg-lime-500 hover:bg-lime-600 text-navy"
+                  >
+                    {updateMutation.isPending ? (
+                      <div className="flex items-center gap-2">
+                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-navy border-t-transparent"></div>
+                        Guardando...
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <Save className="h-4 w-4" />
+                        Actualizar
+                      </div>
+                    )}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
