@@ -683,9 +683,6 @@ export default function ResiduosExcel() {
                                 <div className="text-center mb-6">
                                   <div className="flex items-center justify-center gap-3 mb-2">
                                     <h3 className="text-xl font-bold text-navy">Metodología de Cálculo Certificada</h3>
-                                    <div className="p-2 bg-lime-500 rounded-full">
-                                      <CheckCircle className="h-5 w-5 text-navy" />
-                                    </div>
                                   </div>
                                   <p className="text-sm text-navy/70">Certificación TRUE Zero Waste - Estándar Internacional</p>
                                 </div>
