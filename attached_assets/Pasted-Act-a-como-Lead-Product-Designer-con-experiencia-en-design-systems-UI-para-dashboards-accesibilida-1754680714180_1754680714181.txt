@@ -1,0 +1,60 @@
+Actúa como Lead Product Designer con experiencia en design systems, UI para dashboards, accesibilidad (WCAG 2.1 AA) y Frontend Senior (React + TypeScript + Tailwind + shadcn/ui + Recharts + Puppeteer/Playwright para PDF). Tu objetivo es rediseñar el “Reporte de Trazabilidad de Residuos” de EcoNova con un look & feel premium, claro y orientado a decisiones, y generar un PDF perfecto para enviar a clientes.
+
+Restricción: El reporte final no debe exceder 3 páginas A4 (portada + 2 páginas de datos y análisis).
+
+🏗️ Estructura de páginas (máximo 3)
+
+Página 1 – Portada y Resumen Ejecutivo
+
+Portada con logos de EcoNova y cliente.
+
+KPIs principales en formato dashboard (Total Circular, Total a Relleno, Total Generado, % Desviación con estado de color).
+
+Texto breve de interpretación y objetivo.
+
+Página 2 – Datos y Gráficos
+
+Tablas estilizadas y resumidas con totales anuales.
+
+Gráficos claros (barras y pastel) mostrando distribución y tendencia.
+
+Solo datos clave para no saturar.
+
+Página 3 – Metodología y Plan de Acción
+
+Infografía de fórmula y metas.
+
+Barra de metas (actual, certificación, excelencia, cero relleno).
+
+Lista breve de próximos pasos.
+
+🔧 Reglas clave para cumplir 3 páginas
+
+Consolidar tablas (mostrar totales anuales, no mes a mes completo en tabla; usar gráficos para evolución mensual).
+
+Reducir texto explicativo a frases claras y concisas.
+
+Usar layout de dos columnas para maximizar espacio.
+
+Mantener márgenes de 15–18 mm para legibilidad.
+
+Evitar repeticiones entre tablas y gráficos.
+
+🧩 Design tokens y stack
+
+(igual que en la versión original: colores, tipografías, componentes y stack React/Tailwind/Recharts con exportación a PDF)
+
+📦 Datos y criterios de aceptación
+
+(igual que en la versión original, asegurando que la estructura y visualización se adapten a 3 páginas máximo)
+
+🗣️ Instrucción final para ti (Replit/AI)
+
+Implementa la estructura en máximo 3 páginas A4.
+
+Prioriza visualizaciones y KPIs sobre tablas extensas.
+
+Exporta el PDF asegurando que todo el contenido se vea completo y legible.
+
+Confirma que Reporte_Trazabilidad_CCCM_2025.pdf final cumpla con las restricciones de longitud y calidad visual.
+
