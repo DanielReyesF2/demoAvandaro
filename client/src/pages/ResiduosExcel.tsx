@@ -223,16 +223,16 @@ export default function ResiduosExcel() {
     const kpis = calculateKPIs();
     const totals = getSectionTotals();
 
-    // Color palette
+    // Color palette (fixed as tuples)
     const colors = {
-      primary: [39, 57, 73],    // Navy
-      accent: [181, 233, 81],   // Lime
-      success: [34, 197, 94],   // Green
-      warning: [245, 158, 11],  // Amber
-      info: [59, 130, 246],     // Blue
-      danger: [239, 68, 68],    // Red
-      text: [55, 65, 81],       // Gray-700
-      lightGray: [249, 250, 251] // Gray-50
+      primary: [39, 57, 73] as [number, number, number],
+      accent: [181, 233, 81] as [number, number, number],
+      success: [34, 197, 94] as [number, number, number],
+      warning: [245, 158, 11] as [number, number, number],
+      info: [59, 130, 246] as [number, number, number],
+      danger: [239, 68, 68] as [number, number, number],
+      text: [55, 65, 81] as [number, number, number],
+      lightGray: [249, 250, 251] as [number, number, number]
     };
 
     // Header with branding
@@ -293,7 +293,7 @@ export default function ResiduosExcel() {
     pdf.setFont('helvetica', 'bold');
     pdf.setFontSize(16);
     pdf.setTextColor(...colors.primary);
-    pdf.text('📊 RESUMEN EJECUTIVO', margin, yPos + 5);
+    pdf.text('RESUMEN EJECUTIVO', margin, yPos + 5);
     
     yPos += 15;
     
@@ -302,10 +302,10 @@ export default function ResiduosExcel() {
     const cardHeight = 25;
     
     const kpiCards = [
-      { label: 'Total Circular', value: kpis.totalCircular.toLocaleString('es-ES', { maximumFractionDigits: 0 }) + ' kg', color: colors.success, icon: '♻️' },
-      { label: 'Total Relleno', value: kpis.totalLandfill.toLocaleString('es-ES', { maximumFractionDigits: 0 }) + ' kg', color: colors.danger, icon: '🗑️' },
-      { label: 'Total Generado', value: kpis.totalWeight.toLocaleString('es-ES', { maximumFractionDigits: 0 }) + ' kg', color: colors.info, icon: '📈' },
-      { label: 'Desviación', value: kpis.deviationPercentage.toFixed(1) + '%', color: kpis.deviationPercentage >= 70 ? colors.success : colors.warning, icon: '🎯' }
+      { label: 'Total Circular', value: kpis.totalCircular.toLocaleString('es-ES', { maximumFractionDigits: 0 }) + ' kg', color: colors.success, icon: 'R' },
+      { label: 'Total Relleno', value: kpis.totalLandfill.toLocaleString('es-ES', { maximumFractionDigits: 0 }) + ' kg', color: colors.danger, icon: 'X' },
+      { label: 'Total Generado', value: kpis.totalWeight.toLocaleString('es-ES', { maximumFractionDigits: 0 }) + ' kg', color: colors.info, icon: 'G' },
+      { label: 'Desviación', value: kpis.deviationPercentage.toFixed(1) + '%', color: kpis.deviationPercentage >= 70 ? colors.success : colors.warning, icon: '%' }
     ];
     
     kpiCards.forEach((card, index) => {
@@ -356,19 +356,19 @@ export default function ResiduosExcel() {
     yPos = 50;
 
     // Helper function for section headers
-    const addSectionHeader = (title: string, icon: string, color: number[]) => {
+    const addSectionHeader = (title: string, color: [number, number, number]) => {
       pdf.setFillColor(...color);
       pdf.rect(margin - 5, yPos - 5, pageWidth - 2 * margin + 10, 12, 'F');
       
       pdf.setFont('helvetica', 'bold');
       pdf.setFontSize(14);
       pdf.setTextColor(255, 255, 255);
-      pdf.text(`${icon} ${title}`, margin, yPos + 3);
+      pdf.text(title, margin, yPos + 3);
       yPos += 15;
     };
 
     // Detailed Data Table - Recycling
-    addSectionHeader('RECICLAJE (kg)', '♻️', colors.success);
+    addSectionHeader('RECICLAJE (kg)', colors.success);
 
     const recyclingData = [['Material', ...MONTH_LABELS, 'Total Anual']];
     wasteData.materials.recycling.forEach(material => {
@@ -408,7 +408,7 @@ export default function ResiduosExcel() {
       },
       bodyStyles: { 
         fontSize: 8,
-        alternateRowStyles: { fillColor: [248, 250, 252] }
+        fillColor: [248, 250, 252]
       },
       footStyles: { 
         fillColor: [...colors.success], 
@@ -418,9 +418,9 @@ export default function ResiduosExcel() {
         halign: 'center'
       },
       columnStyles: {
-        0: { fontStyle: 'bold', cellWidth: 35, halign: 'left' },
-        ...Object.fromEntries(MONTH_LABELS.map((_, i) => [i + 1, { halign: 'right', cellWidth: 18 }])),
-        13: { halign: 'right', cellWidth: 25, fontStyle: 'bold', fillColor: [240, 253, 244] }
+        0: { fontStyle: 'bold', cellWidth: 30, halign: 'left' },
+        ...Object.fromEntries(MONTH_LABELS.map((_, i) => [i + 1, { halign: 'right', cellWidth: 16 }])),
+        13: { halign: 'right', cellWidth: 22, fontStyle: 'bold', fillColor: [240, 253, 244] }
       },
       margin: { left: margin, right: margin },
       styles: {
@@ -432,7 +432,7 @@ export default function ResiduosExcel() {
     yPos = (pdf as any).lastAutoTable.finalY + 20;
 
     // Compost Section
-    addSectionHeader('COMPOSTA (kg)', '🌱', colors.warning);
+    addSectionHeader('COMPOSTA (kg)', colors.warning);
 
     const compostData = [['Categoría', ...MONTH_LABELS, 'Total Anual']];
     wasteData.materials.compost.forEach(category => {
@@ -471,7 +471,7 @@ export default function ResiduosExcel() {
       },
       bodyStyles: { 
         fontSize: 8,
-        alternateRowStyles: { fillColor: [254, 252, 232] }
+        fillColor: [254, 252, 232]
       },
       footStyles: { 
         fillColor: [...colors.warning], 
@@ -481,9 +481,9 @@ export default function ResiduosExcel() {
         halign: 'center'
       },
       columnStyles: {
-        0: { fontStyle: 'bold', cellWidth: 35, halign: 'left' },
-        ...Object.fromEntries(MONTH_LABELS.map((_, i) => [i + 1, { halign: 'right', cellWidth: 18 }])),
-        13: { halign: 'right', cellWidth: 25, fontStyle: 'bold', fillColor: [254, 243, 199] }
+        0: { fontStyle: 'bold', cellWidth: 30, halign: 'left' },
+        ...Object.fromEntries(MONTH_LABELS.map((_, i) => [i + 1, { halign: 'right', cellWidth: 16 }])),
+        13: { halign: 'right', cellWidth: 22, fontStyle: 'bold', fillColor: [254, 243, 199] }
       },
       margin: { left: margin, right: margin },
       styles: {
@@ -503,7 +503,7 @@ export default function ResiduosExcel() {
     }
 
     // Reuse Section
-    addSectionHeader('REUSO (kg)', '🔄', colors.info);
+    addSectionHeader('REUSO (kg)', colors.info);
 
     const reuseData = [['Categoría', ...MONTH_LABELS, 'Total Anual']];
     wasteData.materials.reuse.forEach(category => {
@@ -542,7 +542,7 @@ export default function ResiduosExcel() {
       },
       bodyStyles: { 
         fontSize: 8,
-        alternateRowStyles: { fillColor: [239, 246, 255] }
+        fillColor: [239, 246, 255]
       },
       footStyles: { 
         fillColor: [...colors.info], 
@@ -552,9 +552,9 @@ export default function ResiduosExcel() {
         halign: 'center'
       },
       columnStyles: {
-        0: { fontStyle: 'bold', cellWidth: 35, halign: 'left' },
-        ...Object.fromEntries(MONTH_LABELS.map((_, i) => [i + 1, { halign: 'right', cellWidth: 18 }])),
-        13: { halign: 'right', cellWidth: 25, fontStyle: 'bold', fillColor: [219, 234, 254] }
+        0: { fontStyle: 'bold', cellWidth: 30, halign: 'left' },
+        ...Object.fromEntries(MONTH_LABELS.map((_, i) => [i + 1, { halign: 'right', cellWidth: 16 }])),
+        13: { halign: 'right', cellWidth: 22, fontStyle: 'bold', fillColor: [219, 234, 254] }
       },
       margin: { left: margin, right: margin },
       styles: {
@@ -566,7 +566,7 @@ export default function ResiduosExcel() {
     yPos = (pdf as any).lastAutoTable.finalY + 20;
 
     // Landfill Section
-    addSectionHeader('RELLENO SANITARIO (kg)', '🗑️', colors.danger);
+    addSectionHeader('RELLENO SANITARIO (kg)', colors.danger);
 
     const landfillData = [['Tipo', ...MONTH_LABELS, 'Total Anual']];
     wasteData.materials.landfill.forEach(wasteType => {
@@ -605,7 +605,7 @@ export default function ResiduosExcel() {
       },
       bodyStyles: { 
         fontSize: 8,
-        alternateRowStyles: { fillColor: [254, 242, 242] }
+        fillColor: [254, 242, 242]
       },
       footStyles: { 
         fillColor: [...colors.danger], 
@@ -615,9 +615,9 @@ export default function ResiduosExcel() {
         halign: 'center'
       },
       columnStyles: {
-        0: { fontStyle: 'bold', cellWidth: 35, halign: 'left' },
-        ...Object.fromEntries(MONTH_LABELS.map((_, i) => [i + 1, { halign: 'right', cellWidth: 18 }])),
-        13: { halign: 'right', cellWidth: 25, fontStyle: 'bold', fillColor: [254, 226, 226] }
+        0: { fontStyle: 'bold', cellWidth: 30, halign: 'left' },
+        ...Object.fromEntries(MONTH_LABELS.map((_, i) => [i + 1, { halign: 'right', cellWidth: 16 }])),
+        13: { halign: 'right', cellWidth: 22, fontStyle: 'bold', fillColor: [254, 226, 226] }
       },
       margin: { left: margin, right: margin },
       styles: {
@@ -642,7 +642,7 @@ export default function ResiduosExcel() {
     pdf.setFont('helvetica', 'bold');
     pdf.setFontSize(16);
     pdf.setTextColor(255, 255, 255);
-    pdf.text('🎯 METODOLOGÍA TRUE ZERO WASTE', margin, yPos + 7);
+    pdf.text('METODOLOGÍA TRUE ZERO WASTE', margin, yPos + 7);
     yPos += 25;
 
     // Formula section
