@@ -297,9 +297,9 @@ export default function ResiduosExcel() {
     
     yPos += 15;
     
-    // KPI Cards Layout
-    const cardWidth = (pageWidth - 2 * margin - 30) / 4;
-    const cardHeight = 25;
+    // KPI Cards Layout - More compact
+    const cardWidth = (pageWidth - 2 * margin - 15) / 4;
+    const cardHeight = 20;
     
     const kpiCards = [
       { label: 'Total Circular', value: kpis.totalCircular.toLocaleString('es-ES', { maximumFractionDigits: 0 }) + ' kg', color: colors.success, icon: 'R' },
@@ -418,9 +418,9 @@ export default function ResiduosExcel() {
         halign: 'center'
       },
       columnStyles: {
-        0: { fontStyle: 'bold', cellWidth: 30, halign: 'left' },
-        ...Object.fromEntries(MONTH_LABELS.map((_, i) => [i + 1, { halign: 'right', cellWidth: 16 }])),
-        13: { halign: 'right', cellWidth: 22, fontStyle: 'bold', fillColor: [240, 253, 244] }
+        0: { fontStyle: 'bold', cellWidth: 28, halign: 'left' },
+        ...Object.fromEntries(MONTH_LABELS.map((_, i) => [i + 1, { halign: 'right', cellWidth: 14 }])),
+        13: { halign: 'right', cellWidth: 20, fontStyle: 'bold', fillColor: [240, 253, 244] }
       },
       margin: { left: margin, right: margin },
       styles: {
@@ -429,7 +429,7 @@ export default function ResiduosExcel() {
       }
     });
 
-    yPos = (pdf as any).lastAutoTable.finalY + 20;
+    yPos = (pdf as any).lastAutoTable.finalY + 12;
 
     // Compost Section
     addSectionHeader('COMPOSTA (kg)', colors.warning);
@@ -481,9 +481,9 @@ export default function ResiduosExcel() {
         halign: 'center'
       },
       columnStyles: {
-        0: { fontStyle: 'bold', cellWidth: 30, halign: 'left' },
-        ...Object.fromEntries(MONTH_LABELS.map((_, i) => [i + 1, { halign: 'right', cellWidth: 16 }])),
-        13: { halign: 'right', cellWidth: 22, fontStyle: 'bold', fillColor: [254, 243, 199] }
+        0: { fontStyle: 'bold', cellWidth: 28, halign: 'left' },
+        ...Object.fromEntries(MONTH_LABELS.map((_, i) => [i + 1, { halign: 'right', cellWidth: 14 }])),
+        13: { halign: 'right', cellWidth: 20, fontStyle: 'bold', fillColor: [254, 243, 199] }
       },
       margin: { left: margin, right: margin },
       styles: {
@@ -492,7 +492,7 @@ export default function ResiduosExcel() {
       }
     });
 
-    yPos = (pdf as any).lastAutoTable.finalY + 20;
+    yPos = (pdf as any).lastAutoTable.finalY + 12;
 
     // Check if we need a new page
     if (yPos > pageHeight - 100) {
@@ -552,9 +552,9 @@ export default function ResiduosExcel() {
         halign: 'center'
       },
       columnStyles: {
-        0: { fontStyle: 'bold', cellWidth: 30, halign: 'left' },
-        ...Object.fromEntries(MONTH_LABELS.map((_, i) => [i + 1, { halign: 'right', cellWidth: 16 }])),
-        13: { halign: 'right', cellWidth: 22, fontStyle: 'bold', fillColor: [219, 234, 254] }
+        0: { fontStyle: 'bold', cellWidth: 28, halign: 'left' },
+        ...Object.fromEntries(MONTH_LABELS.map((_, i) => [i + 1, { halign: 'right', cellWidth: 14 }])),
+        13: { halign: 'right', cellWidth: 20, fontStyle: 'bold', fillColor: [219, 234, 254] }
       },
       margin: { left: margin, right: margin },
       styles: {
@@ -563,7 +563,7 @@ export default function ResiduosExcel() {
       }
     });
 
-    yPos = (pdf as any).lastAutoTable.finalY + 20;
+    yPos = (pdf as any).lastAutoTable.finalY + 12;
 
     // Landfill Section
     addSectionHeader('RELLENO SANITARIO (kg)', colors.danger);
@@ -615,9 +615,9 @@ export default function ResiduosExcel() {
         halign: 'center'
       },
       columnStyles: {
-        0: { fontStyle: 'bold', cellWidth: 30, halign: 'left' },
-        ...Object.fromEntries(MONTH_LABELS.map((_, i) => [i + 1, { halign: 'right', cellWidth: 16 }])),
-        13: { halign: 'right', cellWidth: 22, fontStyle: 'bold', fillColor: [254, 226, 226] }
+        0: { fontStyle: 'bold', cellWidth: 28, halign: 'left' },
+        ...Object.fromEntries(MONTH_LABELS.map((_, i) => [i + 1, { halign: 'right', cellWidth: 14 }])),
+        13: { halign: 'right', cellWidth: 20, fontStyle: 'bold', fillColor: [254, 226, 226] }
       },
       margin: { left: margin, right: margin },
       styles: {
@@ -627,7 +627,7 @@ export default function ResiduosExcel() {
     });
 
     // Add methodology section
-    yPos = (pdf as any).lastAutoTable.finalY + 20;
+    yPos = (pdf as any).lastAutoTable.finalY + 12;
     if (yPos > pageHeight - 80) {
       addFooter();
       pdf.addPage();
@@ -643,11 +643,11 @@ export default function ResiduosExcel() {
     pdf.setFontSize(16);
     pdf.setTextColor(255, 255, 255);
     pdf.text('METODOLOGÍA TRUE ZERO WASTE', margin, yPos + 7);
-    yPos += 25;
+    yPos += 20;
 
-    // Formula section
+    // Formula section - more compact
     pdf.setFillColor(...colors.lightGray);
-    pdf.roundedRect(margin, yPos, pageWidth - 2 * margin, 25, 3, 3, 'F');
+    pdf.roundedRect(margin, yPos, pageWidth - 2 * margin, 20, 3, 3, 'F');
     
     pdf.setFont('helvetica', 'bold');
     pdf.setFontSize(12);
@@ -657,10 +657,10 @@ export default function ResiduosExcel() {
     pdf.setFont('helvetica', 'normal');
     pdf.setFontSize(10);
     pdf.setTextColor(...colors.text);
-    pdf.text('% Desviación = (Total Circular ÷ Total Residuos) × 100', margin + 10, yPos + 16);
-    pdf.text('Donde: Total Circular = Reciclaje + Composta + Reuso', margin + 10, yPos + 22);
+    pdf.text('% Desviación = (Total Circular ÷ Total Residuos) × 100', margin + 10, yPos + 14);
+    pdf.text('Donde: Total Circular = Reciclaje + Composta + Reuso', margin + 10, yPos + 18);
     
-    yPos += 35;
+    yPos += 25;
 
     // Results section
     const resultColor = kpis.deviationPercentage >= 70 ? colors.success : kpis.deviationPercentage >= 50 ? colors.warning : colors.danger;
@@ -670,39 +670,24 @@ export default function ResiduosExcel() {
     pdf.roundedRect(margin, yPos, pageWidth - 2 * margin, 20, 3, 3, 'F');
     
     pdf.setFont('helvetica', 'bold');
-    pdf.setFontSize(14);
+    pdf.setFontSize(12);
     pdf.setTextColor(255, 255, 255);
     pdf.text(`RESULTADO ACTUAL: ${kpis.deviationPercentage.toFixed(1)}% - ${resultText}`, margin + 10, yPos + 13);
     
-    yPos += 30;
+    yPos += 25;
 
-    // Goals and certification info
+    // Compact goals and system info
     pdf.setFont('helvetica', 'bold');
-    pdf.setFontSize(11);
-    pdf.setTextColor(...colors.primary);
-    pdf.text('METAS INSTITUCIONALES:', margin, yPos);
-    yPos += 8;
-    
-    pdf.setFont('helvetica', 'normal');
     pdf.setFontSize(10);
-    pdf.setTextColor(...colors.text);
-    pdf.text('• Meta mínima TRUE Zero Waste: ≥70% desviación de relleno sanitario', margin, yPos);
-    yPos += 6;
-    pdf.text('• Meta excelencia: ≥90% desviación de relleno sanitario', margin, yPos);
-    yPos += 6;
-    pdf.text('• Compromiso institucional: Cero residuos a relleno sanitario para 2026', margin, yPos);
+    pdf.setTextColor(...colors.primary);
+    pdf.text('METAS: ≥70% Certificación | ≥90% Excelencia | 2026: Cero residuos a relleno', margin, yPos);
     
-    yPos += 15;
-    
-    // System info footer
-    pdf.setFillColor(245, 245, 245);
-    pdf.rect(margin - 10, yPos, pageWidth - 2 * margin + 20, 20, 'F');
+    yPos += 10;
     
     pdf.setFont('helvetica', 'normal');
-    pdf.setFontSize(9);
+    pdf.setFontSize(8);
     pdf.setTextColor(100, 100, 100);
-    pdf.text('🤖 Este reporte fue generado automáticamente por el Sistema ECONOVA', margin, yPos + 8);
-    pdf.text(`📅 Fecha de generación: ${new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}`, margin, yPos + 15);
+    pdf.text(`Sistema ECONOVA - Generado: ${new Date().toLocaleDateString('es-ES')}`, margin, yPos);
 
     // Add final page footer
     addFooter();
