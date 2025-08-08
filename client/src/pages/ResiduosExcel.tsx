@@ -715,10 +715,9 @@ export default function ResiduosExcel() {
                                     </div>
                                   </div>
 
-                                  {/* Step 2: Division Symbol & Total Residuos */}
+                                  {/* Step 2: Total Residuos */}
                                   <div className="bg-white rounded-xl p-4 shadow-sm border border-navy/20 transform hover:scale-105 transition-transform">
                                     <div className="text-center">
-                                      <div className="text-2xl font-bold text-navy mb-1">÷</div>
                                       <div className="text-xs text-gray-600 mb-1">Total Residuos</div>
                                       <div className="text-lg font-bold text-navy">
                                         {kpis.totalWeight.toLocaleString('es-ES', { maximumFractionDigits: 1 })}
