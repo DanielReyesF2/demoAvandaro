@@ -555,70 +555,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Rutas para registro diario - MVP para demostrar tiempo real
   
-  // POST /api/daily-waste - Guardar registro diario
+  // POST /api/daily-waste - Guardar registro diario en tabla daily_waste_entries
   app.post('/api/daily-waste', async (req: Request, res: Response) => {
     try {
       const { type, material, kg, location, notes, date } = req.body;
-      
+      const clientId = 4; // Club Campestre
+
       if (!type || !material || !kg || !location) {
         return res.status(400).json({ message: "Faltan campos requeridos" });
       }
 
-      const recordDate = new Date(date || new Date());
-      const year = recordDate.getFullYear();
-      const month = recordDate.getMonth() + 1;
-
-      // Obtener o crear mes
-      let monthRecord = await storage.getMonth(year, month);
-      if (!monthRecord) {
-        const monthLabels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-        monthRecord = await storage.createMonth({
-          year,
-          month,
-          label: `${monthLabels[month - 1]} ${year}`
-        });
-      }
-
-      // Guardar entrada según el tipo
-      let entry;
-      switch (type) {
-        case 'recycling':
-          entry = await storage.upsertRecyclingEntry({
-            monthId: monthRecord.id,
-            material,
-            kg: parseFloat(kg)
-          });
-          break;
-        case 'compost':
-          entry = await storage.upsertCompostEntry({
-            monthId: monthRecord.id,
-            category: material,
-            kg: parseFloat(kg)
-          });
-          break;
-        case 'reuse':
-          entry = await storage.upsertReuseEntry({
-            monthId: monthRecord.id,
-            category: material,
-            kg: parseFloat(kg)
-          });
-          break;
-        case 'landfill':
-          entry = await storage.upsertLandfillEntry({
-            monthId: monthRecord.id,
-            wasteType: material,
-            kg: parseFloat(kg)
-          });
-          break;
-        default:
-          return res.status(400).json({ message: "Tipo de residuo inválido" });
-      }
+      // Crear entrada diaria en la nueva tabla
+      const entry = await storage.createDailyWasteEntry({
+        clientId,
+        date: date ? new Date(date) : new Date(),
+        type,
+        material,
+        kg: parseFloat(kg),
+        location,
+        notes
+      });
 
       res.status(201).json({
         message: "Registro guardado exitosamente",
-        entry,
-        location,
-        notes
+        entry
       });
 
     } catch (error) {
