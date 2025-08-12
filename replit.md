@@ -15,6 +15,8 @@ Preferred communication style: Simple, everyday language.
 - **Circular Economy Integration**: Advanced index calculation combining all environmental factors for holistic sustainability assessment
 - **Club Infrastructure Integration**: Added PTAR wastewater treatment plant and lagoon system for water module, solar panel implementation planning for energy module
 - **Dashboard Redesign**: Eliminated rigid card layouts for more natural, interactive environmental module design
+- **TRUE Zero Waste Certification**: Implemented "Año TRUE" functionality with 12-month rolling period calculation (Aug 2024 - Jul 2025) for certification compliance
+- **Enhanced Data Management**: Improved save button UX with permanent visibility, smart disabled states, and cross-year data compatibility
 
 # System Architecture
 
