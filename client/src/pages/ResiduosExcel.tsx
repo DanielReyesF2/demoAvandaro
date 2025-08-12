@@ -121,9 +121,9 @@ export default function ResiduosExcel() {
   const combineTrueData = useMemo(() => {
     if (!isTrueMode || !trueData2024 || !trueData2025) return null;
     
-    // Get Aug-Dec 2024 (months 8-12) and Jan-Aug 2025 (months 1-8)
+    // Get Aug-Dec 2024 (months 8-12) and Jan-Jul 2025 (months 1-7)  
     const months2024 = trueData2024.months.filter(m => m.month.month >= 8); // Aug-Dec 2024
-    const months2025 = trueData2025.months.filter(m => m.month.month <= 8); // Jan-Aug 2025
+    const months2025 = trueData2025.months.filter(m => m.month.month <= 7); // Jan-Jul 2025
     
     // Combine materials from both years
     const combinedMaterials = {
@@ -989,7 +989,7 @@ export default function ResiduosExcel() {
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={selectedYear === 2025 ? chartData.slice(0, 8) : chartData}>
+                  <BarChart data={isTrueMode ? chartData : (selectedYear === 2025 ? chartData.slice(0, 8) : chartData)}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="month" />
                     <YAxis />
@@ -1011,7 +1011,7 @@ export default function ResiduosExcel() {
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={selectedYear === 2025 ? chartData.slice(0, 8) : chartData}>
+                  <LineChart data={isTrueMode ? chartData : (selectedYear === 2025 ? chartData.slice(0, 8) : chartData)}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="month" />
                     <YAxis />
