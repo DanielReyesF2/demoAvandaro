@@ -75,7 +75,9 @@ export default function HistorialMensual() {
       if (!response.ok) throw new Error('Failed to fetch monthly data');
       return response.json();
     },
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    staleTime: 0, // Siempre considerar los datos como stale para forzar refetch
   });
 
   // Mutación para cerrar mes

@@ -133,6 +133,11 @@ export default function RegistroDiario() {
       // Invalidar queries para actualizar datos
       queryClient.invalidateQueries({ queryKey: ['/api/daily-totals'] });
       queryClient.invalidateQueries({ queryKey: ['/api/waste-excel'] });
+      // Invalidar historial mensual para que se actualice automáticamente
+      const currentDate = new Date();
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth() + 1;
+      queryClient.invalidateQueries({ queryKey: [`/api/monthly-summary/${year}/${month}`] });
     },
     onError: (error: any) => {
       toast({
