@@ -198,18 +198,18 @@ export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualiz
       <div className="relative max-w-6xl mx-auto">
         
         {/* Contenedor principal del flujo */}
-        <div className="grid grid-cols-12 gap-4 items-center min-h-96">
+        <div className="flex items-center justify-between gap-8 max-w-5xl mx-auto">
           
           {/* LADO IZQUIERDO - Puntos de Origen */}
-          <div className="col-span-3 space-y-4">
-            <div className="text-center mb-6">
-              <span className="text-sm font-bold text-gray-500 uppercase tracking-wider">Puntos de Origen</span>
+          <div className="w-72 space-y-3">
+            <div className="text-center mb-4">
+              <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Puntos de Origen</span>
             </div>
             
             {/* Puntos de origen con volúmenes */}
-            <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl p-4 text-white shadow-lg">
-              <div className="flex items-center space-x-3">
-                <Building2 className="w-6 h-6" />
+            <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-3 text-white shadow-lg">
+              <div className="flex items-center space-x-2">
+                <Building2 className="w-5 h-5" />
                 <div>
                   <div className="font-semibold text-sm">Casa Club</div>
                   <div className="text-xs opacity-90">6.2 ton/mes</div>
@@ -217,9 +217,9 @@ export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualiz
               </div>
             </div>
 
-            <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-2xl p-4 text-white shadow-lg">
-              <div className="flex items-center space-x-3">
-                <ChefHat className="w-6 h-6" />
+            <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl p-3 text-white shadow-lg">
+              <div className="flex items-center space-x-2">
+                <ChefHat className="w-5 h-5" />
                 <div>
                   <div className="font-semibold text-sm">Acuarima, Restaurante Jose</div>
                   <div className="text-xs opacity-90">18.4 ton/mes</div>
@@ -227,9 +227,9 @@ export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualiz
               </div>
             </div>
 
-            <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-2xl p-4 text-white shadow-lg">
-              <div className="flex items-center space-x-3">
-                <Users className="w-6 h-6" />
+            <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-xl p-3 text-white shadow-lg">
+              <div className="flex items-center space-x-2">
+                <Users className="w-5 h-5" />
                 <div>
                   <div className="font-semibold text-sm">Eventos & Instalaciones</div>
                   <div className="text-xs opacity-90">8.4 ton/mes</div>
@@ -238,7 +238,7 @@ export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualiz
             </div>
 
             {/* Total de Entrada */}
-            <div className="bg-gradient-to-r from-[#273949] to-slate-700 rounded-2xl p-4 text-white shadow-xl border-2 border-[#b5e951]">
+            <div className="bg-gradient-to-r from-[#273949] to-slate-700 rounded-xl p-3 text-white shadow-xl border-2 border-[#b5e951] mt-4">
               <div className="text-center">
                 <div className="text-lg font-black">33.0 ton/mes</div>
                 <div className="text-xs font-semibold uppercase tracking-wide">Total Generado</div>
@@ -247,69 +247,63 @@ export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualiz
           </div>
 
           {/* FLUJOS CENTRALES - Líneas animadas */}
-          <div className="col-span-6 relative py-12">
+          <div className="flex-1 max-w-md relative py-8">
             
             {/* Líneas de flujo con animación */}
-            <div className="relative h-64 flex flex-col justify-center space-y-8">
+            <div className="space-y-6">
               
               {/* Flujo Orgánicos */}
-              <div className="flex items-center space-x-4">
-                <div className="flex-1 relative">
-                  <div className="h-12 bg-gradient-to-r from-green-400 to-green-500 rounded-full relative overflow-hidden shadow-lg">
-                    <div className="absolute inset-0 bg-white opacity-30 transform -skew-x-12"></div>
-                    <div className={`absolute left-0 top-0 w-8 h-full bg-white opacity-40 rounded-full transform transition-transform duration-2000 ${
-                      animatingParticles ? 'translate-x-96' : 'translate-x-0'
-                    }`}></div>
-                  </div>
-                  <div className="absolute -top-2 left-4 text-xs font-bold text-green-700">Orgánicos: 21.6 ton</div>
-                  <div className="absolute -bottom-2 left-4 text-xs text-gray-500">65.5%</div>
+              <div className="relative">
+                <div className="h-10 bg-gradient-to-r from-green-400 to-green-500 rounded-full relative overflow-hidden shadow-lg">
+                  <div className="absolute inset-0 bg-white opacity-30 transform -skew-x-12"></div>
+                  <div className={`absolute left-0 top-0 w-6 h-full bg-white opacity-50 rounded-full transform transition-transform duration-2000 ${
+                    animatingParticles ? 'translate-x-full' : 'translate-x-0'
+                  }`}></div>
                 </div>
-                <MoveRight className="w-6 h-6 text-green-500" />
+                <div className="absolute -top-1 left-2 text-xs font-bold text-green-700">Orgánicos: 21.6 ton</div>
+                <div className="absolute -bottom-1 left-2 text-xs text-gray-500">65.5%</div>
+                <MoveRight className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 text-green-600" />
               </div>
 
               {/* Flujo Reciclables */}
-              <div className="flex items-center space-x-4">
-                <div className="flex-1 relative">
-                  <div className="h-8 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full relative overflow-hidden shadow-lg">
-                    <div className="absolute inset-0 bg-white opacity-30 transform -skew-x-12"></div>
-                    <div className={`absolute left-0 top-0 w-6 h-full bg-white opacity-40 rounded-full transform transition-transform duration-2000 delay-300 ${
-                      animatingParticles ? 'translate-x-96' : 'translate-x-0'
-                    }`}></div>
-                  </div>
-                  <div className="absolute -top-2 left-4 text-xs font-bold text-blue-700">Reciclables: 5.2 ton</div>
-                  <div className="absolute -bottom-2 left-4 text-xs text-gray-500">15.8%</div>
+              <div className="relative">
+                <div className="h-7 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full relative overflow-hidden shadow-lg">
+                  <div className="absolute inset-0 bg-white opacity-30 transform -skew-x-12"></div>
+                  <div className={`absolute left-0 top-0 w-5 h-full bg-white opacity-50 rounded-full transform transition-transform duration-2000 delay-300 ${
+                    animatingParticles ? 'translate-x-full' : 'translate-x-0'
+                  }`}></div>
                 </div>
-                <MoveRight className="w-6 h-6 text-blue-500" />
+                <div className="absolute -top-1 left-2 text-xs font-bold text-blue-700">Reciclables: 5.2 ton</div>
+                <div className="absolute -bottom-1 left-2 text-xs text-gray-500">15.8%</div>
+                <MoveRight className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-600" />
               </div>
 
               {/* Flujo Inorgánicos */}
-              <div className="flex items-center space-x-4">
-                <div className="flex-1 relative">
-                  <div className="h-6 bg-gradient-to-r from-gray-400 to-gray-500 rounded-full relative overflow-hidden shadow-lg">
-                    <div className="absolute inset-0 bg-white opacity-30 transform -skew-x-12"></div>
-                    <div className={`absolute left-0 top-0 w-4 h-full bg-white opacity-40 rounded-full transform transition-transform duration-2000 delay-600 ${
-                      animatingParticles ? 'translate-x-96' : 'translate-x-0'
-                    }`}></div>
-                  </div>
-                  <div className="absolute -top-2 left-4 text-xs font-bold text-gray-700">Inorgánicos: 6.2 ton</div>
-                  <div className="absolute -bottom-2 left-4 text-xs text-gray-500">18.7%</div>
+              <div className="relative">
+                <div className="h-5 bg-gradient-to-r from-gray-400 to-gray-500 rounded-full relative overflow-hidden shadow-lg">
+                  <div className="absolute inset-0 bg-white opacity-30 transform -skew-x-12"></div>
+                  <div className={`absolute left-0 top-0 w-4 h-full bg-white opacity-50 rounded-full transform transition-transform duration-2000 delay-600 ${
+                    animatingParticles ? 'translate-x-full' : 'translate-x-0'
+                  }`}></div>
                 </div>
-                <MoveRight className="w-6 h-6 text-gray-500" />
+                <div className="absolute -top-1 left-2 text-xs font-bold text-gray-700">Inorgánicos: 6.2 ton</div>
+                <div className="absolute -bottom-1 left-2 text-xs text-gray-500">18.7%</div>
+                <MoveRight className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-600" />
               </div>
 
             </div>
           </div>
 
           {/* LADO DERECHO - Destinos Finales */}
-          <div className="col-span-3 space-y-4">
-            <div className="text-center mb-6">
-              <span className="text-sm font-bold text-gray-500 uppercase tracking-wider">Destinos Finales</span>
+          <div className="w-72 space-y-3">
+            <div className="text-center mb-4">
+              <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Destinos Finales</span>
             </div>
 
             {/* Destinos con socios */}
-            <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-4 text-white shadow-lg">
-              <div className="flex items-center space-x-3">
-                <Leaf className="w-6 h-6" />
+            <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl p-3 text-white shadow-lg">
+              <div className="flex items-center space-x-2">
+                <Leaf className="w-5 h-5" />
                 <div>
                   <div className="font-semibold text-sm">Biodegradación</div>
                   <div className="text-xs opacity-90">ORKA · TEDISD</div>
@@ -317,9 +311,9 @@ export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualiz
               </div>
             </div>
 
-            <div className="bg-gradient-to-r from-blue-500 to-cyan-600 rounded-2xl p-4 text-white shadow-lg">
-              <div className="flex items-center space-x-3">
-                <Recycle className="w-6 h-6" />
+            <div className="bg-gradient-to-r from-blue-500 to-cyan-600 rounded-xl p-3 text-white shadow-lg">
+              <div className="flex items-center space-x-2">
+                <Recycle className="w-5 h-5" />
                 <div>
                   <div className="font-semibold text-sm">Reciclaje</div>
                   <div className="text-xs opacity-90">Recupera · Verde Ciudad</div>
@@ -327,9 +321,9 @@ export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualiz
               </div>
             </div>
 
-            <div className="bg-gradient-to-r from-gray-500 to-slate-600 rounded-2xl p-4 text-white shadow-lg">
-              <div className="flex items-center space-x-3">
-                <Trash2 className="w-6 h-6" />
+            <div className="bg-gradient-to-r from-gray-500 to-slate-600 rounded-xl p-3 text-white shadow-lg">
+              <div className="flex items-center space-x-2">
+                <Trash2 className="w-5 h-5" />
                 <div>
                   <div className="font-semibold text-sm">Disposición</div>
                   <div className="text-xs opacity-90">Controlada · KREY</div>
@@ -338,7 +332,7 @@ export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualiz
             </div>
 
             {/* Impacto Ambiental */}
-            <div className="bg-gradient-to-r from-[#b5e951] to-lime-400 rounded-2xl p-4 text-[#273949] shadow-xl border-2 border-[#273949]">
+            <div className="bg-gradient-to-r from-[#b5e951] to-lime-400 rounded-xl p-3 text-[#273949] shadow-xl border-2 border-[#273949] mt-4">
               <div className="text-center">
                 <div className="text-lg font-black">81.3%</div>
                 <div className="text-xs font-semibold uppercase tracking-wide">Desviación de Relleno</div>
