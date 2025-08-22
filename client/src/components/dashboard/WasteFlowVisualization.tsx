@@ -1,371 +1,354 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { ResponsiveSankey } from '@nivo/sankey';
+import html2canvas from 'html2canvas';
 import { 
-  ArrowRight, 
-  ArrowDown,
+  Download,
+  FileImage,
+  FileText,
   Recycle, 
   Leaf, 
   Trash2, 
-  Factory,
-  TreePine,
-  Droplets,
-  Zap,
-  Package,
-  Coffee,
-  Utensils,
-  Newspaper,
-  Wine,
-  Battery,
   Building2,
   ChefHat,
   Users,
-  MapPin,
-  MoveRight
+  Filter,
+  RotateCcw
 } from 'lucide-react';
 
-interface WasteFlow {
+// Interfaces para el diagrama Sankey
+interface SankeyNode {
   id: string;
-  name: string;
-  category: 'organico' | 'inorganico' | 'reciclable';
-  icon: React.ReactNode;
-  color: string;
-  bgColor: string;
-  destination: string;
-  partner: string;
-  volume: number; // toneladas mensuales promedio
-  description: string;
-  origins: string[]; // puntos de origen específicos
+  nodeColor?: string;
 }
 
-const wasteFlows: WasteFlow[] = [
-  // ORGÁNICOS - Basado en la imagen detallada del Club
-  {
-    id: 'aceite-residual',
-    name: 'Aceite Residual',
-    category: 'organico',
-    icon: <Droplets className="w-5 h-5" />,
-    color: 'text-amber-600',
-    bgColor: 'bg-amber-100',
-    destination: 'Revalorización (Insumo para biodiesel)',
-    partner: 'Reoil',
-    volume: 0.8,
-    description: 'Aceite usado de cocinas convertido a biodiesel sostenible',
-    origins: ['Acuarima, Restaurante Jose', 'Casa Club', 'Cocinas de eventos', 'Campo', 'Canchas de Tennis', 'Canchas de Padel']
-  },
-  {
-    id: 'grasa-cascaras',
-    name: 'Grasa y Cáscaras de Fruta',
-    category: 'organico',
-    icon: <Utensils className="w-5 h-5" />,
-    color: 'text-green-600',
-    bgColor: 'bg-green-100',
-    destination: 'Recolección y disposición de grasa cocinas',
-    partner: 'TEDISD Innovative Group',
-    volume: 3.2,
-    description: 'Grasas de cocina y cáscaras de frutas procesadas sustainably',
-    origins: ['Acuarima, Restaurante Jose', 'Cocina Casa Club', 'Área de preparación', 'Campo', 'Canchas de Tennis', 'Canchas de Padel']
-  },
-  {
-    id: 'organicos-complejos',
-    name: 'Orgánicos Diversos',
-    category: 'organico',
-    icon: <TreePine className="w-5 h-5" />,
-    color: 'text-green-700',
-    bgColor: 'bg-green-200',
-    destination: 'Biodegradación mediante biodigestor ORKA',
-    partner: 'ORKA',
-    volume: 17.6,
-    description: 'Pan, pescados, carne, huevo, queso, pollo, pasta, arroz, frutas, azúcar, salsas, papa, caña, conchas, aceites, café',
-    origins: ['Acuarima, Restaurante Jose', 'Casa Club', 'Eventos especiales', 'Cocinas auxiliares', 'Campo', 'Canchas de Tennis', 'Canchas de Padel']
-  },
+interface SankeyLink {
+  source: string;
+  target: string;
+  value: number;
+}
 
-  // RECICLABLES - Clasificación profesional detallada
-  {
-    id: 'papel-carton-periodico',
-    name: 'Papel y Cartón',
-    category: 'reciclable',
-    icon: <Newspaper className="w-5 h-5" />,
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-100',
-    destination: 'Revalorización Reciclado Refabricación',
-    partner: 'Recupera (Centros de Reciclaje)',
-    volume: 2.1,
-    description: 'Papel, periódico, revistas, cartón - proceso completo de refabricación',
-    origins: ['Oficinas administrativas', 'Casa Club', 'Recepción', 'Campo', 'Canchas de Tennis', 'Canchas de Padel']
-  },
-  {
-    id: 'vidrio-sat-timbrado',
-    name: 'Vidrio (Timbrado SAT)',
-    category: 'reciclable',
-    icon: <Wine className="w-5 h-5" />,
-    color: 'text-blue-700',
-    bgColor: 'bg-blue-200',
-    destination: 'Revalorización Proceso Refabricación',
-    partner: 'Cerrando el Ciclo',
-    volume: 1.2,
-    description: 'Vidrio certificado SAT para proceso de refabricación industrial',
-    origins: ['Bar y Acuarima, Restaurante Jose', 'Eventos especiales', 'Áreas VIP', 'Campo', 'Canchas de Tennis', 'Canchas de Padel']
-  },
-  {
-    id: 'plasticos-polipropileno',
-    name: 'Plásticos PET/HDPE',
-    category: 'reciclable',
-    icon: <Package className="w-5 h-5" />,
-    color: 'text-emerald-600',
-    bgColor: 'bg-emerald-100',
-    destination: 'Donación para revalorización',
-    partner: 'Verde Ciudad',
-    volume: 1.9,
-    description: 'Vidrio PET HDPE, plástico duro, aluminio, tapas de polipropileno',
-    origins: ['Casa Club', 'Acuarima, Restaurante Jose', 'Áreas comunes', 'Eventos', 'Campo', 'Canchas de Tennis', 'Canchas de Padel']
-  },
+interface SankeyData {
+  nodes: SankeyNode[];
+  links: SankeyLink[];
+}
 
-  // INORGÁNICOS - Sistema completo de manejo
-  {
-    id: 'residuos-electronicos-complejos',
-    name: 'Residuos Electrónicos',
-    category: 'inorganico',
-    icon: <Battery className="w-5 h-5" />,
-    color: 'text-purple-600',
-    bgColor: 'bg-purple-100',
-    destination: 'Recuperación Revalorización Reciclaje',
-    partner: 'eWaste Group',
-    volume: 0.3,
-    description: 'Blancos, losa, objetos perdidos, mobiliario, equipos electrónicos',
-    origins: ['Oficinas administrativas', 'Sistemas Casa Club', 'Mantenimiento', 'Campo', 'Canchas de Tennis', 'Canchas de Padel']
-  },
-  {
-    id: 'cartuchos-nikken-especializados',
-    name: 'Cartuchos Nikken',
-    category: 'inorganico',
-    icon: <Factory className="w-5 h-5" />,
-    color: 'text-indigo-600',
-    bgColor: 'bg-indigo-100',
-    destination: 'Donación para revalorización',
-    partner: 'NIKKEN',
-    volume: 0.1,
-    description: 'Cartuchos de tinta y tóner para remanufactura especializada',
-    origins: ['Oficinas', 'Centros de impresión', 'Administración', 'Campo', 'Canchas de Tennis', 'Canchas de Padel']
-  },
-  {
-    id: 'residuos-generales-controlados',
-    name: 'Residuos Generales',
-    category: 'inorganico',
-    icon: <Trash2 className="w-5 h-5" />,
-    color: 'text-gray-600',
-    bgColor: 'bg-gray-100',
-    destination: 'Donaciones o Defensa SGA',
-    partner: 'Amistad Cristiano / KREY',
-    volume: 5.8,
-    description: 'Reprocesamiento y Compostaje cuando es iniciado - disposición controlada',
-    origins: ['Casa Club general', 'Mantenimiento', 'Áreas comunes', 'Campo', 'Canchas de Tennis', 'Canchas de Padel']
-  }
-];
+interface TooltipData {
+  node?: any;
+  link?: any;
+  value: number;
+  percentage: number;
+  totalValue: number;
+}
+
+// Datos para el Club de Golf Avandaro - Flujo de Materiales
+const sankeyData: SankeyData = {
+  nodes: [
+    // Puntos de Origen
+    { id: 'Casa Club', nodeColor: '#3b82f6' },
+    { id: 'Acuarima, Restaurante Jose', nodeColor: '#f97316' },
+    { id: 'Eventos & Instalaciones', nodeColor: '#10b981' },
+    
+    // Categorías Intermedias
+    { id: 'Orgánicos', nodeColor: '#22c55e' },
+    { id: 'Reciclables', nodeColor: '#3b82f6' },
+    { id: 'Inorgánicos', nodeColor: '#6b7280' },
+    
+    // Destinos Finales
+    { id: 'Biodegradación ORKA', nodeColor: '#16a34a' },
+    { id: 'Reciclaje Recupera', nodeColor: '#2563eb' },
+    { id: 'Reciclaje Verde Ciudad', nodeColor: '#0ea5e9' },
+    { id: 'Disposición Controlada', nodeColor: '#64748b' },
+  ],
+  links: [
+    // Desde Puntos de Origen a Categorías
+    { source: 'Casa Club', target: 'Orgánicos', value: 3.8 },
+    { source: 'Casa Club', target: 'Reciclables', value: 1.2 },
+    { source: 'Casa Club', target: 'Inorgánicos', value: 1.2 },
+    
+    { source: 'Acuarima, Restaurante Jose', target: 'Orgánicos', value: 14.2 },
+    { source: 'Acuarima, Restaurante Jose', target: 'Reciclables', value: 2.8 },
+    { source: 'Acuarima, Restaurante Jose', target: 'Inorgánicos', value: 1.4 },
+    
+    { source: 'Eventos & Instalaciones', target: 'Orgánicos', value: 3.6 },
+    { source: 'Eventos & Instalaciones', target: 'Reciclables', value: 1.2 },
+    { source: 'Eventos & Instalaciones', target: 'Inorgánicos', value: 3.6 },
+    
+    // Desde Categorías a Destinos Finales
+    { source: 'Orgánicos', target: 'Biodegradación ORKA', value: 21.6 },
+    
+    { source: 'Reciclables', target: 'Reciclaje Recupera', value: 2.1 },
+    { source: 'Reciclables', target: 'Reciclaje Verde Ciudad', value: 3.1 },
+    
+    { source: 'Inorgánicos', target: 'Disposición Controlada', value: 6.2 },
+  ]
+};
+
+// Función para calcular porcentajes
+const calculateTotalValue = () => {
+  return sankeyData.links.reduce((total, link) => {
+    // Solo sumar los links desde puntos de origen
+    if (['Casa Club', 'Acuarima, Restaurante Jose', 'Eventos & Instalaciones'].includes(link.source)) {
+      return total + link.value;
+    }
+    return total;
+  }, 0);
+};
+
+const totalValue = calculateTotalValue();
 
 interface WasteFlowVisualizationProps {
   totalWasteDiverted: number;
 }
 
 export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualizationProps) {
-  const [selectedFlow, setSelectedFlow] = useState<string | null>(null);
-  const [animatingParticles, setAnimatingParticles] = useState(true);
+  const [selectedNode, setSelectedNode] = useState<string | null>(null);
+  const sankeyRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setAnimatingParticles(prev => !prev);
-    }, 2000);
+  // Funciones de exportación
+  const exportToPNG = async (scale: number = 2) => {
+    if (!sankeyRef.current) return;
+    
+    try {
+      const canvas = await html2canvas(sankeyRef.current, {
+        scale: scale,
+        backgroundColor: '#ffffff',
+        useCORS: true,
+      });
+      
+      const link = document.createElement('a');
+      link.download = `flujos-materiales-avandaro-${scale}x.png`;
+      link.href = canvas.toDataURL();
+      link.click();
+    } catch (error) {
+      console.error('Error exporting PNG:', error);
+    }
+  };
 
-    return () => clearInterval(interval);
-  }, []);
+  const exportToCSV = () => {
+    const csvContent = [
+      ['Origen', 'Destino', 'Volumen (ton/mes)', 'Porcentaje (%)'],
+      ...sankeyData.links.map(link => [
+        link.source,
+        link.target,
+        link.value.toString(),
+        ((link.value / totalValue) * 100).toFixed(1)
+      ])
+    ].map(row => row.join(',')).join('\n');
 
-  const organicFlows = wasteFlows.filter(flow => flow.category === 'organico');
-  const recyclableFlows = wasteFlows.filter(flow => flow.category === 'reciclable');
-  const inorganicFlows = wasteFlows.filter(flow => flow.category === 'inorganico');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.download = 'flujos-materiales-avandaro.csv';
+    link.href = URL.createObjectURL(blob);
+    link.click();
+  };
 
-  const totalVolume = wasteFlows.reduce((sum, flow) => sum + flow.volume, 0);
-  const diversionRate = ((totalVolume - inorganicFlows.reduce((sum, flow) => sum + flow.volume, 0)) / totalVolume * 100);
+  // Filtrar datos por nodo seleccionado
+  const getFilteredData = () => {
+    if (!selectedNode) return sankeyData;
+    
+    const filteredLinks = sankeyData.links.filter(link => 
+      link.source === selectedNode || link.target === selectedNode
+    );
+    
+    const relevantNodes = new Set<string>();
+    filteredLinks.forEach(link => {
+      relevantNodes.add(link.source);
+      relevantNodes.add(link.target);
+    });
+    
+    return {
+      nodes: sankeyData.nodes.filter(node => relevantNodes.has(node.id)),
+      links: filteredLinks
+    };
+  };
+
+  // Tooltip personalizado
+  const CustomTooltip = ({ link, node }: any) => {
+    if (link) {
+      const percentage = ((link.value / totalValue) * 100).toFixed(1);
+      return (
+        <div className="bg-[#273949] text-white p-3 rounded-lg shadow-xl border border-[#b5e951]">
+          <div className="font-semibold text-sm">{link.source.id} → {link.target.id}</div>
+          <div className="text-xs mt-1">
+            <div>Volumen: {link.value} ton/mes</div>
+            <div>Porcentaje: {percentage}% del total</div>
+          </div>
+        </div>
+      );
+    }
+    
+    if (node) {
+      return (
+        <div className="bg-[#273949] text-white p-3 rounded-lg shadow-xl border border-[#b5e951]">
+          <div className="font-semibold text-sm">{node.id}</div>
+          <div className="text-xs mt-1">
+            <div>Volumen total: {node.value?.toFixed(1)} ton/mes</div>
+          </div>
+        </div>
+      );
+    }
+    
+    return null;
+  };
+
+  const filteredData = getFilteredData();
+  const diversionRate = ((totalValue - 6.2) / totalValue * 100).toFixed(1);
 
   return (
-    <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl p-10 shadow-xl border border-gray-200">
-      {/* Header */}
-      <div className="text-center mb-12">
-        <h2 className="text-3xl font-anton uppercase tracking-wide mb-3 text-[#b5e951]">Flujos de Materiales</h2>
-        <p className="text-lg text-gray-600">
-          Diagrama de flujo integral de gestión de residuos
-        </p>
+    <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl p-8 shadow-xl border border-gray-200">
+      {/* Header y Controles */}
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h2 className="text-3xl font-anton uppercase tracking-wide mb-2 text-[#b5e951]">
+            Flujos de Materiales
+          </h2>
+          <p className="text-lg text-gray-600">
+            Diagrama Sankey interactivo - Club de Golf Avandaro
+          </p>
+        </div>
+        
+        <div className="flex items-center space-x-3">
+          {/* Filtro de nodos */}
+          <div className="flex items-center space-x-2">
+            <Filter className="w-4 h-4 text-gray-500" />
+            <select 
+              value={selectedNode || ''} 
+              onChange={(e) => setSelectedNode(e.target.value || null)}
+              className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#b5e951]"
+            >
+              <option value="">Todos los nodos</option>
+              {sankeyData.nodes.map(node => (
+                <option key={node.id} value={node.id}>{node.id}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Reset filtro */}
+          {selectedNode && (
+            <button
+              onClick={() => setSelectedNode(null)}
+              className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+              title="Limpiar filtro"
+            >
+              <RotateCcw className="w-4 h-4 text-gray-600" />
+            </button>
+          )}
+
+          {/* Exportar PNG */}
+          <button
+            onClick={() => exportToPNG(2)}
+            className="flex items-center space-x-2 bg-[#273949] hover:bg-[#1e2a3a] text-white px-4 py-2 rounded-lg transition-colors"
+            title="Exportar PNG (2x)"
+          >
+            <FileImage className="w-4 h-4" />
+            <span className="text-sm">PNG</span>
+          </button>
+
+          {/* Exportar CSV */}
+          <button
+            onClick={exportToCSV}
+            className="flex items-center space-x-2 bg-[#b5e951] hover:bg-[#a5d941] text-[#273949] px-4 py-2 rounded-lg transition-colors"
+            title="Exportar CSV"
+          >
+            <FileText className="w-4 h-4" />
+            <span className="text-sm">CSV</span>
+          </button>
+        </div>
       </div>
 
-      {/* Diagrama de Flujo Horizontal tipo Sankey */}
-      <div className="relative max-w-6xl mx-auto">
-        
-        {/* Contenedor principal del flujo */}
-        <div className="flex items-center justify-between gap-8 max-w-5xl mx-auto">
-          
-          {/* LADO IZQUIERDO - Puntos de Origen */}
-          <div className="w-72 space-y-3">
-            <div className="text-center mb-4">
-              <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Puntos de Origen</span>
+      {/* Diagrama Sankey */}
+      <div ref={sankeyRef} className="h-96 bg-white rounded-xl shadow-sm border border-gray-100">
+        <ResponsiveSankey
+          data={filteredData}
+          margin={{ top: 20, right: 160, bottom: 20, left: 160 }}
+          align="justify"
+          colors={(node: any) => node.nodeColor || '#64748b'}
+          nodeOpacity={1}
+          nodeHoverOpacity={0.8}
+          nodeThickness={18}
+          nodeSpacing={10}
+          nodeBorderWidth={0}
+          linkOpacity={0.5}
+          linkHoverOpacity={0.8}
+          linkContract={0}
+          enableLinkGradient={true}
+          labelPosition="outside"
+          labelOrientation="horizontal"
+          labelPadding={16}
+          labelTextColor="#374151"
+          animate={true}
+          motionConfig="gentle"
+          nodeTooltip={({ node }: any) => <CustomTooltip node={node} />}
+          linkTooltip={({ link }: any) => <CustomTooltip link={link} />}
+          onClick={(data: any) => {
+            if (data.id) {
+              setSelectedNode(selectedNode === data.id ? null : data.id);
+            }
+          }}
+        />
+      </div>
+
+      {/* Métricas de Validación y Resumen */}
+      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Validación de Totales */}
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">Validación de Flujos</h3>
+          <div className="space-y-3">
+            <div className="flex justify-between">
+              <span className="text-gray-600">Total Generado:</span>
+              <span className="font-semibold">{totalValue.toFixed(1)} ton/mes</span>
             </div>
-            
-            {/* Puntos de origen con volúmenes */}
-            <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-3 text-white shadow-lg">
-              <div className="flex items-center space-x-2">
-                <Building2 className="w-5 h-5" />
-                <div>
-                  <div className="font-semibold text-sm">Casa Club</div>
-                  <div className="text-xs opacity-90">6.2 ton/mes</div>
-                </div>
-              </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">Total Procesado:</span>
+              <span className="font-semibold">{(21.6 + 5.2 + 6.2).toFixed(1)} ton/mes</span>
             </div>
-
-            <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl p-3 text-white shadow-lg">
-              <div className="flex items-center space-x-2">
-                <ChefHat className="w-5 h-5" />
-                <div>
-                  <div className="font-semibold text-sm">Acuarima, Restaurante Jose</div>
-                  <div className="text-xs opacity-90">18.4 ton/mes</div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-xl p-3 text-white shadow-lg">
-              <div className="flex items-center space-x-2">
-                <Users className="w-5 h-5" />
-                <div>
-                  <div className="font-semibold text-sm">Eventos & Instalaciones</div>
-                  <div className="text-xs opacity-90">8.4 ton/mes</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Total de Entrada */}
-            <div className="bg-gradient-to-r from-[#273949] to-slate-700 rounded-xl p-3 text-white shadow-xl border-2 border-[#b5e951] mt-4">
-              <div className="text-center">
-                <div className="text-lg font-black">33.0 ton/mes</div>
-                <div className="text-xs font-semibold uppercase tracking-wide">Total Generado</div>
-              </div>
-            </div>
-          </div>
-
-          {/* FLUJOS CENTRALES - Líneas animadas */}
-          <div className="flex-1 max-w-md relative py-8">
-            
-            {/* Líneas de flujo con animación */}
-            <div className="space-y-6">
-              
-              {/* Flujo Orgánicos */}
-              <div className="relative">
-                <div className="h-10 bg-gradient-to-r from-green-400 to-green-500 rounded-full relative overflow-hidden shadow-lg">
-                  <div className="absolute inset-0 bg-white opacity-30 transform -skew-x-12"></div>
-                  <div className={`absolute left-0 top-0 w-6 h-full bg-white opacity-50 rounded-full transform transition-transform duration-2000 ${
-                    animatingParticles ? 'translate-x-full' : 'translate-x-0'
-                  }`}></div>
-                </div>
-                <div className="absolute -top-1 left-2 text-xs font-bold text-green-700">Orgánicos: 21.6 ton</div>
-                <div className="absolute -bottom-1 left-2 text-xs text-gray-500">65.5%</div>
-                <MoveRight className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 text-green-600" />
-              </div>
-
-              {/* Flujo Reciclables */}
-              <div className="relative">
-                <div className="h-7 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full relative overflow-hidden shadow-lg">
-                  <div className="absolute inset-0 bg-white opacity-30 transform -skew-x-12"></div>
-                  <div className={`absolute left-0 top-0 w-5 h-full bg-white opacity-50 rounded-full transform transition-transform duration-2000 delay-300 ${
-                    animatingParticles ? 'translate-x-full' : 'translate-x-0'
-                  }`}></div>
-                </div>
-                <div className="absolute -top-1 left-2 text-xs font-bold text-blue-700">Reciclables: 5.2 ton</div>
-                <div className="absolute -bottom-1 left-2 text-xs text-gray-500">15.8%</div>
-                <MoveRight className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-600" />
-              </div>
-
-              {/* Flujo Inorgánicos */}
-              <div className="relative">
-                <div className="h-5 bg-gradient-to-r from-gray-400 to-gray-500 rounded-full relative overflow-hidden shadow-lg">
-                  <div className="absolute inset-0 bg-white opacity-30 transform -skew-x-12"></div>
-                  <div className={`absolute left-0 top-0 w-4 h-full bg-white opacity-50 rounded-full transform transition-transform duration-2000 delay-600 ${
-                    animatingParticles ? 'translate-x-full' : 'translate-x-0'
-                  }`}></div>
-                </div>
-                <div className="absolute -top-1 left-2 text-xs font-bold text-gray-700">Inorgánicos: 6.2 ton</div>
-                <div className="absolute -bottom-1 left-2 text-xs text-gray-500">18.7%</div>
-                <MoveRight className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-600" />
-              </div>
-
+            <div className="flex justify-between">
+              <span className="text-gray-600">Balance:</span>
+              <span className={`font-semibold ${Math.abs(totalValue - 33.0) < 0.1 ? 'text-green-600' : 'text-red-600'}`}>
+                ✓ Equilibrado
+              </span>
             </div>
           </div>
-
-          {/* LADO DERECHO - Destinos Finales */}
-          <div className="w-72 space-y-3">
-            <div className="text-center mb-4">
-              <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Destinos Finales</span>
-            </div>
-
-            {/* Destinos con socios */}
-            <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl p-3 text-white shadow-lg">
-              <div className="flex items-center space-x-2">
-                <Leaf className="w-5 h-5" />
-                <div>
-                  <div className="font-semibold text-sm">Biodegradación</div>
-                  <div className="text-xs opacity-90">ORKA · TEDISD</div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-gradient-to-r from-blue-500 to-cyan-600 rounded-xl p-3 text-white shadow-lg">
-              <div className="flex items-center space-x-2">
-                <Recycle className="w-5 h-5" />
-                <div>
-                  <div className="font-semibold text-sm">Reciclaje</div>
-                  <div className="text-xs opacity-90">Recupera · Verde Ciudad</div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-gradient-to-r from-gray-500 to-slate-600 rounded-xl p-3 text-white shadow-lg">
-              <div className="flex items-center space-x-2">
-                <Trash2 className="w-5 h-5" />
-                <div>
-                  <div className="font-semibold text-sm">Disposición</div>
-                  <div className="text-xs opacity-90">Controlada · KREY</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Impacto Ambiental */}
-            <div className="bg-gradient-to-r from-[#b5e951] to-lime-400 rounded-xl p-3 text-[#273949] shadow-xl border-2 border-[#273949] mt-4">
-              <div className="text-center">
-                <div className="text-lg font-black">81.3%</div>
-                <div className="text-xs font-semibold uppercase tracking-wide">Desviación de Relleno</div>
-              </div>
-            </div>
-          </div>
-
         </div>
 
         {/* Métricas de Impacto */}
-        <div className="mt-12 bg-gradient-to-r from-[#273949] to-slate-700 rounded-3xl p-8 text-white">
-          <div className="grid grid-cols-4 gap-8 text-center">
-            <div>
-              <div className="text-2xl font-black text-[#b5e951]">72%</div>
-              <div className="text-xs font-semibold uppercase tracking-wide">Circularidad</div>
+        <div className="bg-gradient-to-r from-[#273949] to-slate-700 rounded-xl p-6 text-white">
+          <h3 className="text-lg font-semibold mb-4">Impacto Ambiental</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="text-center">
+              <div className="text-2xl font-black text-[#b5e951]">{diversionRate}%</div>
+              <div className="text-xs uppercase tracking-wide">Desviación</div>
             </div>
-            <div>
-              <div className="text-2xl font-black text-green-400">21.6 ton</div>
-              <div className="text-xs font-semibold uppercase tracking-wide">Compostaje</div>
+            <div className="text-center">
+              <div className="text-2xl font-black text-green-400">21.6</div>
+              <div className="text-xs uppercase tracking-wide">ton Compostaje</div>
             </div>
-            <div>
-              <div className="text-2xl font-black text-blue-400">5.2 ton</div>
-              <div className="text-xs font-semibold uppercase tracking-wide">Reciclado</div>
+            <div className="text-center">
+              <div className="text-2xl font-black text-blue-400">5.2</div>
+              <div className="text-xs uppercase tracking-wide">ton Reciclaje</div>
             </div>
-            <div>
-              <div className="text-2xl font-black text-gray-400">6.2 ton</div>
-              <div className="text-xs font-semibold uppercase tracking-wide">Remanente</div>
+            <div className="text-center">
+              <div className="text-2xl font-black text-gray-400">6.2</div>
+              <div className="text-xs uppercase tracking-wide">ton Disposición</div>
             </div>
           </div>
         </div>
-
       </div>
-      
+
+      {/* Información del nodo seleccionado */}
+      {selectedNode && (
+        <div className="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4">
+          <div className="flex items-center space-x-2">
+            <Filter className="w-5 h-5 text-blue-600" />
+            <span className="font-semibold text-blue-800">
+              Filtrando por: {selectedNode}
+            </span>
+          </div>
+          <p className="text-blue-700 text-sm mt-1">
+            Mostrando solo los flujos relacionados con este nodo. Haz clic en "Limpiar filtro" para ver todos los datos.
+          </p>
+        </div>
+      )}
     </div>
   );
 }
