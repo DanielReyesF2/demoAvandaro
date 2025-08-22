@@ -83,7 +83,7 @@ function Router() {
       {/* Tenant Routes - Direct route matching */}
       <Route path="/cccm/dashboard">
         <TenantWrapper clientSlug="cccm">
-          <MultiTenantDashboard clientSlug="cccm" />
+          <Dashboard />
         </TenantWrapper>
       </Route>
       <Route path="/cccm/registro-diario">
@@ -120,7 +120,7 @@ function Router() {
       {/* Club Avándaro Routes */}
       <Route path="/club-de-golf-avandaro/dashboard">
         <TenantWrapper clientSlug="club-de-golf-avandaro">
-          <MultiTenantDashboard clientSlug="club-de-golf-avandaro" />
+          <Dashboard />
         </TenantWrapper>
       </Route>
       <Route path="/club-de-golf-avandaro/registro-diario">
@@ -142,7 +142,7 @@ function Router() {
       {/* Rancho Avándaro Routes */}
       <Route path="/rancho-avandaro/dashboard">
         <TenantWrapper clientSlug="rancho-avandaro">
-          <MultiTenantDashboard clientSlug="rancho-avandaro" />
+          <Dashboard />
         </TenantWrapper>
       </Route>
       <Route path="/rancho-avandaro/registro-diario">
