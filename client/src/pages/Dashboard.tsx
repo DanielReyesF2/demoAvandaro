@@ -188,9 +188,8 @@ export default function Dashboard() {
                     <div className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">DESVIACIÓN</div>
                   </div>
                   
-                  {/* Título y descripción */}
-                  <div className="text-center space-y-2">
-                    <h3 className="text-lg font-bold text-gray-800 uppercase tracking-wider">Residuos</h3>
+                  {/* Descripción */}
+                  <div className="text-center">
                     <p className="text-sm text-gray-600 font-medium">TRUE Zero Waste en progreso</p>
                   </div>
                   
@@ -225,9 +224,8 @@ export default function Dashboard() {
                     <div className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">RENOVABLE</div>
                   </div>
                   
-                  {/* Título y descripción */}
-                  <div className="text-center space-y-2">
-                    <h3 className="text-lg font-bold text-gray-800 uppercase tracking-wider">Energía</h3>
+                  {/* Descripción */}
+                  <div className="text-center">
                     <p className="text-sm text-gray-600 font-medium">Paneles solares en desarrollo</p>
                   </div>
                   
@@ -262,9 +260,8 @@ export default function Dashboard() {
                     <div className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">RECICLADA</div>
                   </div>
                   
-                  {/* Título y descripción */}
-                  <div className="text-center space-y-2">
-                    <h3 className="text-lg font-bold text-gray-800 uppercase tracking-wider">Agua</h3>
+                  {/* Descripción */}
+                  <div className="text-center">
                     <p className="text-sm text-gray-600 font-medium">PTAR y sistema de laguna</p>
                   </div>
                   
@@ -299,9 +296,8 @@ export default function Dashboard() {
                     <div className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">CIRCULARIDAD</div>
                   </div>
                   
-                  {/* Título y descripción */}
-                  <div className="text-center space-y-2">
-                    <h3 className="text-lg font-bold text-gray-800 uppercase tracking-wider">Economía Circular</h3>
+                  {/* Descripción */}
+                  <div className="text-center">
                     <p className="text-sm text-gray-600 font-medium">Sustentabilidad integral</p>
                   </div>
                   
