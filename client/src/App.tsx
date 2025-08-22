@@ -17,40 +17,202 @@ import EconomiaCircular from "@/pages/EconomiaCircular";
 import DataExport from "@/pages/DataExport";
 import MultiTenantDashboard from "@/components/MultiTenantDashboard";
 import TenantSidebar from "@/components/TenantSidebar";
+import { Leaf, Droplets, Zap, Recycle } from "lucide-react";
 
-// Temporary simple components until we fix the imports
+// Temporary simple components until we fix the imports  
 const AdminDashboard = () => <div className="p-8">Admin Dashboard - Coming Soon</div>;
 const ClientSelector = () => (
-  <div className="min-h-screen bg-gray-50 p-8">
-    <div className="max-w-4xl mx-auto text-center">
-      <h1 className="text-3xl font-bold mb-8">ECONOVA - Selecciona tu Cliente</h1>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="font-bold mb-4">Club Campestre Ciudad de México</h3>
-          <button 
-            onClick={() => window.location.href = '/cccm/dashboard'}
-            className="bg-[#273949] text-white px-4 py-2 rounded w-full"
-          >
-            Acceder
-          </button>
+  <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col">
+    {/* Header */}
+    <div className="bg-white shadow-sm border-b border-gray-200">
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="text-center">
+          <div className="flex items-center justify-center mb-4">
+            <div className="bg-[#b5e951] p-3 rounded-xl mr-4">
+              <Leaf className="h-8 w-8 text-[#273949]" />
+            </div>
+            <h1 className="text-4xl font-bold text-gray-900">ECONOVA</h1>
+          </div>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Sistema Integral de Gestión Ambiental Multi-Tenant
+          </p>
+          <div className="mt-4 flex items-center justify-center space-x-6 text-sm text-gray-500">
+            <div className="flex items-center">
+              <Droplets className="h-4 w-4 mr-1 text-blue-500" />
+              <span>Gestión de Agua</span>
+            </div>
+            <div className="flex items-center">
+              <Zap className="h-4 w-4 mr-1 text-yellow-500" />
+              <span>Eficiencia Energética</span>
+            </div>
+            <div className="flex items-center">
+              <Recycle className="h-4 w-4 mr-1 text-green-500" />
+              <span>Economía Circular</span>
+            </div>
+          </div>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="font-bold mb-4">Club de Golf Avándaro</h3>
-          <button 
-            onClick={() => window.location.href = '/club-de-golf-avandaro/dashboard'}
-            className="bg-[#273949] text-white px-4 py-2 rounded w-full"
-          >
-            Acceder
-          </button>
+      </div>
+    </div>
+
+    {/* Main Content */}
+    <div className="flex-1 flex items-center justify-center px-6 py-12">
+      <div className="w-full max-w-6xl">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            Selecciona tu Cliente
+          </h2>
+          <p className="text-lg text-gray-600">
+            Accede al dashboard ambiental de tu organización
+          </p>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="font-bold mb-4">Rancho Avándaro</h3>
-          <button 
-            onClick={() => window.location.href = '/rancho-avandaro/dashboard'}
-            className="bg-[#273949] text-white px-4 py-2 rounded w-full"
-          >
-            Acceder
-          </button>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* CCCM Card */}
+          <div className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-200 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#273949]/5 to-[#b5e951]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            
+            <div className="relative p-8">
+              {/* Logo/Icon */}
+              <div className="w-16 h-16 bg-gradient-to-br from-[#273949] to-[#1e2a35] rounded-xl flex items-center justify-center mb-6 mx-auto">
+                <span className="text-white font-bold text-xl">C</span>
+              </div>
+              
+              {/* Content */}
+              <div className="text-center mb-8">
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  Club Campestre Ciudad de México
+                </h3>
+                <p className="text-gray-600 text-sm mb-4">
+                  Sistema líder en gestión sustentable
+                </p>
+                
+                {/* Stats */}
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <div className="text-2xl font-bold text-[#273949]">72%</div>
+                    <div className="text-xs text-gray-600">Índice Circular</div>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <div className="text-2xl font-bold text-green-600">TRUE</div>
+                    <div className="text-xs text-gray-600">Zero Waste</div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Button */}
+              <button 
+                onClick={() => window.location.href = '/cccm/dashboard'}
+                className="w-full bg-gradient-to-r from-[#273949] to-[#1e2a35] text-white font-semibold py-3 px-6 rounded-xl hover:from-[#1e2a35] hover:to-[#273949] transition-all duration-300 transform group-hover:scale-105 shadow-lg"
+              >
+                Acceder al Dashboard
+              </button>
+            </div>
+          </div>
+
+          {/* Club Avándaro Card */}
+          <div className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-200 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/5 to-emerald-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            
+            <div className="relative p-8">
+              {/* Logo/Icon */}
+              <div className="w-16 h-16 bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-xl flex items-center justify-center mb-6 mx-auto">
+                <span className="text-white font-bold text-xl">A</span>
+              </div>
+              
+              {/* Content */}
+              <div className="text-center mb-8">
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  Club de Golf Avándaro
+                </h3>
+                <p className="text-gray-600 text-sm mb-4">
+                  Excelencia en sostenibilidad
+                </p>
+                
+                {/* Stats */}
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <div className="text-2xl font-bold text-emerald-600">65%</div>
+                    <div className="text-xs text-gray-600">Índice Circular</div>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <div className="text-2xl font-bold text-blue-600">85%</div>
+                    <div className="text-xs text-gray-600">Agua Reciclada</div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Button */}
+              <button 
+                onClick={() => window.location.href = '/club-de-golf-avandaro/dashboard'}
+                className="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl hover:from-emerald-700 hover:to-emerald-600 transition-all duration-300 transform group-hover:scale-105 shadow-lg"
+              >
+                Acceder al Dashboard
+              </button>
+            </div>
+          </div>
+
+          {/* Rancho Avándaro Card */}
+          <div className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-200 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-600/5 to-amber-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            
+            <div className="relative p-8">
+              {/* Logo/Icon */}
+              <div className="w-16 h-16 bg-gradient-to-br from-amber-600 to-amber-700 rounded-xl flex items-center justify-center mb-6 mx-auto">
+                <span className="text-white font-bold text-xl">R</span>
+              </div>
+              
+              {/* Content */}
+              <div className="text-center mb-8">
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  Rancho Avándaro
+                </h3>
+                <p className="text-gray-600 text-sm mb-4">
+                  Innovación en gestión ambiental
+                </p>
+                
+                {/* Stats */}
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <div className="text-2xl font-bold text-amber-600">58%</div>
+                    <div className="text-xs text-gray-600">Índice Circular</div>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <div className="text-2xl font-bold text-orange-600">320</div>
+                    <div className="text-xs text-gray-600">kW Solar</div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Button */}
+              <button 
+                onClick={() => window.location.href = '/rancho-avandaro/dashboard'}
+                className="w-full bg-gradient-to-r from-amber-600 to-amber-700 text-white font-semibold py-3 px-6 rounded-xl hover:from-amber-700 hover:to-amber-600 transition-all duration-300 transform group-hover:scale-105 shadow-lg"
+              >
+                Acceder al Dashboard
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Footer */}
+    <div className="bg-white border-t border-gray-200">
+      <div className="max-w-7xl mx-auto px-6 py-6">
+        <div className="flex flex-col md:flex-row items-center justify-between text-sm text-gray-600">
+          <div className="mb-4 md:mb-0">
+            <p>© 2025 ECONOVA. Sistema Multi-Tenant de Gestión Ambiental.</p>
+          </div>
+          <div className="flex items-center space-x-6">
+            <div className="flex items-center">
+              <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+              <span>Sistema Operativo</span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+              <span>3 Clientes Activos</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
