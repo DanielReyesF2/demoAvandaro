@@ -67,42 +67,18 @@ export default function MultiTenantDashboard({ clientSlug }: TenantDashboardProp
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Tenant Header */}
-      <div 
-        className="bg-white shadow-sm border-b"
-        style={{ borderBottomColor: clientConfig.primaryColor }}
-      >
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div 
-                className="w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold text-xl"
-                style={{ backgroundColor: clientConfig.primaryColor }}
-              >
-                {clientConfig.name.charAt(0)}
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">{clientConfig.name}</h1>
-                <p className="text-gray-600">{clientConfig.description}</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Badge 
-                className="text-white"
-                style={{ backgroundColor: clientConfig.secondaryColor, color: '#000' }}
-              >
-                /{clientSlug}
-              </Badge>
-              <button className="p-2 text-gray-400 hover:text-gray-600">
-                <Settings className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
+    <div className="h-full bg-gray-50">
+      <div className="p-8">
+        {/* Page Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Dashboard - {clientConfig.name}
+          </h1>
+          <p className="text-gray-600">
+            Vista general del sistema ambiental para {new Date().toLocaleDateString('es-MX', { month: 'long', year: 'numeric' })}
+          </p>
         </div>
-      </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card>

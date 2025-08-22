@@ -16,7 +16,7 @@ import Agua from "@/pages/Agua";
 import EconomiaCircular from "@/pages/EconomiaCircular";
 import DataExport from "@/pages/DataExport";
 import MultiTenantDashboard from "@/components/MultiTenantDashboard";
-import TenantNavigation from "@/components/TenantNavigation";
+import TenantSidebar from "@/components/TenantSidebar";
 
 // Temporary simple components until we fix the imports
 const AdminDashboard = () => <div className="p-8">Admin Dashboard - Coming Soon</div>;
@@ -63,9 +63,11 @@ interface TenantWrapperProps {
   children: React.ReactNode;
 }
 const TenantWrapper = ({ clientSlug, children }: TenantWrapperProps) => (
-  <div data-tenant={clientSlug}>
-    <TenantNavigation clientSlug={clientSlug} />
-    {children}
+  <div data-tenant={clientSlug} className="flex h-screen">
+    <TenantSidebar clientSlug={clientSlug} />
+    <main className="flex-1 overflow-y-auto">
+      {children}
+    </main>
   </div>
 );
 
