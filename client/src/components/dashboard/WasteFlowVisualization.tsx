@@ -49,7 +49,7 @@ const wasteFlows: WasteFlow[] = [
     partner: 'Reoil',
     volume: 0.8,
     description: 'Aceite usado de cocinas convertido a biodiesel sostenible',
-    origins: ['Restaurante', 'Casa Club', 'Cocinas de eventos', 'Campo', 'Canchas de Tennis', 'Canchas de Padel']
+    origins: ['Acuarima, Restaurante Jose', 'Casa Club', 'Cocinas de eventos', 'Campo', 'Canchas de Tennis', 'Canchas de Padel']
   },
   {
     id: 'grasa-cascaras',
@@ -62,7 +62,7 @@ const wasteFlows: WasteFlow[] = [
     partner: 'TEDISD Innovative Group',
     volume: 3.2,
     description: 'Grasas de cocina y cáscaras de frutas procesadas sustainably',
-    origins: ['Restaurante principal', 'Cocina Casa Club', 'Área de preparación', 'Campo', 'Canchas de Tennis', 'Canchas de Padel']
+    origins: ['Acuarima, Restaurante Jose', 'Cocina Casa Club', 'Área de preparación', 'Campo', 'Canchas de Tennis', 'Canchas de Padel']
   },
   {
     id: 'organicos-complejos',
@@ -75,7 +75,7 @@ const wasteFlows: WasteFlow[] = [
     partner: 'ORKA',
     volume: 17.6,
     description: 'Pan, pescados, carne, huevo, queso, pollo, pasta, arroz, frutas, azúcar, salsas, papa, caña, conchas, aceites, café',
-    origins: ['Restaurante', 'Casa Club', 'Eventos especiales', 'Cocinas auxiliares', 'Campo', 'Canchas de Tennis', 'Canchas de Padel']
+    origins: ['Acuarima, Restaurante Jose', 'Casa Club', 'Eventos especiales', 'Cocinas auxiliares', 'Campo', 'Canchas de Tennis', 'Canchas de Padel']
   },
 
   // RECICLABLES - Clasificación profesional detallada
@@ -103,7 +103,7 @@ const wasteFlows: WasteFlow[] = [
     partner: 'Cerrando el Ciclo',
     volume: 1.2,
     description: 'Vidrio certificado SAT para proceso de refabricación industrial',
-    origins: ['Bar y restaurante', 'Eventos especiales', 'Áreas VIP', 'Campo', 'Canchas de Tennis', 'Canchas de Padel']
+    origins: ['Bar y Acuarima, Restaurante Jose', 'Eventos especiales', 'Áreas VIP', 'Campo', 'Canchas de Tennis', 'Canchas de Padel']
   },
   {
     id: 'plasticos-polipropileno',
@@ -116,7 +116,7 @@ const wasteFlows: WasteFlow[] = [
     partner: 'Verde Ciudad',
     volume: 1.9,
     description: 'Vidrio PET HDPE, plástico duro, aluminio, tapas de polipropileno',
-    origins: ['Casa Club', 'Restaurante', 'Áreas comunes', 'Eventos', 'Campo', 'Canchas de Tennis', 'Canchas de Padel']
+    origins: ['Casa Club', 'Acuarima, Restaurante Jose', 'Áreas comunes', 'Eventos', 'Campo', 'Canchas de Tennis', 'Canchas de Padel']
   },
 
   // INORGÁNICOS - Sistema completo de manejo
@@ -214,8 +214,8 @@ export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualiz
             <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center shadow-lg mb-2 mx-auto">
               <ChefHat className="w-6 h-6 text-white" />
             </div>
-            <div className="text-sm font-medium text-gray-800">Restaurante</div>
-            <div className="text-xs text-gray-500">Cocina & Bar</div>
+            <div className="text-sm font-medium text-gray-800">Acuarima</div>
+            <div className="text-xs text-gray-500">Restaurante Jose</div>
           </div>
 
           <div className="text-center">

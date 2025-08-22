@@ -42,8 +42,8 @@ export default function Sidebar() {
   
   // User data
   const user = {
-    name: "CCCM Sustentabilidad",
-    role: "Club Campestre"
+    name: "Avandaro Sustentabilidad",
+    role: "Club de Golf"
   };
   
   return (
