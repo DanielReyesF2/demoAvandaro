@@ -210,15 +210,18 @@ export class MemStorage implements IStorage {
   }
 
   async setClientFeatureFlag(flag: InsertClientFeatureFlag): Promise<ClientFeatureFlag> {
-    return { ...flag };
+    return { ...flag, enabled: flag.enabled ?? false };
   }
 
   async createClient(client: InsertClient): Promise<Client> {
     const id = this.clientId++;
+    const now = new Date();
     const newClient: Client = { 
       ...client, 
       id,
-      description: client.description || null
+      description: client.description || null,
+      createdAt: now,
+      updatedAt: now
     };
     this.clients.set(id, newClient);
     return newClient;
@@ -945,14 +948,17 @@ async function initializeDatabase() {
       await db.insert(clients).values([
         {
           name: "Empresa Sustentable S.A.",
+          slug: "empresa-sustentable", 
           description: "Empresa líder en gestión sustentable de recursos y residuos industriales."
         },
         {
           name: "EcoServicios SpA",
+          slug: "ecoservicios",
           description: "Servicios de reciclaje y manejo de residuos para empresas e instituciones."
         },
         {
           name: "Constructora Verde Ltda.",
+          slug: "constructora-verde",
           description: "Construcción sustentable con enfoque en minimización y gestión de residuos."
         }
       ]);

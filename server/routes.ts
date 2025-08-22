@@ -1,6 +1,8 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { resolveTenant, requireTenant, requireAdminScopes, logTenantContext } from "./middleware";
+import { RLS, Access } from "./rls";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
@@ -55,68 +57,19 @@ const upload = multer({
   }
 });
 
-// Multi-tenant middleware to resolve client from slug
+// Legacy tenant interface for backward compatibility
 interface TenantRequest extends Request {
   tenant?: { id: number; slug: string; name: string };
   isAdmin?: boolean;
 }
 
-const resolveTenant = async (req: TenantRequest, res: Response, next: NextFunction) => {
-  const path = req.path;
-  
-  // Admin routes
-  if (path.startsWith('/api/admin')) {
-    req.isAdmin = true;
-    return next();
-  }
-  
-  // Extract client slug from path: /api/tenant/:slug/*
-  const tenantMatch = path.match(/^\/api\/tenant\/([^\/]+)/);
-  if (tenantMatch) {
-    const slug = tenantMatch[1];
-    
-    try {
-      const client = await storage.getClientBySlug(slug);
-      if (!client) {
-        return res.status(404).json({ message: `Tenant '${slug}' not found` });
-      }
-      
-      req.tenant = {
-        id: client.id,
-        slug: client.slug,
-        name: client.name
-      };
-      
-      return next();
-    } catch (error) {
-      console.error("Error resolving tenant:", error);
-      return res.status(500).json({ message: "Error resolving tenant" });
-    }
-  }
-  
-  // For backwards compatibility, assume CCCM for legacy routes
-  try {
-    const client = await storage.getClientBySlug('cccm');
-    if (client) {
-      req.tenant = {
-        id: client.id,
-        slug: client.slug,
-        name: client.name
-      };
-    }
-  } catch (error) {
-    console.error("Error resolving default tenant:", error);
-  }
-  
-  next();
-};
-
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Apply tenant resolution middleware
+  // Apply hardened multi-tenant middleware
   app.use(resolveTenant);
+  app.use(logTenantContext);
 
-  // Admin Routes (global access)
-  app.get("/api/admin/clients", async (req: TenantRequest, res: Response) => {
+  // Admin Routes (global access) - Protected with admin scope
+  app.get("/api/admin/clients", requireAdminScopes, async (req: Request, res: Response) => {
     try {
       const clients = await storage.getClients();
       res.json(clients);
@@ -180,10 +133,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           acc[setting.key] = setting.value;
           return acc;
         }, {} as Record<string, any>),
-        features: features.reduce((acc, feature) => {
+        features: features.reduce((acc: Record<string, boolean>, feature: any) => {
           acc[feature.feature] = feature.enabled;
           return acc;
-        }, {} as Record<string, boolean>)
+        }, {})
       });
     } catch (error) {
       console.error("Error fetching tenant info:", error);
@@ -219,25 +172,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Upload a document
-  app.post('/api/documents/upload', upload.single('file'), async (req: Request, res: Response) => {
+  // Upload a document - Tenant-isolated
+  app.post('/api/documents/upload', requireTenant, upload.single('file'), async (req: Request, res: Response) => {
     try {
       if (!req.file) {
         return res.status(400).json({ message: "No file uploaded" });
       }
       
-      // Validate request body
-      const clientId = req.body.clientId ? parseInt(req.body.clientId) : undefined;
-      
-      if (!clientId) {
-        return res.status(400).json({ message: "Client ID is required" });
-      }
-      
-      // Check if client exists
-      const client = await storage.getClient(clientId);
-      if (!client) {
-        return res.status(404).json({ message: "Client not found" });
-      }
+      // Use client ID from tenant context (enforced by middleware)
+      const clientId = req.context!.clientId;
       
       // Create document record
       const document = await storage.createDocument({
@@ -642,8 +585,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           csvRecord['Total Residuos (kg)'] = record.totalWaste || 0;
           csvRecord['Desviación de Relleno Sanitario (%)'] = record.deviation || 0;
-          csvRecord['Ubicación'] = record.location || 'N/A';
-          csvRecord['Observaciones'] = record.observations || '';
+          // csvRecord['Ubicación'] = record.location || 'N/A'; // Field not in schema
+          // csvRecord['Observaciones'] = record.observations || ''; // Field not in schema
           
           return csvRecord;
         });
@@ -908,7 +851,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const settings = await storage.getClientSettings(client.id);
-      const features = await storage.getClientFeatures(client.id);
+      const features = await storage.getClientFeatureFlags(client.id);
       
       res.json({
         client,
