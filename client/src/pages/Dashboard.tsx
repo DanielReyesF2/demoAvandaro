@@ -190,7 +190,7 @@ export default function Dashboard() {
                   
                   {/* Título y descripción */}
                   <div className="text-center space-y-2">
-                    <h3 className="text-xl font-black text-gray-900 uppercase tracking-wide">RESIDUOS</h3>
+                    <h3 className="text-lg font-bold text-gray-800 uppercase tracking-wider">Residuos</h3>
                     <p className="text-sm text-gray-600 font-medium">TRUE Zero Waste en progreso</p>
                   </div>
                   
@@ -227,7 +227,7 @@ export default function Dashboard() {
                   
                   {/* Título y descripción */}
                   <div className="text-center space-y-2">
-                    <h3 className="text-xl font-black text-gray-900 uppercase tracking-wide">ENERGÍA</h3>
+                    <h3 className="text-lg font-bold text-gray-800 uppercase tracking-wider">Energía</h3>
                     <p className="text-sm text-gray-600 font-medium">Paneles solares en desarrollo</p>
                   </div>
                   
@@ -264,7 +264,7 @@ export default function Dashboard() {
                   
                   {/* Título y descripción */}
                   <div className="text-center space-y-2">
-                    <h3 className="text-xl font-black text-gray-900 uppercase tracking-wide">AGUA</h3>
+                    <h3 className="text-lg font-bold text-gray-800 uppercase tracking-wider">Agua</h3>
                     <p className="text-sm text-gray-600 font-medium">PTAR y sistema de laguna</p>
                   </div>
                   
@@ -301,7 +301,7 @@ export default function Dashboard() {
                   
                   {/* Título y descripción */}
                   <div className="text-center space-y-2">
-                    <h3 className="text-xl font-black text-gray-900 uppercase tracking-wide">ECONOMÍA CIRCULAR</h3>
+                    <h3 className="text-lg font-bold text-gray-800 uppercase tracking-wider">Economía Circular</h3>
                     <p className="text-sm text-gray-600 font-medium">Sustentabilidad integral</p>
                   </div>
                   
