@@ -2,11 +2,23 @@ import { pgTable, text, serial, integer, boolean, timestamp, json, real } from "
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// Define the client schema
+// Define the client schema with enhanced multi-tenant features
 export const clients = pgTable("clients", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   description: text("description"),
+  // Multi-tenant enhancements
+  slug: text("slug").unique().notNull(), // URL-friendly identifier: "cccm", "club-bosques", etc.
+  logo: text("logo"), // Logo URL for branding
+  primaryColor: text("primary_color").default("#273949"), // Brand colors
+  secondaryColor: text("secondary_color").default("#b5e951"),
+  subdomain: text("subdomain").unique(), // Optional: cccm.econova.com
+  contactEmail: text("contact_email"),
+  contactPhone: text("contact_phone"),
+  address: text("address"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 export const insertClientSchema = createInsertSchema(clients).pick({
