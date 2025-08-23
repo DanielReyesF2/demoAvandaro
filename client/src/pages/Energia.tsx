@@ -58,9 +58,6 @@ export default function Energia() {
         <div className="max-w-7xl mx-auto px-4 py-6">
           {/* Header del módulo */}
           <div className="mb-8">
-            <h1 className="text-3xl font-anton text-gray-800 uppercase tracking-wider">
-              Gestión Energética
-            </h1>
             <p className="text-gray-600 mt-2">
               Eficiencia energética y proyecto de paneles solares
             </p>
