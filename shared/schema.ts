@@ -203,6 +203,57 @@ export type InsertReuseEntry = z.infer<typeof insertReuseEntrySchema>;
 export type LandfillEntry = typeof landfillEntries.$inferSelect;
 export type InsertLandfillEntry = z.infer<typeof insertLandfillEntrySchema>;
 
+// Diagnostic system tables
+export const diagnosticSessions = pgTable("diagnostic_sessions", {
+  id: serial("id").primaryKey(),
+  clientName: text("client_name").notNull(),
+  contactEmail: text("contact_email"),
+  contactPhone: text("contact_phone"),
+  
+  // Progress tracking
+  currentModule: text("current_module").default("A"), // Which module they're on
+  completed: boolean("completed").default(false),
+  
+  // Results
+  gateStatus: boolean("gate_status"), // Whether they pass the gate requirements
+  trueReadinessIndex: integer("true_readiness_index"), // 0-100 score
+  
+  // Timestamps
+  startedAt: timestamp("started_at").notNull().defaultNow(),
+  completedAt: timestamp("completed_at"),
+  lastActiveAt: timestamp("last_active_at").notNull().defaultNow(),
+});
+
+export const diagnosticResponses = pgTable("diagnostic_responses", {
+  id: serial("id").primaryKey(),
+  sessionId: integer("session_id").references(() => diagnosticSessions.id).notNull(),
+  moduleId: text("module_id").notNull(), // A, B, C, etc.
+  questionId: text("question_id").notNull(), // A1, B2, etc.
+  response: text("response").notNull(), // The selected answer
+  score: real("score").notNull(), // Numerical score for this response
+  
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+// Insert schemas
+export const insertDiagnosticSessionSchema = createInsertSchema(diagnosticSessions).omit({
+  id: true,
+  startedAt: true,
+  lastActiveAt: true,
+});
+
+export const insertDiagnosticResponseSchema = createInsertSchema(diagnosticResponses).omit({
+  id: true,
+  createdAt: true,
+});
+
+// Types
+export type DiagnosticSession = typeof diagnosticSessions.$inferSelect;
+export type InsertDiagnosticSession = z.infer<typeof insertDiagnosticSessionSchema>;
+
+export type DiagnosticResponse = typeof diagnosticResponses.$inferSelect;
+export type InsertDiagnosticResponse = z.infer<typeof insertDiagnosticResponseSchema>;
+
 // Constants for materials and categories
 export const RECYCLING_MATERIALS = [
   "Papel Mixto",
