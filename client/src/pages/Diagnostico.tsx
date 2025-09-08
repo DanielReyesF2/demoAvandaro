@@ -16,6 +16,7 @@ import {
   Zap
 } from 'lucide-react';
 import { DIAGNOSTIC_CONFIG, calculateReadinessIndex } from '@shared/diagnosticConfig';
+import { GateModule } from '@/components/diagnostic/GateModule';
 
 type DiagnosticStep = 'welcome' | 'contact' | 'modules' | 'results';
 
@@ -282,6 +283,30 @@ export function Diagnostico() {
   }
 
   if (currentStep === 'modules' && currentModule && currentQuestion) {
+    // Special handling for Gate module (Module A)
+    if (currentModule.id === 'A') {
+      return (
+        <AppLayout>
+          <GateModule
+            answers={answers}
+            currentQuestionIndex={currentQuestionIndex}
+            onAnswer={handleAnswer}
+            onNext={() => {
+              if (currentQuestionIndex < currentModule.questions.length - 1) {
+                setCurrentQuestionIndex(prev => prev + 1);
+              } else {
+                setCurrentModuleIndex(1); // Skip to module B
+                setCurrentQuestionIndex(0);
+              }
+            }}
+            onBack={goBack}
+            canGoBack={currentQuestionIndex > 0 || currentModuleIndex > 0}
+          />
+        </AppLayout>
+      );
+    }
+
+    // Regular module handling for non-gate modules
     return (
       <AppLayout>
         <div className="min-h-screen bg-gray-50">
@@ -325,12 +350,18 @@ export function Diagnostico() {
                   <CardContent className="p-8">
                     <div className="space-y-6">
                       <div className="text-center space-y-3">
-                        <h3 className="text-2xl font-bold text-gray-900">
-                          {currentQuestion.text}
-                        </h3>
+                        <div className="flex items-center justify-center space-x-3 mb-4">
+                          <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${currentModule.color} flex items-center justify-center text-white font-bold`}>
+                            {currentQuestionIndex + 1}
+                          </div>
+                          <h3 className="text-2xl font-bold text-gray-900">
+                            {currentQuestion.text}
+                          </h3>
+                        </div>
+                        
                         {currentQuestion.description && (
-                          <p className="text-gray-600 text-lg">
-                            {currentQuestion.description}
+                          <p className="text-gray-600 text-lg bg-blue-50 p-4 rounded-xl border border-blue-100">
+                            💡 {currentQuestion.description}
                           </p>
                         )}
                       </div>
