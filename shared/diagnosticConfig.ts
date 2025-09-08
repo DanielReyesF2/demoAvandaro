@@ -34,10 +34,10 @@ export const DIAGNOSTIC_CONFIG: DiagnosticModule[] = [
     questions: [
       {
         id: "A1",
-        text: "¿Cuál describe mejor su enfoque actual hacia la sostenibilidad?",
+        text: "¿Su organización cuenta con una política formal de Zero Waste documentada?",
         type: "single",
-        options: { "Tenemos una estrategia formal documentada": 1, "Estamos desarrollando nuestro marco estratégico": 0.5, "Estamos explorando oportunidades": 0 },
-        description: "Una estrategia clara potencia el impacto de TRUE"
+        options: { "Sí, tenemos política formal y procedimientos": 1, "Tenemos compromisos informales": 0.5, "No tenemos política específica": 0 },
+        description: "Política formal es requisito base para certificación TRUE"
       },
       {
         id: "A2",
@@ -47,36 +47,36 @@ export const DIAGNOSTIC_CONFIG: DiagnosticModule[] = [
       },
       {
         id: "A3",
-        text: "¿Cómo califican su situación en temas ambientales y regulatorios?",
+        text: "¿Cumplen con todas las regulaciones ambientales aplicables?",
         type: "single",
-        options: { "Excelente base para crecer": 1, "Buenos fundamentos": 0.5, "Oportunidad de mejora": 0 },
-        description: "Una base sólida permite máximo impacto con TRUE"
+        options: { "Sí, cumplimos completamente": 1, "Cumplimos en su mayoría": 0.5, "Tenemos áreas de mejora": 0 },
+        description: "Cumplimiento regulatorio es pre-requisito TRUE"
       },
       {
         id: "A4",
-        text: "¿Qué nivel de información tienen sobre sus materiales y residuos?",
+        text: "¿Tienen sistema de medición y registro de residuos por flujo?",
         type: "single",
-        options: { "Datos detallados y consistentes": 1, "Información básica": 0.5, "Queremos empezar a medir": 0 },
-        description: "Los datos potencian las oportunidades que TRUE puede identificar"
+        options: { "Sí, medimos todos los flujos mensualmente": 1, "Medimos flujos principales": 0.5, "No medimos sistemáticamente": 0 },
+        description: "Medición precisa es fundamental para TRUE"
       },
       {
         id: "A5",
-        text: "¿Qué porcentaje aproximado de sus materiales se desvían del relleno sanitario?",
+        text: "¿Qué porcentaje de desvío de relleno sanitario han documentado?",
         type: "single",
-        options: { "Muy alto (90%+)": 1, "Necesitamos medir esto": 0.3, "Es una gran oportunidad de mejora": 0 },
-        description: "TRUE maximiza el potencial de desvío de cualquier organización"
+        options: { "90% o más": 1, "Entre 75-89%": 0.7, "Entre 50-74%": 0.4, "Menos del 50%": 0 },
+        description: "TRUE requiere documentar mínimo 90% de desvío"
       },
       {
         id: "A6",
-        text: "¿Monitorean la calidad de sus materiales reciclables?",
+        text: "¿Implementan control de calidad en separación de reciclables?",
         type: "single",
-        options: { "Sí, consistentemente": 1, "Ocasionalmente": 0.5, "Es una oportunidad de mejora": 0 }
+        options: { "Sí, con auditorías regulares": 1, "Control básico": 0.5, "No implementado": 0 }
       },
       {
         id: "A7",
-        text: "¿Tienen alguien que pueda liderar iniciativas de sustentabilidad?",
+        text: "¿Cuentan con personal dedicado a gestión de residuos/sustentabilidad?",
         type: "single",
-        options: { "Sí, tenemos el líder perfecto": 1, "Podemos designar a alguien fácilmente": 0 }
+        options: { "Sí, personal dedicado tiempo completo": 1, "Personal de medio tiempo": 0.7, "Responsabilidades adicionales": 0.3, "No tenemos personal asignado": 0 }
       }
     ]
   },

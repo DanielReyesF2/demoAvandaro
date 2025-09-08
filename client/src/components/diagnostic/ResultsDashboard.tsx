@@ -377,66 +377,6 @@ export function ResultsDashboard({
             </CardContent>
           </Card>
 
-          {/* Module Details Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {moduleData.map((module, index) => (
-              <motion.div
-                key={module.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-              >
-                <Card className="shadow-lg border-0 rounded-2xl overflow-hidden h-full">
-                  <CardHeader className={`bg-gradient-to-r ${module.color} text-white p-4`}>
-                    <CardTitle className="text-lg font-bold flex items-center">
-                      <span className="text-2xl mr-2">{module.icon}</span>
-                      <div>
-                        <div>Módulo {module.id}</div>
-                        <div className="text-sm font-normal opacity-90">{module.name}</div>
-                      </div>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-4">
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-3xl font-black text-gray-900">
-                          {module.score}%
-                        </span>
-                        <div className={`px-3 py-1 rounded-full text-sm font-bold ${
-                          module.score >= 80 ? 'bg-green-100 text-green-800' :
-                          module.score >= 60 ? 'bg-green-100 text-green-700' :
-                          module.score >= 40 ? 'bg-blue-100 text-blue-800' :
-                          'bg-purple-100 text-purple-800'
-                        }`}>
-                          {module.score >= 80 ? 'Líder en Sustentabilidad' :
-                           module.score >= 60 ? 'Bien Posicionado' :
-                           module.score >= 40 ? 'Gran Potencial' : 'Máximo Impacto'}
-                        </div>
-                      </div>
-                      
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div 
-                          className={`h-2 rounded-full ${
-                            module.score >= 80 ? 'bg-green-500' :
-                            module.score >= 60 ? 'bg-green-400' :
-                            module.score >= 40 ? 'bg-yellow-500' : 'bg-red-500'
-                          }`}
-                          style={{ width: `${module.score}%` }}
-                        ></div>
-                      </div>
-                      
-                      <p className="text-sm text-gray-600">
-                        {module.score >= 60 
-                          ? `Fortaleza estratégica (${Math.round(module.weight * 100)}% del total)`
-                          : `Oportunidad de alto ROI (${Math.round(module.weight * 100)}% del total)`
-                        }
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
 
           {/* Strategic Opportunity Section */}
           <Card className="shadow-xl border-0 rounded-3xl overflow-hidden bg-gradient-to-r from-blue-50 to-green-50">
