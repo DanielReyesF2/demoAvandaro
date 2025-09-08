@@ -41,9 +41,9 @@ export const DIAGNOSTIC_CONFIG: DiagnosticModule[] = [
       },
       {
         id: "A2",
-        text: "¿Tienen claridad sobre qué áreas incluirían en un programa de sustentabilidad?",
+        text: "¿Tienen definidas las áreas que incluirían en un programa de sustentabilidad?",
         type: "single",
-        options: { "Completamente definido": 1, "Tenemos ideas generales": 0.5, "Queremos explorar opciones": 0 }
+        options: { "Completamente definido": 1, "Tenemos ideas generales": 0.5, "No está definido": 0 }
       },
       {
         id: "A3",
@@ -154,13 +154,13 @@ export const DIAGNOSTIC_CONFIG: DiagnosticModule[] = [
         id: "C1",
         text: "¿Consideran criterios de sustentabilidad en sus compras?",
         type: "single",
-        options: { "Sí, es prioritario": 1, "Lo estamos integrando": 0.6, "Es una gran oportunidad": 0 }
+        options: { "Sí, es prioritario": 1, "Lo estamos integrando": 0.6, "No las consideramos": 0 }
       },
       {
         id: "C2",
         text: "¿Usan opciones reutilizables en alimentos y bebidas?",
         type: "single",
-        options: { "Sí, es nuestra preferencia": 1, "En algunas ocasiones": 0.6, "Queremos explorar esto": 0 }
+        options: { "Sí, sistemáticamente": 1, "En algunas ocasiones": 0.6, "No las usamos": 0 }
       },
       {
         id: "C3",
@@ -251,13 +251,13 @@ export const DIAGNOSTIC_CONFIG: DiagnosticModule[] = [
         id: "H1",
         text: "¿Separan los desechos orgánicos de cocina para aprovechamiento?",
         type: "single",
-        options: { "Sí, consistentemente": 1, "En algunas áreas": 0.6, "Es una excelente oportunidad": 0 }
+        options: { "Sí, consistentemente": 1, "En algunas áreas": 0.6, "No las separamos": 0 }
       },
       {
         id: "H2",
         text: "¿Donan alimentos que aún están en buen estado?",
         type: "single",
-        options: { "Sí, regularmente": 1, "Ocasionalmente": 0.6, "Nos gustaría explorar esto": 0 }
+        options: { "Sí, regularmente": 1, "Ocasionalmente": 0.6, "No las donamos": 0 }
       },
       {
         id: "H3",
@@ -272,9 +272,9 @@ export const DIAGNOSTIC_CONFIG: DiagnosticModule[] = [
       },
       {
         id: "H4",
-        text: "Área de compost en sitio",
+        text: "¿Tienen área de compost en sitio?",
         type: "single",
-        options: { "Sí": 1, "Planeada": 0.6, "No": 0 }
+        options: { "Sí, operativa": 1, "En construcción": 0.6, "No tenemos": 0 }
       },
       {
         id: "H5",
@@ -296,7 +296,7 @@ export const DIAGNOSTIC_CONFIG: DiagnosticModule[] = [
         id: "J1",
         text: "¿Incluyen temas de sustentabilidad al capacitar nuevos empleados?",
         type: "single",
-        options: { "Sí, es parte del proceso": 1, "Podemos agregar esto fácilmente": 0 }
+        options: { "Sí, es parte del proceso": 1, "No las incluimos": 0 }
       },
       {
         id: "J2",
@@ -325,7 +325,7 @@ export const DIAGNOSTIC_CONFIG: DiagnosticModule[] = [
         id: "J5",
         text: "¿Tienen un líder o equipo dedicado a impulsar sustentabilidad?",
         type: "single",
-        options: { "Sí, tenemos el equipo perfecto": 1, "Tenemos personas interesadas": 0.6, "Podemos formar uno": 0 }
+        options: { "Sí, equipo formal": 1, "Personas interesadas": 0.6, "No tenemos": 0 }
       }
     ]
   },
