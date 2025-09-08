@@ -18,10 +18,11 @@ import {
 import { DIAGNOSTIC_CONFIG, calculateReadinessIndex } from '@shared/diagnosticConfig';
 import { GateModule } from '@/components/diagnostic/GateModule';
 import { ResultsDashboard } from '@/components/diagnostic/ResultsDashboard';
+import { MatchAnimation } from '@/components/diagnostic/MatchAnimation';
 import { useMutation } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 
-type DiagnosticStep = 'welcome' | 'contact' | 'modules' | 'results';
+type DiagnosticStep = 'welcome' | 'contact' | 'modules' | 'match' | 'results';
 
 interface ContactInfo {
   clientName: string;
@@ -96,7 +97,7 @@ export function Diagnostico() {
           responses
         });
 
-        setCurrentStep('results');
+        setCurrentStep('match');
       }
     }, 800);
   };
@@ -467,6 +468,15 @@ export function Diagnostico() {
           </div>
         </div>
       </AppLayout>
+    );
+  }
+
+  if (currentStep === 'match') {
+    return (
+      <MatchAnimation
+        clientName={contactInfo.clientName}
+        onComplete={() => setCurrentStep('results')}
+      />
     );
   }
 
