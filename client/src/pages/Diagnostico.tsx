@@ -123,107 +123,81 @@ export function Diagnostico() {
   if (currentStep === 'welcome') {
     return (
       <AppLayout>
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
-          <div className="max-w-5xl mx-auto px-4 py-12">
+        <div className="min-h-screen bg-white">
+          <div className="max-w-4xl mx-auto px-8 py-20">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-center space-y-12"
+              transition={{ duration: 0.8 }}
+              className="space-y-20"
             >
-              {/* Hero Section */}
-              <div className="space-y-8">
-                <motion.div
-                  initial={{ scale: 0.8 }}
-                  animate={{ scale: 1 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                  className="w-28 h-28 mx-auto bg-slate-900 rounded-3xl flex items-center justify-center shadow-2xl border border-slate-200"
-                >
-                  <Award className="w-12 h-12 text-white" />
-                </motion.div>
-                
-                <div className="space-y-6">
-                  <h1 className="text-5xl md:text-6xl font-black text-slate-900 leading-tight">
-                    Diagnóstico Inicial
-                    <span className="block text-slate-700">
-                      TRUE Zero Waste
-                    </span>
-                  </h1>
+              {/* Minimalist Hero */}
+              <div className="text-center space-y-12">
+                <div className="space-y-8">
+                  <motion.div
+                    initial={{ scale: 0.9 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                  >
+                    <h1 className="text-7xl md:text-8xl font-light text-slate-900 tracking-tight leading-none">
+                      TRUE
+                    </h1>
+                    <div className="text-2xl md:text-3xl font-light text-slate-600 mt-2 tracking-wide">
+                      ZERO WASTE DIAGNOSTIC
+                    </div>
+                  </motion.div>
                   
-                  <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-                    Evaluación profesional de su preparación para la certificación TRUE Zero Waste.
-                    Obtenga resultados inmediatos y un plan de acción personalizado.
-                  </p>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.6, delay: 0.6 }}
+                    className="max-w-2xl mx-auto"
+                  >
+                    <p className="text-lg text-slate-600 leading-relaxed font-light">
+                      Evaluación estratégica para organizaciones comprometidas 
+                      con la excelencia en sustentabilidad
+                    </p>
+                  </motion.div>
                 </div>
-              </div>
 
-              {/* Features Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+                {/* Simple Stats */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.4 }}
-                  className="bg-white rounded-3xl p-8 shadow-xl border border-slate-200"
+                  transition={{ duration: 0.6, delay: 0.8 }}
+                  className="flex justify-center items-center space-x-12 text-center"
                 >
-                  <div className="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center mb-6">
-                    <Target className="w-7 h-7 text-slate-700" />
+                  <div>
+                    <div className="text-3xl font-light text-slate-900">11</div>
+                    <div className="text-sm text-slate-500 uppercase tracking-wider">Módulos</div>
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 mb-3">Evaluación Completa</h3>
-                  <p className="text-slate-600 text-base">
-                    Análisis de 11 módulos TRUE con scoring profesional
-                  </p>
-                </motion.div>
-
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.5 }}
-                  className="bg-white rounded-3xl p-8 shadow-xl border border-slate-200"
-                >
-                  <div className="w-14 h-14 bg-slate-200 rounded-2xl flex items-center justify-center mb-6">
-                    <Zap className="w-7 h-7 text-slate-800" />
+                  <div className="w-px h-12 bg-slate-200"></div>
+                  <div>
+                    <div className="text-3xl font-light text-slate-900">25min</div>
+                    <div className="text-sm text-slate-500 uppercase tracking-wider">Duración</div>
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 mb-3">Resultados Inmediatos</h3>
-                  <p className="text-slate-600 text-base">
-                    TRUE Readiness Index y plan de acción en tiempo real
-                  </p>
-                </motion.div>
-
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.6 }}
-                  className="bg-white rounded-3xl p-8 shadow-xl border border-slate-200"
-                >
-                  <div className="w-14 h-14 bg-slate-300 rounded-2xl flex items-center justify-center mb-6">
-                    <Building2 className="w-7 h-7 text-slate-900" />
+                  <div className="w-px h-12 bg-slate-200"></div>
+                  <div>
+                    <div className="text-3xl font-light text-slate-900">Instantáneo</div>
+                    <div className="text-sm text-slate-500 uppercase tracking-wider">Resultados</div>
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 mb-3">Móvil Optimizado</h3>
-                  <p className="text-slate-600 text-base">
-                    Experiencia perfecta en cualquier dispositivo
-                  </p>
                 </motion.div>
               </div>
 
-              {/* CTA */}
+              {/* Minimal CTA */}
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.7 }}
-                className="pt-12"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 1.0 }}
+                className="text-center"
               >
                 <Button
                   onClick={startDiagnostic}
-                  size="lg"
-                  className="bg-slate-900 hover:bg-slate-800 text-white px-12 py-6 text-xl font-semibold rounded-3xl shadow-2xl transform hover:scale-105 transition-all duration-300 border border-slate-700"
+                  variant="outline"
+                  className="border-2 border-slate-900 text-slate-900 hover:bg-slate-900 hover:text-white px-16 py-6 text-lg font-light rounded-none transition-all duration-300 tracking-wide uppercase"
                 >
-                  Comenzar Diagnóstico
-                  <ArrowRight className="w-6 h-6 ml-3" />
+                  Comenzar Evaluación
                 </Button>
-                
-                <p className="text-slate-500 mt-6 text-base">
-                  ⏱️ Tiempo estimado: 25-30 minutos
-                </p>
               </motion.div>
             </motion.div>
           </div>
