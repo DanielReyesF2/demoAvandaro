@@ -120,8 +120,10 @@ interface ActionItem {
 
 export async function generateAndDownloadTrueCertificationReport(
   clientName: string,
-  currentDeviation: number,
-  pendingActions: ActionItem[]
+  trueReadinessIndex: number,
+  circularityIndex: number,
+  moduleScores: Record<string, number>,
+  answers: Record<string, string>
 ): Promise<void> {
   // Crear documento PDF 
   const doc = new jsPDF({
@@ -169,216 +171,182 @@ export async function generateAndDownloadTrueCertificationReport(
   // Añadir escudo de certificación en la esquina
   drawShieldIcon(doc, 175, 80, 2);
   
-  // Sección de estado actual de la certificación
+  // Sección de índices principales  
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(14);
   doc.setTextColor(parseInt(COLORS.navy.slice(1, 3), 16), parseInt(COLORS.navy.slice(3, 5), 16), parseInt(COLORS.navy.slice(5, 7), 16));
-  doc.text('ESTADO ACTUAL', 15, 105);
+  doc.text('ÍNDICES DE EVALUACIÓN', 15, 105);
   
   // Línea decorativa
   doc.setDrawColor(parseInt(COLORS.lime.slice(1, 3), 16), parseInt(COLORS.lime.slice(3, 5), 16), parseInt(COLORS.lime.slice(5, 7), 16));
   doc.setLineWidth(0.7);
   doc.line(15, 107, 80, 107);
   
-  // Panel para el estado actual
+  // Panel para TRUE Readiness Index
   doc.setFillColor(245, 247, 250);
-  doc.roundedRect(15, 115, 180, 50, 3, 3, 'F');
+  doc.rect(15, 110, 90, 35, 'F');
   
-  // Dibujar barra de progreso
-  // Fondo de la barra
-  doc.setFillColor(220, 220, 220);
-  doc.roundedRect(30, 125, 150, 8, 4, 4, 'F');
-  
-  // Progreso actual
-  const progressPercentage = Math.min(100, (currentDeviation / 90) * 100);
-  const progressWidth = 150 * (progressPercentage / 100);
-  
-  // Color según el nivel de progreso
-  let progressColor = '#74c278'; // Verde para nivel alto
-  if (currentDeviation < 50) {
-    progressColor = '#ff7f50'; // Coral para nivel crítico
-  } else if (currentDeviation < 75) {
-    progressColor = '#ffd166'; // Amarillo para nivel medio
-  }
-  
-  doc.setFillColor(
-    parseInt(progressColor.slice(1, 3), 16),
-    parseInt(progressColor.slice(3, 5), 16),
-    parseInt(progressColor.slice(5, 7), 16)
-  );
-  doc.roundedRect(30, 125, progressWidth, 8, 4, 4, 'F');
-  
-  // Marcador de meta
-  const targetX = 30 + (150 * 90) / 100;
-  doc.setDrawColor(39, 57, 73); // Navy
-  doc.setLineWidth(1.5);
-  doc.line(targetX, 120, targetX, 138);
-  
-  // Etiqueta de meta
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8);
-  doc.setTextColor(39, 57, 73);
-  doc.text('Meta 90%', targetX - 10, 117);
-  
-  // Indicador de desviación actual
+  // TRUE Readiness Index
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(13);
-  doc.text('Índice de Desviación Actual:', 30, 150);
-  
-  doc.setFontSize(24);
-  doc.setTextColor(39, 57, 73);
-  doc.text(`${currentDeviation.toFixed(1)}%`, 160, 150, { align: 'center' });
-  
-  // Estado con color
   doc.setFontSize(12);
-  let statusText = '';
+  doc.setTextColor(parseInt(COLORS.navy.slice(1, 3), 16), parseInt(COLORS.navy.slice(3, 5), 16), parseInt(COLORS.navy.slice(5, 7), 16));
+  doc.text('TRUE Readiness Index', 20, 120);
   
-  if (currentDeviation < 50) {
-    statusText = 'ESTADO: CRÍTICO';
-    doc.setTextColor(220, 38, 38); // Rojo
-  } else if (currentDeviation < 75) {
-    statusText = 'ESTADO: EN PROGRESO';
-    doc.setTextColor(245, 158, 11); // Ámbar
-  } else if (currentDeviation < 90) {
-    statusText = 'ESTADO: CERCANO A META';
-    doc.setTextColor(16, 185, 129); // Verde
-  } else {
-    statusText = 'ESTADO: META ALCANZADA';
-    doc.setTextColor(5, 150, 105); // Verde oscuro
-  }
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(24);
+  doc.setTextColor(trueReadinessIndex >= 70 ? 16 : 239, trueReadinessIndex >= 70 ? 185 : 68, trueReadinessIndex >= 70 ? 129 : 68);
+  doc.text(`${trueReadinessIndex}%`, 20, 135);
   
-  doc.text(statusText, 105, 160, { align: 'center' });
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(107, 114, 128);
+  const readinessLevel = trueReadinessIndex >= 80 ? 'LISTO PARA TRUE' :
+                        trueReadinessIndex >= 60 ? 'BIEN POSICIONADO' :
+                        trueReadinessIndex >= 40 ? 'GRAN POTENCIAL' : 'OPORTUNIDAD DE IMPACTO';
+  doc.text(readinessLevel, 20, 142);
+
+  // Panel para Índice de Circularidad
+  doc.setFillColor(245, 247, 250);
+  doc.rect(110, 110, 90, 35, 'F');
   
-  // Sección de acciones pendientes
+  // Índice de Circularidad
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(12);
+  doc.setTextColor(parseInt(COLORS.navy.slice(1, 3), 16), parseInt(COLORS.navy.slice(3, 5), 16), parseInt(COLORS.navy.slice(5, 7), 16));
+  doc.text('Índice de Circularidad', 115, 120);
+  
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(24);
+  doc.setTextColor(circularityIndex >= 70 ? 139 : 147, circularityIndex >= 70 ? 92 : 51, circularityIndex >= 70 ? 246 : 230);
+  doc.text(`${circularityIndex}%`, 115, 135);
+  
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(107, 114, 128);
+  const circularityLevel = circularityIndex >= 80 ? 'CIRCULAR AVANZADO' :
+                          circularityIndex >= 60 ? 'CIRCULARIDAD SÓLIDA' :
+                          circularityIndex >= 40 ? 'EN TRANSICIÓN' : 'GRAN POTENCIAL';
+  doc.text(circularityLevel, 115, 142);
+
+  // Análisis estratégico basado en resultados
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(14);
   doc.setTextColor(parseInt(COLORS.navy.slice(1, 3), 16), parseInt(COLORS.navy.slice(3, 5), 16), parseInt(COLORS.navy.slice(5, 7), 16));
-  doc.text('ACCIONES PENDIENTES', 15, 180);
+  doc.text('ANÁLISIS ESTRATÉGICO', 15, 160);
   
   // Línea decorativa
   doc.setDrawColor(parseInt(COLORS.lime.slice(1, 3), 16), parseInt(COLORS.lime.slice(3, 5), 16), parseInt(COLORS.lime.slice(5, 7), 16));
   doc.setLineWidth(0.7);
-  doc.line(15, 182, 120, 182);
+  doc.line(15, 162, 120, 162);
+
+  // Determinar estrategia recomendada
+  const strategyRecommendation = trueReadinessIndex >= 80 ? 
+    'Certificación TRUE Inmediata' : 
+    trueReadinessIndex >= 60 ?
+    'Preparación Acelerada para TRUE' :
+    'Precertificación Estratégica';
+
+  // Panel de recomendación estratégica
+  doc.setFillColor(245, 247, 250);
+  doc.rect(15, 170, 180, 40, 'F');
   
-  // Tabla de acciones pendientes
-  autoTable(doc, {
-    startY: 190,
-    head: [['Acción', 'Descripción', 'Estado']],
-    body: pendingActions.map(action => {
-      let statusText = '';
-      switch (action.status) {
-        case 'completed':
-          statusText = 'Completado';
-          break;
-        case 'in-progress':
-          statusText = 'En progreso';
-          break;
-        case 'pending':
-          statusText = 'Pendiente';
-          break;
-      }
-      return [action.title, action.description, statusText];
-    }),
-    headStyles: {
-      fillColor: [39, 57, 73], // Navy
-      textColor: [255, 255, 255],
-      fontStyle: 'bold'
-    },
-    alternateRowStyles: {
-      fillColor: [245, 245, 250]
-    },
-    columnStyles: {
-      0: { cellWidth: 45 },
-      1: { cellWidth: 90 },
-      2: { cellWidth: 25 }
-    },
-    tableWidth: 170, // Ancho controlado
-    styles: {
-      overflow: 'linebreak', // Evitar desbordamiento
-      fontSize: 8, // Tamaño menor
-      cellPadding: 2 // Padding reducido
-    }
-  });
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(12);
+  doc.setTextColor(parseInt(COLORS.navy.slice(1, 3), 16), parseInt(COLORS.navy.slice(3, 5), 16), parseInt(COLORS.navy.slice(5, 7), 16));
+  doc.text('Estrategia Recomendada:', 20, 180);
   
-  // Añadir recomendaciones según el nivel actual
-  // Obtener la posición Y después de la tabla
-  const finalY = (doc as any).lastAutoTable.finalY + 10;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(14);
+  doc.setTextColor(16, 185, 129);
+  doc.text(strategyRecommendation, 20, 190);
   
-  // Si hay espacio suficiente en la página actual
-  if (finalY < 240) {
+  // Descripción de la estrategia
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(107, 114, 128);
+  
+  if (trueReadinessIndex >= 80) {
+    doc.text('Su organización está perfectamente posicionada para la certificación TRUE', 20, 200);
+    doc.text('Zero Waste. Recomendamos iniciar el proceso de certificación inmediato.', 20, 207);
+  } else if (trueReadinessIndex >= 60) {
+    doc.text('Excelente base para TRUE. Con mejoras específicas en áreas clave,', 20, 200);
+    doc.text('puede alcanzar la certificación en 6-12 meses.', 20, 207);
+  } else {
+    doc.text('Gran oportunidad para precertificación. Esta estrategia permite impacto', 20, 200);
+    doc.text('inmediato mientras construye fundamentos para TRUE completo.', 20, 207);
+  }
+
+  const finalY = 220;
+
+  // Sección de áreas de oportunidad
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(14);
+  doc.setTextColor(parseInt(COLORS.navy.slice(1, 3), 16), parseInt(COLORS.navy.slice(3, 5), 16), parseInt(COLORS.navy.slice(5, 7), 16));
+  doc.text('ÁREAS DE OPORTUNIDAD', 15, finalY);
+  
+  // Línea decorativa
+  doc.setDrawColor(parseInt(COLORS.lime.slice(1, 3), 16), parseInt(COLORS.lime.slice(3, 5), 16), parseInt(COLORS.lime.slice(5, 7), 16));
+  doc.setLineWidth(0.7);
+  doc.line(15, finalY + 2, 120, finalY + 2);
+  
+  // Encontrar módulos con más oportunidad de mejora
+  const moduleNames = {
+    'B': 'Información y Seguimiento',
+    'C': 'Reducción de Residuos', 
+    'D': 'Gestión de Materiales',
+    'E': 'Tratamiento de Residuos',
+    'F': 'Organización',
+    'G': 'Innovación y Mejora Continua'
+  };
+
+  const sortedModules = Object.entries(moduleScores)
+    .filter(([moduleId]) => moduleNames[moduleId as keyof typeof moduleNames])
+    .map(([moduleId, score]) => ({
+      id: moduleId,
+      name: moduleNames[moduleId as keyof typeof moduleNames],
+      score: Math.round(score * 100)
+    }))
+    .sort((a, b) => a.score - b.score)
+    .slice(0, 3);
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(11);
+  doc.setTextColor(0, 0, 0);
+  
+  let currentY = finalY + 15;
+  doc.text('Priorizar las siguientes áreas para maximizar el impacto:', 20, currentY);
+  currentY += 10;
+
+  sortedModules.forEach((module, index) => {
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(14);
-    doc.setTextColor(parseInt(COLORS.navy.slice(1, 3), 16), parseInt(COLORS.navy.slice(3, 5), 16), parseInt(COLORS.navy.slice(5, 7), 16));
-    doc.text('RECOMENDACIONES', 15, finalY);
-    
-    // Línea decorativa
-    doc.setDrawColor(parseInt(COLORS.lime.slice(1, 3), 16), parseInt(COLORS.lime.slice(3, 5), 16), parseInt(COLORS.lime.slice(5, 7), 16));
-    doc.setLineWidth(0.7);
-    doc.line(15, finalY + 2, 110, finalY + 2);
+    doc.text(`${index + 1}. ${module.name} (${module.score}%)`, 25, currentY);
+    currentY += 6;
     
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(10);
-    doc.setTextColor(0, 0, 0);
+    const recommendation = module.score < 40 ? 
+      'Oportunidad de alto impacto para desarrollo inicial' :
+      module.score < 70 ? 
+      'Área estratégica para mejora acelerada' :
+      'Excelente base para optimización avanzada';
     
-    // Recomendaciones basadas en el nivel actual de desviación y las necesidades específicas del Club
-    // Se crean dos columnas para optimizar espacio y evitar desbordamientos
-    doc.setFontSize(8); // Texto más pequeño para las recomendaciones
-    
-    if (currentDeviation < 50) {
-      // Columna izquierda
-      doc.text('1. URGENTE: Conseguir respaldo de', 20, finalY+10);
-      doc.text('   la alta dirección', 20, finalY+15);
-      
-      doc.text('2. Implementar compostero en sitio', 20, finalY+25);
-      doc.text('   para residuos de poda y comedor', 20, finalY+30);
-      
-      // Columna derecha
-      doc.text('3. Contratar proveedor privado para', 110, finalY+10);
-      doc.text('   asegurar trazabilidad adecuada', 110, finalY+15);
-      
-      doc.text('4. Formar brigada de 3 personas', 110, finalY+25);
-      doc.text('   para gestión interna de residuos', 110, finalY+30);
-    } else if (currentDeviation < 75) {
-      // Columna izquierda
-      doc.text('1. Involucrar activamente a la alta', 20, finalY+10);
-      doc.text('   dirección en el programa', 20, finalY+15);
-      
-      doc.text('2. Ampliar capacidad de compostaje', 20, finalY+25);
-      doc.text('   in situ para residuos orgánicos', 20, finalY+30);
-      
-      // Columna derecha
-      doc.text('3. Mejorar trazabilidad y reportes', 110, finalY+10);
-      doc.text('   con proveedor privado', 110, finalY+15);
-      
-      doc.text('4. Aumentar personal dedicado a', 110, finalY+25);
-      doc.text('   la gestión de residuos', 110, finalY+30);
-    } else {
-      // Columna izquierda
-      doc.text('1. Presentar avances y beneficios', 20, finalY+10);
-      doc.text('   a la alta dirección', 20, finalY+15);
-      
-      doc.text('2. Optimizar sistema de compostaje', 20, finalY+25);
-      doc.text('   y aumentar su capacidad', 20, finalY+30);
-      
-      // Columna derecha
-      doc.text('3. Revisar indicadores mensuales', 110, finalY+10);
-      doc.text('   con proveedor privado', 110, finalY+15);
-      
-      doc.text('4. Capacitar a la brigada en', 110, finalY+25);
-      doc.text('   nuevas técnicas de separación', 110, finalY+30);
-    }
-  }
+    doc.text(`   ${recommendation}`, 25, currentY);
+    currentY += 8;
+  });
   
-  // Pie de página
-  doc.setDrawColor(parseInt(COLORS.lime.slice(1, 3), 16), parseInt(COLORS.lime.slice(3, 5), 16), parseInt(COLORS.lime.slice(5, 7), 16), 0.5);
-  doc.setLineWidth(0.5);
-  doc.line(15, 280, 195, 280);
+  // Información de contacto
+  const contactY = currentY + 10;
+  doc.setFillColor(parseInt(COLORS.navy.slice(1, 3), 16), parseInt(COLORS.navy.slice(3, 5), 16), parseInt(COLORS.navy.slice(5, 7), 16));
+  doc.rect(0, contactY, 210, 25, 'F');
+  
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(12);
+  doc.text('ECONOVA - TRUE Zero Waste Consulting', 105, contactY + 8, { align: 'center' });
   
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(9);
-  doc.setTextColor(100, 100, 100);
-  doc.text('ECONOVA © 2025 | Innovando en Gestión Ambiental', 105, 286, { align: 'center' });
-  
+  doc.setFontSize(10);
+  doc.text('Certificación TRUE Zero Waste | Consultoría en Sustentabilidad', 105, contactY + 16, { align: 'center' });
+  doc.text('Email: info@econova.com.mx | Tel: +52 55 1234 5678', 105, contactY + 22, { align: 'center' });
   // Generar y descargar el PDF
   const pdfBlob = doc.output('blob');
   const blobUrl = URL.createObjectURL(pdfBlob);
@@ -386,7 +354,7 @@ export async function generateAndDownloadTrueCertificationReport(
   // Crear un enlace temporal
   const link = document.createElement('a');
   link.href = blobUrl;
-  link.download = `Certificación_TRUE_${clientName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+  link.download = `Plan_Estrategico_TRUE_${clientName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
   
   // Simular un clic en el enlace para iniciar la descarga
   document.body.appendChild(link);

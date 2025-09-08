@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { DIAGNOSTIC_CONFIG } from '@shared/diagnosticConfig';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, RadialBarChart, RadialBar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
+import { generateAndDownloadTrueCertificationReport } from '@/lib/trueCertificationReport';
 
 interface ResultsDashboardProps {
   contactInfo: {
@@ -489,6 +490,13 @@ export function ResultsDashboard({
             </Button>
             
             <Button
+              onClick={() => generateAndDownloadTrueCertificationReport(
+                contactInfo.clientName,
+                readinessIndex,
+                circularityIndex,
+                moduleScores,
+                answers
+              )}
               size="lg"
               className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-4 text-lg font-bold rounded-2xl"
             >
