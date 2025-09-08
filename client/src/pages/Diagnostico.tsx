@@ -123,7 +123,7 @@ export function Diagnostico() {
   if (currentStep === 'welcome') {
     return (
       <AppLayout>
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen bg-gradient-to-b from-white to-slate-50">
           <div className="max-w-4xl mx-auto px-8 py-20">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -139,10 +139,10 @@ export function Diagnostico() {
                     animate={{ scale: 1 }}
                     transition={{ duration: 0.6, delay: 0.2 }}
                   >
-                    <h1 className="text-7xl md:text-8xl font-light text-slate-900 tracking-tight leading-none">
+                    <h1 className="text-7xl md:text-8xl font-light bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent tracking-tight leading-none">
                       TRUE
                     </h1>
-                    <div className="text-2xl md:text-3xl font-light text-slate-600 mt-2 tracking-wide">
+                    <div className="text-2xl md:text-3xl font-light text-slate-700 mt-2 tracking-wide">
                       ZERO WASTE DIAGNOSTIC
                     </div>
                   </motion.div>
@@ -168,17 +168,17 @@ export function Diagnostico() {
                   className="flex justify-center items-center space-x-12 text-center"
                 >
                   <div>
-                    <div className="text-3xl font-light text-slate-900">11</div>
+                    <div className="text-3xl font-light text-emerald-600">11</div>
                     <div className="text-sm text-slate-500 uppercase tracking-wider">Módulos</div>
                   </div>
-                  <div className="w-px h-12 bg-slate-200"></div>
+                  <div className="w-px h-12 bg-gradient-to-b from-emerald-200 to-blue-200"></div>
                   <div>
-                    <div className="text-3xl font-light text-slate-900">25min</div>
+                    <div className="text-3xl font-light text-blue-600">25min</div>
                     <div className="text-sm text-slate-500 uppercase tracking-wider">Duración</div>
                   </div>
-                  <div className="w-px h-12 bg-slate-200"></div>
+                  <div className="w-px h-12 bg-gradient-to-b from-blue-200 to-emerald-200"></div>
                   <div>
-                    <div className="text-3xl font-light text-slate-900">Instantáneo</div>
+                    <div className="text-3xl font-light text-emerald-600">Instantáneo</div>
                     <div className="text-sm text-slate-500 uppercase tracking-wider">Resultados</div>
                   </div>
                 </motion.div>
@@ -194,7 +194,7 @@ export function Diagnostico() {
                 <Button
                   onClick={startDiagnostic}
                   variant="outline"
-                  className="border-2 border-slate-900 text-slate-900 hover:bg-slate-900 hover:text-white px-16 py-6 text-lg font-light rounded-none transition-all duration-300 tracking-wide uppercase"
+                  className="border-2 border-emerald-600 text-emerald-600 hover:bg-gradient-to-r hover:from-emerald-600 hover:to-blue-600 hover:text-white hover:border-transparent px-16 py-6 text-lg font-light rounded-none transition-all duration-500 tracking-wide uppercase shadow-lg hover:shadow-xl"
                 >
                   Comenzar Evaluación
                 </Button>
