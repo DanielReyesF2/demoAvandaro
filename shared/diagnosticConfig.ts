@@ -24,8 +24,8 @@ export interface DiagnosticModule {
 export const DIAGNOSTIC_CONFIG: DiagnosticModule[] = [
   {
     id: "A",
-    name: "Requisitos de Elegibilidad",
-    description: "Evaluación inicial para determinar si están listos para TRUE Zero Waste",
+    name: "Evaluación Estratégica",
+    description: "Análisis de oportunidades para maximizar el impacto de TRUE Zero Waste",
     icon: "🧱",
     color: "from-red-500 to-orange-500",
     weight: 0,
@@ -34,87 +34,87 @@ export const DIAGNOSTIC_CONFIG: DiagnosticModule[] = [
     questions: [
       {
         id: "A1",
-        text: "¿Tienen política Zero Waste formal?",
+        text: "¿Cuál describe mejor su enfoque actual hacia la sostenibilidad?",
         type: "single",
-        options: { "Sí": 1, "En desarrollo": 0.5, "No": 0 },
-        description: "Una política formal documentada es esencial para TRUE"
+        options: { "Tenemos una estrategia formal documentada": 1, "Estamos desarrollando nuestro marco estratégico": 0.5, "Estamos explorando oportunidades": 0 },
+        description: "Una estrategia clara potencia el impacto de TRUE"
       },
       {
         id: "A2",
-        text: "¿Está definido el alcance (áreas incluidas/excluidas)?",
+        text: "¿Tienen claridad sobre qué áreas incluirían en un programa de sustentabilidad?",
         type: "single",
-        options: { "Sí": 1, "Parcial": 0.5, "No": 0 }
+        options: { "Completamente definido": 1, "Tenemos ideas generales": 0.5, "Queremos explorar opciones": 0 }
       },
       {
         id: "A3",
-        text: "¿Cumplimiento legal al día?",
+        text: "¿Cómo califican su situación en temas ambientales y regulatorios?",
         type: "single",
-        options: { "Sí": 1, "Parcial": 0.5, "No": 0 },
-        description: "Cumplimiento ambiental es prerequisito"
+        options: { "Excelente base para crecer": 1, "Buenos fundamentos": 0.5, "Oportunidad de mejora": 0 },
+        description: "Una base sólida permite máximo impacto con TRUE"
       },
       {
         id: "A4",
-        text: "¿Cuentan con 12 meses de datos por material?",
+        text: "¿Qué nivel de información tienen sobre sus materiales y residuos?",
         type: "single",
-        options: { "Sí": 1, "Parcial": 0.5, "No": 0 },
-        description: "TRUE requiere 12 meses consecutivos de datos"
+        options: { "Datos detallados y consistentes": 1, "Información básica": 0.5, "Queremos empezar a medir": 0 },
+        description: "Los datos potencian las oportunidades que TRUE puede identificar"
       },
       {
         id: "A5",
-        text: "¿Promedio anual de desvío ≥ 90%?",
+        text: "¿Qué porcentaje aproximado de sus materiales se desvían del relleno sanitario?",
         type: "single",
-        options: { "Sí": 1, "No": 0, "No sabemos": 0.3 },
-        description: "90% de desvío es el mínimo para TRUE"
+        options: { "Muy alto (90%+)": 1, "Necesitamos medir esto": 0.3, "Es una gran oportunidad de mejora": 0 },
+        description: "TRUE maximiza el potencial de desvío de cualquier organización"
       },
       {
         id: "A6",
-        text: "¿Miden % de contaminación en reciclables/compost?",
+        text: "¿Monitorean la calidad de sus materiales reciclables?",
         type: "single",
-        options: { "Sí": 1, "A veces": 0.5, "No": 0 }
+        options: { "Sí, consistentemente": 1, "Ocasionalmente": 0.5, "Es una oportunidad de mejora": 0 }
       },
       {
         id: "A7",
-        text: "¿Tienen responsable designado para datos y reporte?",
+        text: "¿Tienen alguien que pueda liderar iniciativas de sustentabilidad?",
         type: "single",
-        options: { "Sí": 1, "No": 0 }
+        options: { "Sí, tenemos el líder perfecto": 1, "Podemos designar a alguien fácilmente": 0 }
       }
     ]
   },
   {
     id: "B",
-    name: "Medición y Trazabilidad",
-    description: "Sistemas de pesaje, registro y seguimiento de materiales",
+    name: "Información y Seguimiento",
+    description: "Cómo miden y dan seguimiento a sus materiales",
     icon: "📊",
     color: "from-blue-500 to-cyan-500",
     weight: 0.15,
     questions: [
       {
         id: "B1",
-        text: "Método de medición de residuos",
+        text: "¿Cómo prefieren medir sus materiales y residuos?",
         type: "single",
         options: {
-          "Báscula fija": 1,
-          "Báscula portátil": 0.8,
-          "Proveedor": 0.7,
-          "Estimación": 0.3
+          "Equipos de pesaje propios": 1,
+          "Equipos móviles": 0.8,
+          "Reportes de proveedores": 0.7,
+          "Estimaciones generales": 0.3
         }
       },
       {
         id: "B2",
-        text: "Frecuencia de registro",
+        text: "¿Con qué frecuencia les gustaría tener información actualizada?",
         type: "single",
         options: {
-          "Diario": 1,
-          "Semanal": 0.8,
-          "Mensual": 0.6,
-          "Esporádico": 0.2
+          "Diario (máximo control)": 1,
+          "Semanal (buen balance)": 0.8,
+          "Mensual (práctico)": 0.6,
+          "Cuando sea necesario": 0.2
         }
       },
       {
         id: "B3",
-        text: "Registro por material",
+        text: "¿Les interesaría conocer el detalle por tipo de material?",
         type: "single",
-        options: { "Sí": 1, "Parcial": 0.6, "No": 0 }
+        options: { "Sí, nos daría mucho valor": 1, "Para algunos materiales clave": 0.6, "Con información general es suficiente": 0 }
       },
       {
         id: "B4",
@@ -144,23 +144,23 @@ export const DIAGNOSTIC_CONFIG: DiagnosticModule[] = [
   },
   {
     id: "C",
-    name: "Compras Preferibles",
-    description: "Políticas de adquisiciones sustentables y contenido reciclado",
+    name: "Compras Inteligentes",
+    description: "Decisiones de compra que apoyan sus objetivos de sustentabilidad",
     icon: "🛒",
     color: "from-green-500 to-emerald-500",
     weight: 0.10,
     questions: [
       {
         id: "C1",
-        text: "¿Tienen política de compras preferibles?",
+        text: "¿Consideran criterios de sustentabilidad en sus compras?",
         type: "single",
-        options: { "Sí": 1, "En desarrollo": 0.6, "No": 0 }
+        options: { "Sí, es prioritario": 1, "Lo estamos integrando": 0.6, "Es una gran oportunidad": 0 }
       },
       {
         id: "C2",
-        text: "Uso de contenedores retornables en F&B",
+        text: "¿Usan opciones reutilizables en alimentos y bebidas?",
         type: "single",
-        options: { "Siempre": 1, "A veces": 0.6, "Nunca": 0 }
+        options: { "Sí, es nuestra preferencia": 1, "En algunas ocasiones": 0.6, "Queremos explorar esto": 0 }
       },
       {
         id: "C3",
@@ -189,23 +189,23 @@ export const DIAGNOSTIC_CONFIG: DiagnosticModule[] = [
   },
   {
     id: "G",
-    name: "Recuperación de Materiales",
-    description: "Separación, reciclaje y gestión de calidad",
+    name: "Aprovechamiento de Materiales",
+    description: "Cómo maximizan el valor de sus materiales",
     icon: "♻️",
     color: "from-purple-500 to-pink-500",
     weight: 0.12,
     questions: [
       {
         id: "G1",
-        text: "Número de categorías de separación",
+        text: "¿Cuántos tipos diferentes de materiales separan actualmente?",
         type: "single",
-        options: { "7+": 1, "5–6": 0.8, "3–4": 0.6, "1–2": 0.3 }
+        options: { "Muchos (7 o más)": 1, "Varios (5-6)": 0.8, "Algunos (3-4)": 0.6, "Pocos (1-2)": 0.3 }
       },
       {
         id: "G2",
-        text: "Contenedores claramente identificados",
+        text: "¿Sus contenedores están bien señalizados para fácil uso?",
         type: "single",
-        options: { "Sí": 1, "Parcial": 0.6, "No": 0 }
+        options: { "Sí, muy claros": 1, "Algunos sí": 0.6, "Podemos mejorar esto": 0 }
       },
       {
         id: "G3",
@@ -241,23 +241,23 @@ export const DIAGNOSTIC_CONFIG: DiagnosticModule[] = [
   },
   {
     id: "H",
-    name: "Manejo de Orgánicos",
-    description: "Compostaje, donación de alimentos y gestión de residuos verdes",
+    name: "Materiales Orgánicos",
+    description: "Aprovechamiento de alimentos y materiales orgánicos",
     icon: "🌱",
     color: "from-lime-500 to-green-500",
     weight: 0.10,
     questions: [
       {
         id: "H1",
-        text: "Separación de orgánicos en cocina",
+        text: "¿Separan los desechos orgánicos de cocina para aprovechamiento?",
         type: "single",
-        options: { "Sí": 1, "Parcial": 0.6, "No": 0 }
+        options: { "Sí, consistentemente": 1, "En algunas áreas": 0.6, "Es una excelente oportunidad": 0 }
       },
       {
         id: "H2",
-        text: "Donación de alimentos aptos",
+        text: "¿Donan alimentos que aún están en buen estado?",
         type: "single",
-        options: { "Sí": 1, "Ocasional": 0.6, "No": 0 }
+        options: { "Sí, regularmente": 1, "Ocasionalmente": 0.6, "Nos gustaría explorar esto": 0 }
       },
       {
         id: "H3",
@@ -286,46 +286,46 @@ export const DIAGNOSTIC_CONFIG: DiagnosticModule[] = [
   },
   {
     id: "J",
-    name: "Capacitación y Liderazgo",
-    description: "Entrenamiento del personal y cultura organizacional",
+    name: "Equipo y Cultura",
+    description: "Involucramiento del personal en sustentabilidad",
     icon: "🧑‍🏫",
     color: "from-indigo-500 to-purple-500",
     weight: 0.12,
     questions: [
       {
         id: "J1",
-        text: "Onboarding Zero Waste para nuevos empleados",
+        text: "¿Incluyen temas de sustentabilidad al capacitar nuevos empleados?",
         type: "single",
-        options: { "Sí": 1, "No": 0 }
+        options: { "Sí, es parte del proceso": 1, "Podemos agregar esto fácilmente": 0 }
       },
       {
         id: "J2",
-        text: "Frecuencia de capacitación",
+        text: "¿Con qué frecuencia les gustaría reforzar la cultura de sustentabilidad?",
         type: "single",
         options: {
-          "Trimestral": 1,
-          "Semestral": 0.8,
-          "Anual": 0.6,
-          "No": 0
+          "Cada 3 meses (alto impacto)": 1,
+          "Cada 6 meses (buen balance)": 0.8,
+          "Anualmente (práctico)": 0.6,
+          "Cuando sea necesario": 0
         }
       },
       {
         id: "J3",
-        text: "KPIs/Metas visibles en áreas",
+        text: "¿Les gustaría que sus logros de sustentabilidad fueran visibles para todos?",
         type: "single",
-        options: { "Sí": 1, "No": 0 }
+        options: { "Sí, nos motivaría mucho": 1, "Preferimos comunicación interna": 0 }
       },
       {
         id: "J4",
-        text: "Incentivos por desempeño ambiental",
+        text: "¿Considerarían reconocer/premiar los logros en sustentabilidad?",
         type: "single",
-        options: { "Sí": 1, "En diseño": 0.6, "No": 0 }
+        options: { "Sí, excelente idea": 1, "Lo estamos considerando": 0.6, "Por el momento no": 0 }
       },
       {
         id: "J5",
-        text: "Responsable formal y comité activo",
+        text: "¿Tienen un líder o equipo dedicado a impulsar sustentabilidad?",
         type: "single",
-        options: { "Sí": 1, "Parcial": 0.6, "No": 0 }
+        options: { "Sí, tenemos el equipo perfecto": 1, "Tenemos personas interesadas": 0.6, "Podemos formar uno": 0 }
       }
     ]
   },

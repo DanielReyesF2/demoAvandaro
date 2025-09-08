@@ -10,7 +10,8 @@ import {
   ArrowLeft,
   Shield,
   ShieldCheck,
-  ShieldX
+  ShieldX,
+  Target
 } from 'lucide-react';
 import { DIAGNOSTIC_CONFIG, DiagnosticModule } from '@shared/diagnosticConfig';
 
@@ -88,16 +89,16 @@ export function GateModule({
               
               <div>
                 <h1 className="text-3xl font-black text-gray-900">
-                  Gate de Elegibilidad TRUE
+                  Evaluación Estratégica TRUE
                 </h1>
                 <p className="text-lg text-gray-600">
-                  Requisitos mínimos para certificación Zero Waste
+                  Análisis de oportunidades para maximizar su impacto
                 </p>
               </div>
             </div>
             
             <div className="text-right">
-              <div className="text-sm text-gray-600">Progreso del Gate</div>
+              <div className="text-sm text-gray-600">Progreso de Evaluación</div>
               <div className="text-2xl font-black text-gray-900">{Math.round(gateProgress)}%</div>
             </div>
           </div>
@@ -128,18 +129,18 @@ export function GateModule({
               <div className="flex-1">
                 <div className="font-bold text-lg">
                   {gateStatus 
-                    ? '✅ Elegible para TRUE Zero Waste'
+                    ? '🚀 Perfectos para TRUE Zero Waste'
                     : criticalBlockers.length > 0
-                      ? '❌ Bloqueadores críticos identificados'
-                      : '⏳ Evaluando elegibilidad...'
+                      ? '💪 Áreas de mayor oportunidad identificadas'
+                      : '🎯 Evaluando potencial estratégico...'
                   }
                 </div>
                 <div className="text-sm">
                   {gateStatus 
-                    ? 'Cumple con todos los requisitos mínimos'
+                    ? 'Excelente posicionamiento para certificación completa'
                     : criticalBlockers.length > 0
-                      ? `${criticalBlockers.length} requisito(s) crítico(s) no cumplido(s)`
-                      : `${answeredBlockers.length}/${blockerStatus.length} requisitos evaluados`
+                      ? `${criticalBlockers.length} área(s) de máximo impacto identificada(s)`
+                      : `${answeredBlockers.length}/${blockerStatus.length} aspectos evaluados`
                   }
                 </div>
               </div>
@@ -154,17 +155,17 @@ export function GateModule({
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-red-100 border-2 border-red-300 rounded-xl p-4"
+            className="bg-blue-100 border-2 border-blue-300 rounded-xl p-4"
           >
             <div className="flex items-start space-x-3">
-              <XCircle className="w-5 h-5 text-red-600 mt-0.5" />
+              <Target className="w-5 h-5 text-blue-600 mt-0.5" />
               <div>
-                <div className="font-bold text-red-800">Requisitos críticos no cumplidos:</div>
-                <ul className="text-sm text-red-700 mt-2 space-y-1">
+                <div className="font-bold text-blue-800">Áreas de Mayor Oportunidad Estratégica:</div>
+                <ul className="text-sm text-blue-700 mt-2 space-y-1">
                   {criticalBlockers.map(blocker => (
                     <li key={blocker.questionId} className="flex items-center space-x-2">
-                      <span className="w-2 h-2 bg-red-500 rounded-full"></span>
-                      <span>{blocker.question}: <strong>{blocker.answer}</strong></span>
+                      <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                      <span>Oportunidad en: <strong>{blocker.question.toLowerCase()}</strong></span>
                     </li>
                   ))}
                 </ul>
@@ -198,8 +199,8 @@ export function GateModule({
                         {currentQuestionIndex + 1}
                       </div>
                       {gateBlockers.includes(currentQuestion.id) && (
-                        <div className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-bold">
-                          CRÍTICO
+                        <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-bold">
+                          OPORTUNIDAD CLAVE
                         </div>
                       )}
                     </div>
@@ -239,9 +240,9 @@ export function GateModule({
                             <div className={`px-3 py-1 rounded-full text-sm font-bold ${
                               score >= gateThreshold
                                 ? 'bg-green-100 text-green-800'
-                                : 'bg-red-100 text-red-800'
+                                : 'bg-blue-100 text-blue-800'
                             }`}>
-                              {score >= gateThreshold ? 'CUMPLE' : 'NO CUMPLE'}
+                              {score >= gateThreshold ? 'FORTALEZA' : 'OPORTUNIDAD'}
                             </div>
                             <span className="text-sm text-gray-500">
                               {Math.round(score * 100)}pts
@@ -250,7 +251,7 @@ export function GateModule({
                               score >= gateThreshold ? (
                                 <CheckCircle className="w-5 h-5 text-green-500" />
                               ) : (
-                                <XCircle className="w-5 h-5 text-red-500" />
+                                <Target className="w-5 h-5 text-blue-500" />
                               )
                             )}
                           </div>
