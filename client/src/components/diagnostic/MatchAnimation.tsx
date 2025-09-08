@@ -52,9 +52,9 @@ export function MatchAnimation({ clientName, onComplete }: MatchAnimationProps) 
   }, [currentPhase, onComplete]);
 
   // Generar partículas de confetti
-  const confettiParticles = Array.from({ length: 50 }, (_, i) => ({
+  const confettiParticles = Array.from({ length: 30 }, (_, i) => ({
     id: i,
-    color: ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444'][i % 5],
+    color: ['#f1f5f9', '#e2e8f0', '#cbd5e1'][i % 3],
     delay: Math.random() * 2,
     x: Math.random() * 100,
     y: Math.random() * 100,
@@ -65,7 +65,7 @@ export function MatchAnimation({ clientName, onComplete }: MatchAnimationProps) 
   }
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-green-900 z-50 flex items-center justify-center overflow-hidden">
+    <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 z-50 flex items-center justify-center overflow-hidden">
       {/* Confetti */}
       <AnimatePresence>
         {showConfetti && confettiParticles.map((particle) => (
@@ -75,7 +75,8 @@ export function MatchAnimation({ clientName, onComplete }: MatchAnimationProps) 
             style={{ 
               backgroundColor: particle.color,
               left: `${particle.x}%`,
-              top: `${particle.y}%`
+              top: `${particle.y}%`,
+              boxShadow: '0 0 10px rgba(255,255,255,0.4)'
             }}
             initial={{ scale: 0, y: -20, rotate: 0 }}
             animate={{ 
@@ -118,7 +119,7 @@ export function MatchAnimation({ clientName, onComplete }: MatchAnimationProps) 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="text-2xl font-bold text-white"
+                className="text-2xl font-semibold text-slate-100"
               >
                 {BUILDUP_MESSAGES[currentMessageIndex]}
               </motion.h2>
@@ -145,7 +146,7 @@ export function MatchAnimation({ clientName, onComplete }: MatchAnimationProps) 
               initial={{ scale: 0 }}
               animate={{ scale: [0, 1.5, 1] }}
               transition={{ duration: 1 }}
-              className="absolute inset-0 bg-gradient-to-r from-pink-500/20 to-purple-500/20 rounded-full blur-3xl"
+              className="absolute inset-0 bg-slate-100/10 rounded-full blur-3xl"
             />
             
             {/* Iconos flotantes */}
@@ -165,7 +166,7 @@ export function MatchAnimation({ clientName, onComplete }: MatchAnimationProps) 
                     repeat: Infinity,
                     repeatDelay: 2
                   }}
-                  className={`absolute text-white ${
+                  className={`absolute text-slate-200 ${
                     index === 0 ? 'top-4 left-4' :
                     index === 1 ? 'top-4 right-4' :
                     index === 2 ? 'bottom-4 left-4' : 'bottom-4 right-4'
@@ -202,7 +203,7 @@ export function MatchAnimation({ clientName, onComplete }: MatchAnimationProps) 
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.8, type: "spring" }}
-                className="text-6xl font-black text-white mb-4 bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent"
+                className="text-6xl font-black text-white mb-4 drop-shadow-2xl"
               >
                 ¡ES UN MATCH
                 <br />
@@ -213,12 +214,12 @@ export function MatchAnimation({ clientName, onComplete }: MatchAnimationProps) 
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.2 }}
-                className="text-3xl font-bold text-white space-y-2"
+                className="text-3xl font-semibold text-white space-y-2"
               >
                 <div className="flex items-center justify-center space-x-4">
-                  <span className="bg-green-500 px-4 py-2 rounded-full">TRUE Zero Waste</span>
-                  <span className="text-pink-400">+</span>
-                  <span className="bg-blue-500 px-4 py-2 rounded-full">{clientName}</span>
+                  <span className="bg-slate-700 px-6 py-3 rounded-full border border-slate-500 shadow-lg">TRUE Zero Waste</span>
+                  <span className="text-slate-300 text-2xl">+</span>
+                  <span className="bg-slate-700 px-6 py-3 rounded-full border border-slate-500 shadow-lg">{clientName}</span>
                 </div>
               </motion.div>
 
@@ -226,7 +227,7 @@ export function MatchAnimation({ clientName, onComplete }: MatchAnimationProps) 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1.8 }}
-                className="text-xl text-white/90 mt-4"
+                className="text-xl text-slate-200 mt-6"
               >
                 ¡Destinados a liderar la sustentabilidad juntos! 🌟
               </motion.p>
