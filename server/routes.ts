@@ -772,7 +772,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         contactEmail,
         contactPhone,
         gateStatus,
-        readinessIndex,
+        trueReadinessIndex: readinessIndex,
         moduleScores
       });
       
@@ -782,7 +782,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           sessionId,
           moduleId: response.moduleId,
           questionId: response.questionId,
-          answer: response.answer,
+          response: response.answer,
           score: response.score
         });
       }
