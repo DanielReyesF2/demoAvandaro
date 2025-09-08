@@ -13,7 +13,7 @@ import {
   Target
 } from 'lucide-react';
 import { DIAGNOSTIC_CONFIG } from '@shared/diagnosticConfig';
-import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, RadialBarChart, RadialBar } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, RadialBarChart, RadialBar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
 
 interface ResultsDashboardProps {
   contactInfo: {
@@ -116,6 +116,39 @@ export function ResultsDashboard({
 
   const readinessLevel = getReadinessLevel(readinessIndex);
 
+  // Calcular índice de circularidad basado en puntuaciones de módulos
+  const calculateCircularityIndex = () => {
+    // Factores de circularidad con diferentes pesos según su impacto en economía circular
+    const circularityFactors = {
+      'B': 0.25, // Información y Seguimiento (datos son base de circularidad)
+      'C': 0.20, // Reducción de Residuos (fundamental para circularidad)
+      'D': 0.15, // Gestión de Materiales (cadena de suministro circular)
+      'E': 0.15, // Tratamiento de Residuos (procesamiento hacia circularidad)
+      'F': 0.10, // Organización (estructura para implementar circularidad)
+      'G': 0.15, // Innovación y Mejora Continua (evolución circular)
+    };
+
+    let totalScore = 0;
+    let totalWeight = 0;
+
+    Object.entries(circularityFactors).forEach(([moduleId, weight]) => {
+      const moduleScore = moduleScores[moduleId] || 0;
+      totalScore += moduleScore * weight;
+      totalWeight += weight;
+    });
+
+    return Math.round((totalScore / totalWeight) * 100);
+  };
+
+  const circularityIndex = calculateCircularityIndex();
+
+  // Datos para gráfica de araña
+  const radarData = moduleData.map(module => ({
+    module: module.name.split(' ')[0], // Tomar primera palabra para que se vea mejor
+    score: module.score,
+    fullName: module.name
+  }));
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -151,41 +184,78 @@ export function ResultsDashboard({
             </div>
           </div>
 
-          {/* Main Score Card */}
+          {/* Main Score Cards */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Readiness Index */}
-            <Card className="lg:col-span-2 shadow-xl border-0 rounded-3xl overflow-hidden">
-              <CardHeader className="bg-gradient-to-r from-blue-600 to-green-600 text-white p-6">
-                <CardTitle className="text-2xl font-bold flex items-center">
-                  <Target className="w-6 h-6 mr-2" />
-                  TRUE Readiness Index
+            {/* TRUE Readiness Index */}
+            <Card className="shadow-xl border-0 rounded-3xl overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-emerald-600 to-blue-600 text-white p-6">
+                <CardTitle className="text-xl font-bold flex items-center">
+                  <Target className="w-5 h-5 mr-2" />
+                  TRUE Readiness
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-8">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-4">
-                    <div className="text-6xl font-black text-gray-900">
-                      {readinessIndex}%
-                    </div>
-                    <div className={`inline-flex px-4 py-2 rounded-full text-sm font-bold ${readinessLevel.bgColor} ${readinessLevel.color}`}>
-                      {readinessLevel.level}
-                    </div>
-                    <p className="text-gray-600 max-w-md">
-                      {readinessLevel.description}. TRUE Zero Waste es la estrategia perfecta para sus objetivos de sustentabilidad.
-                    </p>
+              <CardContent className="p-6">
+                <div className="text-center space-y-4">
+                  <div className="text-5xl font-black text-gray-900">
+                    {readinessIndex}%
                   </div>
-                  
-                  <div className="w-48 h-48">
+                  <div className={`inline-flex px-3 py-1 rounded-full text-xs font-bold ${readinessLevel.bgColor} ${readinessLevel.color}`}>
+                    {readinessLevel.level}
+                  </div>
+                  <div className="w-32 h-32 mx-auto">
                     <ResponsiveContainer width="100%" height="100%">
-                      <RadialBarChart cx="50%" cy="50%" innerRadius="40%" outerRadius="80%" data={readinessData}>
+                      <RadialBarChart cx="50%" cy="50%" innerRadius="30%" outerRadius="80%" data={readinessData}>
                         <RadialBar
                           dataKey="value"
-                          cornerRadius={10}
+                          cornerRadius={8}
                           fill={readinessData[0].fill}
                         />
-                        <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="text-lg font-bold">
-                          {readinessIndex}%
-                        </text>
+                      </RadialBarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Circularity Index */}
+            <Card className="shadow-xl border-0 rounded-3xl overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-purple-600 to-pink-600 text-white p-6">
+                <CardTitle className="text-xl font-bold flex items-center">
+                  <RefreshCw className="w-5 h-5 mr-2" />
+                  Índice Circularidad
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="text-center space-y-4">
+                  <div className="text-5xl font-black text-gray-900">
+                    {circularityIndex}%
+                  </div>
+                  <div className={`inline-flex px-3 py-1 rounded-full text-xs font-bold ${
+                    circularityIndex >= 80 ? 'bg-green-100 text-green-800' :
+                    circularityIndex >= 60 ? 'bg-blue-100 text-blue-800' : 
+                    circularityIndex >= 40 ? 'bg-yellow-100 text-yellow-800' :
+                    'bg-purple-100 text-purple-800'
+                  }`}>
+                    {circularityIndex >= 80 ? 'CIRCULAR AVANZADO' :
+                     circularityIndex >= 60 ? 'CIRCULARIDAD SÓLIDA' :
+                     circularityIndex >= 40 ? 'EN TRANSICIÓN' : 'GRAN POTENCIAL'}
+                  </div>
+                  <div className="w-32 h-32 mx-auto">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RadialBarChart cx="50%" cy="50%" innerRadius="30%" outerRadius="80%" data={[{
+                        name: 'Circularidad',
+                        value: circularityIndex,
+                        fill: circularityIndex >= 80 ? '#10b981' :
+                              circularityIndex >= 60 ? '#3b82f6' :
+                              circularityIndex >= 40 ? '#eab308' : '#8b5cf6'
+                      }]}>
+                        <RadialBar
+                          dataKey="value"
+                          cornerRadius={8}
+                          fill={circularityIndex >= 80 ? '#10b981' :
+                               circularityIndex >= 60 ? '#3b82f6' :
+                               circularityIndex >= 40 ? '#eab308' : '#8b5cf6'}
+                        />
                       </RadialBarChart>
                     </ResponsiveContainer>
                   </div>
@@ -236,51 +306,59 @@ export function ResultsDashboard({
             </Card>
           </div>
 
-          {/* Module Scores */}
+          {/* Spider Chart - Análisis Multidimensional */}
           <Card className="shadow-xl border-0 rounded-3xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-purple-600 to-pink-600 text-white p-6">
+            <CardHeader className="bg-gradient-to-r from-indigo-600 to-cyan-600 text-white p-6">
               <CardTitle className="text-xl font-bold flex items-center">
-                <BarChart3 className="w-6 h-6 mr-2" />
-                Puntuación por Módulo
+                <TrendingUp className="w-6 h-6 mr-2" />
+                Análisis Multidimensional TRUE
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <div className="h-80">
+              <div className="h-96">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={moduleData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis 
-                      dataKey="id" 
-                      tick={{ fontSize: 12 }}
+                  <RadarChart data={radarData} margin={{ top: 40, right: 80, bottom: 40, left: 80 }}>
+                    <PolarGrid stroke="#e5e7eb" />
+                    <PolarAngleAxis 
+                      dataKey="module" 
+                      tick={{ fontSize: 12, fontWeight: 600 }}
+                      className="fill-gray-700"
                     />
-                    <YAxis 
-                      domain={[0, 'dataMax']}
-                      tick={{ fontSize: 12 }}
+                    <PolarRadiusAxis 
+                      angle={90}
+                      domain={[0, 100]}
+                      tick={{ fontSize: 10 }}
+                      tickCount={6}
+                    />
+                    <Radar
+                      name="Puntuación"
+                      dataKey="score"
+                      stroke="#10b981"
+                      fill="#10b981"
+                      fillOpacity={0.1}
+                      strokeWidth={3}
+                      dot={{ r: 6, fill: '#10b981' }}
                     />
                     <Tooltip 
                       formatter={(value: number, name: string, props: any) => [
                         `${value}%`,
-                        props.payload.name
+                        props.payload?.fullName || name
                       ]}
+                      labelFormatter={(label) => `Módulo: ${label}`}
+                      contentStyle={{
+                        backgroundColor: '#fff',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '8px',
+                        fontSize: '12px'
+                      }}
                     />
-                    <Bar 
-                      dataKey="score" 
-                      fill="#8884d8"
-                      radius={[4, 4, 0, 0]}
-                    >
-                      {moduleData.map((entry, index) => (
-                        <Cell 
-                          key={`cell-${index}`} 
-                          fill={
-                            entry.score >= 80 ? COLORS.excellent :
-                            entry.score >= 60 ? COLORS.good :
-                            entry.score >= 40 ? COLORS.fair : COLORS.poor
-                          } 
-                        />
-                      ))}
-                    </Bar>
-                  </BarChart>
+                  </RadarChart>
                 </ResponsiveContainer>
+              </div>
+              <div className="mt-4 text-center">
+                <p className="text-sm text-gray-600">
+                  Visualización integral de fortalezas y oportunidades por módulo TRUE
+                </p>
               </div>
             </CardContent>
           </Card>
