@@ -123,34 +123,34 @@ export function Diagnostico() {
   if (currentStep === 'welcome') {
     return (
       <AppLayout>
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
-          <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
+          <div className="max-w-5xl mx-auto px-4 py-12">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="text-center space-y-8"
+              className="text-center space-y-12"
             >
               {/* Hero Section */}
-              <div className="space-y-6">
+              <div className="space-y-8">
                 <motion.div
                   initial={{ scale: 0.8 }}
                   animate={{ scale: 1 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
-                  className="w-24 h-24 mx-auto bg-gradient-to-br from-green-500 to-blue-500 rounded-2xl flex items-center justify-center shadow-2xl"
+                  className="w-28 h-28 mx-auto bg-slate-900 rounded-3xl flex items-center justify-center shadow-2xl border border-slate-200"
                 >
                   <Award className="w-12 h-12 text-white" />
                 </motion.div>
                 
-                <div className="space-y-4">
-                  <h1 className="text-4xl md:text-5xl font-black text-gray-900 leading-tight">
+                <div className="space-y-6">
+                  <h1 className="text-5xl md:text-6xl font-black text-slate-900 leading-tight">
                     Diagnóstico Inicial
-                    <span className="block bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+                    <span className="block text-slate-700">
                       TRUE Zero Waste
                     </span>
                   </h1>
                   
-                  <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                  <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
                     Evaluación profesional de su preparación para la certificación TRUE Zero Waste.
                     Obtenga resultados inmediatos y un plan de acción personalizado.
                   </p>
@@ -158,18 +158,18 @@ export function Diagnostico() {
               </div>
 
               {/* Features Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.4 }}
-                  className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100"
+                  className="bg-white rounded-3xl p-8 shadow-xl border border-slate-200"
                 >
-                  <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
-                    <Target className="w-6 h-6 text-blue-600" />
+                  <div className="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center mb-6">
+                    <Target className="w-7 h-7 text-slate-700" />
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">Evaluación Completa</h3>
-                  <p className="text-gray-600 text-sm">
+                  <h3 className="text-xl font-bold text-slate-900 mb-3">Evaluación Completa</h3>
+                  <p className="text-slate-600 text-base">
                     Análisis de 11 módulos TRUE con scoring profesional
                   </p>
                 </motion.div>
@@ -178,13 +178,13 @@ export function Diagnostico() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.5 }}
-                  className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100"
+                  className="bg-white rounded-3xl p-8 shadow-xl border border-slate-200"
                 >
-                  <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-4">
-                    <Zap className="w-6 h-6 text-green-600" />
+                  <div className="w-14 h-14 bg-slate-200 rounded-2xl flex items-center justify-center mb-6">
+                    <Zap className="w-7 h-7 text-slate-800" />
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">Resultados Inmediatos</h3>
-                  <p className="text-gray-600 text-sm">
+                  <h3 className="text-xl font-bold text-slate-900 mb-3">Resultados Inmediatos</h3>
+                  <p className="text-slate-600 text-base">
                     TRUE Readiness Index y plan de acción en tiempo real
                   </p>
                 </motion.div>
@@ -193,13 +193,13 @@ export function Diagnostico() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.6 }}
-                  className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100"
+                  className="bg-white rounded-3xl p-8 shadow-xl border border-slate-200"
                 >
-                  <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
-                    <Building2 className="w-6 h-6 text-purple-600" />
+                  <div className="w-14 h-14 bg-slate-300 rounded-2xl flex items-center justify-center mb-6">
+                    <Building2 className="w-7 h-7 text-slate-900" />
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">Móvil Optimizado</h3>
-                  <p className="text-gray-600 text-sm">
+                  <h3 className="text-xl font-bold text-slate-900 mb-3">Móvil Optimizado</h3>
+                  <p className="text-slate-600 text-base">
                     Experiencia perfecta en cualquier dispositivo
                   </p>
                 </motion.div>
@@ -210,18 +210,18 @@ export function Diagnostico() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.7 }}
-                className="pt-8"
+                className="pt-12"
               >
                 <Button
                   onClick={startDiagnostic}
                   size="lg"
-                  className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white px-8 py-4 text-lg font-bold rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-200"
+                  className="bg-slate-900 hover:bg-slate-800 text-white px-12 py-6 text-xl font-semibold rounded-3xl shadow-2xl transform hover:scale-105 transition-all duration-300 border border-slate-700"
                 >
                   Comenzar Diagnóstico
-                  <ArrowRight className="w-5 h-5 ml-2" />
+                  <ArrowRight className="w-6 h-6 ml-3" />
                 </Button>
                 
-                <p className="text-sm text-gray-500 mt-4">
+                <p className="text-slate-500 mt-6 text-base">
                   ⏱️ Tiempo estimado: 25-30 minutos
                 </p>
               </motion.div>
