@@ -142,9 +142,7 @@ export function Diagnostico() {
                     <h1 className="text-7xl md:text-8xl font-light bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent tracking-tight leading-none">
                       TRUE
                     </h1>
-                    <div className="text-2xl md:text-3xl font-light text-slate-700 mt-2 tracking-wide">
-                      ZERO WASTE DIAGNOSTIC
-                    </div>
+                    <div className="text-2xl md:text-3xl font-light text-slate-700 mt-2 tracking-wide">DIAGNÓSTICO DE CIRCULARIDAD</div>
                   </motion.div>
                   
                   <motion.div
