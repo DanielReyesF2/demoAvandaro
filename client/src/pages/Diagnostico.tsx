@@ -139,10 +139,10 @@ export function Diagnostico() {
                     animate={{ scale: 1 }}
                     transition={{ duration: 0.6, delay: 0.2 }}
                   >
-                    <h1 className="text-7xl md:text-8xl font-light bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent tracking-tight leading-none">
-                      TRUE
+                    <h1 className="text-6xl md:text-7xl font-light bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent tracking-tight leading-none">
+                      ECONOMÍA CIRCULAR
                     </h1>
-                    <div className="text-2xl md:text-3xl font-light text-slate-700 mt-2 tracking-wide">DIAGNÓSTICO DE CIRCULARIDAD</div>
+                    <div className="text-2xl md:text-3xl font-light text-slate-700 mt-2 tracking-wide">DIAGNÓSTICO INTEGRAL</div>
                   </motion.div>
                   
                   <motion.div
@@ -152,8 +152,8 @@ export function Diagnostico() {
                     className="max-w-2xl mx-auto"
                   >
                     <p className="text-lg text-slate-600 leading-relaxed font-light">
-                      Evaluación estratégica para organizaciones comprometidas 
-                      con la excelencia en sustentabilidad
+                      Evaluación completa de <strong>Agua</strong>, <strong>Energía</strong> y <strong>Residuos</strong> para 
+                      organizaciones líderes en sustentabilidad y economía circular
                     </p>
                   </motion.div>
                 </div>
@@ -166,18 +166,18 @@ export function Diagnostico() {
                   className="flex justify-center items-center space-x-12 text-center"
                 >
                   <div>
-                    <div className="text-3xl font-light text-emerald-600">11</div>
-                    <div className="text-sm text-slate-500 uppercase tracking-wider">Módulos</div>
+                    <div className="text-3xl font-light text-blue-600">💧</div>
+                    <div className="text-sm text-slate-500 uppercase tracking-wider">Gestión Hídrica</div>
                   </div>
                   <div className="w-px h-12 bg-gradient-to-b from-emerald-200 to-blue-200"></div>
                   <div>
-                    <div className="text-3xl font-light text-blue-600">25min</div>
-                    <div className="text-sm text-slate-500 uppercase tracking-wider">Duración</div>
+                    <div className="text-3xl font-light text-emerald-600">⚡</div>
+                    <div className="text-sm text-slate-500 uppercase tracking-wider">Eficiencia Energética</div>
                   </div>
                   <div className="w-px h-12 bg-gradient-to-b from-blue-200 to-emerald-200"></div>
                   <div>
-                    <div className="text-3xl font-light text-emerald-600">Instantáneo</div>
-                    <div className="text-sm text-slate-500 uppercase tracking-wider">Resultados</div>
+                    <div className="text-3xl font-light text-purple-600">♻️</div>
+                    <div className="text-sm text-slate-500 uppercase tracking-wider">Zero Waste</div>
                   </div>
                 </motion.div>
               </div>
