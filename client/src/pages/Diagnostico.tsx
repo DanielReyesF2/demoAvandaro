@@ -123,8 +123,15 @@ export function Diagnostico() {
   if (currentStep === 'welcome') {
     return (
       <AppLayout>
-        <div className="min-h-screen bg-gradient-to-b from-white to-slate-50">
-          <div className="max-w-4xl mx-auto px-8 py-20">
+        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
+          {/* Subtle floating shapes */}
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute top-20 left-10 w-32 h-32 bg-lime-200/20 rounded-full blur-3xl"></div>
+            <div className="absolute top-40 right-20 w-48 h-48 bg-navy-200/20 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-32 left-1/3 w-40 h-40 bg-emerald-200/20 rounded-full blur-3xl"></div>
+          </div>
+          
+          <div className="max-w-5xl mx-auto px-8 py-24 relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -135,14 +142,31 @@ export function Diagnostico() {
               <div className="text-center space-y-12">
                 <div className="space-y-8">
                   <motion.div
-                    initial={{ scale: 0.9 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
                   >
-                    <h1 className="text-6xl md:text-7xl font-light bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent tracking-tight leading-none">
-                      ECONOMÍA CIRCULAR
-                    </h1>
-                    <div className="text-2xl md:text-3xl font-light text-slate-700 mt-2 tracking-wide">DIAGNÓSTICO INTEGRAL</div>
+                    <motion.h1 
+                      className="text-7xl md:text-8xl font-extralight bg-gradient-to-r from-navy to-lime-600 bg-clip-text text-transparent tracking-tight leading-[0.85] mb-6"
+                      whileHover={{ 
+                        scale: 1.02
+                      }}
+                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                    >
+                      ECONOMÍA
+                      <br />
+                      <span className="font-light">
+                        CIRCULAR
+                      </span>
+                    </motion.h1>
+                    <motion.div 
+                      className="text-3xl md:text-4xl font-light text-gray-600 tracking-wide"
+                      initial={{ opacity: 0, x: -30 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.8, delay: 0.8 }}
+                    >
+                      Diagnóstico Integral
+                    </motion.div>
                   </motion.div>
                   
                   <motion.div
@@ -151,10 +175,21 @@ export function Diagnostico() {
                     transition={{ duration: 0.6, delay: 0.6 }}
                     className="max-w-2xl mx-auto"
                   >
-                    <p className="text-lg text-slate-600 leading-relaxed font-light">
-                      Evaluación completa de <strong>Agua</strong>, <strong>Energía</strong> y <strong>Residuos</strong> para 
-                      organizaciones líderes en sustentabilidad y economía circular
-                    </p>
+                    <motion.div 
+                      className="bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-3xl p-8 shadow-xl"
+                      whileHover={{ 
+                        y: -5,
+                        boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.1)"
+                      }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <p className="text-xl text-gray-700 leading-relaxed font-light">
+                        Evaluación completa de <span className="text-navy font-semibold">Agua</span>, 
+                        <span className="text-lime-600 font-semibold"> Energía</span> y 
+                        <span className="text-emerald-600 font-semibold"> Residuos</span> para 
+                        organizaciones líderes en sustentabilidad
+                      </p>
+                    </motion.div>
                   </motion.div>
                 </div>
 
@@ -165,20 +200,45 @@ export function Diagnostico() {
                   transition={{ duration: 0.6, delay: 0.8 }}
                   className="flex justify-center items-center space-x-12 text-center"
                 >
-                  <div>
-                    <div className="text-3xl font-light text-blue-600">💧</div>
-                    <div className="text-sm text-slate-500 uppercase tracking-wider">Gestión Hídrica</div>
-                  </div>
-                  <div className="w-px h-12 bg-gradient-to-b from-emerald-200 to-blue-200"></div>
-                  <div>
-                    <div className="text-3xl font-light text-emerald-600">⚡</div>
-                    <div className="text-sm text-slate-500 uppercase tracking-wider">Eficiencia Energética</div>
-                  </div>
-                  <div className="w-px h-12 bg-gradient-to-b from-blue-200 to-emerald-200"></div>
-                  <div>
-                    <div className="text-3xl font-light text-purple-600">♻️</div>
-                    <div className="text-sm text-slate-500 uppercase tracking-wider">Zero Waste</div>
-                  </div>
+                  <motion.div 
+                    className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100"
+                    whileHover={{ 
+                      y: -8,
+                      boxShadow: "0 20px 40px -12px rgba(59, 130, 246, 0.15)"
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <div className="text-5xl mb-3">💧</div>
+                    <div className="text-sm text-navy uppercase tracking-wider font-semibold">Gestión Hídrica</div>
+                  </motion.div>
+                  
+                  <div className="w-px h-20 bg-gradient-to-b from-navy/20 to-lime-600/20"></div>
+                  
+                  <motion.div 
+                    className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100"
+                    whileHover={{ 
+                      y: -8,
+                      boxShadow: "0 20px 40px -12px rgba(132, 204, 22, 0.15)"
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <div className="text-5xl mb-3">⚡</div>
+                    <div className="text-sm text-lime-600 uppercase tracking-wider font-semibold">Eficiencia Energética</div>
+                  </motion.div>
+                  
+                  <div className="w-px h-20 bg-gradient-to-b from-lime-600/20 to-emerald-600/20"></div>
+                  
+                  <motion.div 
+                    className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100"
+                    whileHover={{ 
+                      y: -8,
+                      boxShadow: "0 20px 40px -12px rgba(16, 185, 129, 0.15)"
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <div className="text-5xl mb-3">♻️</div>
+                    <div className="text-sm text-emerald-600 uppercase tracking-wider font-semibold">Zero Waste</div>
+                  </motion.div>
                 </motion.div>
               </div>
 
@@ -189,13 +249,35 @@ export function Diagnostico() {
                 transition={{ duration: 0.6, delay: 1.0 }}
                 className="text-center"
               >
-                <Button
-                  onClick={startDiagnostic}
-                  variant="outline"
-                  className="border-2 border-emerald-600 text-emerald-600 hover:bg-gradient-to-r hover:from-emerald-600 hover:to-blue-600 hover:text-white hover:border-transparent px-16 py-6 text-lg font-light rounded-none transition-all duration-500 tracking-wide uppercase shadow-lg hover:shadow-xl"
+                <motion.div
+                  whileHover={{ y: -3 }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 >
-                  Comenzar Evaluación
-                </Button>
+                  <Button
+                    onClick={startDiagnostic}
+                    className="relative px-12 py-6 text-lg font-medium tracking-wide
+                              bg-gradient-to-r from-navy to-lime-600
+                              hover:from-navy-dark hover:to-lime-700
+                              text-white border-0 rounded-full 
+                              shadow-xl hover:shadow-2xl hover:shadow-lime-500/20
+                              transition-all duration-300
+                              group overflow-hidden"
+                  >
+                    <span className="relative z-10 flex items-center justify-center">
+                      <Award className="w-5 h-5 mr-3" />
+                      Comenzar Evaluación
+                    </span>
+                    
+                    {/* Subtle glow effect */}
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                      initial={{ x: '-100%', opacity: 0 }}
+                      whileHover={{ x: '100%', opacity: 1 }}
+                      transition={{ duration: 0.8 }}
+                    />
+                  </Button>
+                </motion.div>
               </motion.div>
             </motion.div>
           </div>
