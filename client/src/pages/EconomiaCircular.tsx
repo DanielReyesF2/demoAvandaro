@@ -54,9 +54,6 @@ export default function EconomiaCircular() {
           {/* Indicador principal de circularidad */}
           <div className="bg-gradient-to-r from-green-50 via-blue-50 to-purple-50 rounded-xl p-8 mb-8 border-2 border-green-100">
             <div className="text-center mb-6">
-              <h2 className="text-2xl font-anton text-gray-800 uppercase tracking-wide mb-4">
-                Índice de Circularidad CCCM
-              </h2>
               <div className="relative inline-block">
                 <div className="text-6xl font-bold text-green-600">{indiceCircularidad.toFixed(0)}%</div>
                 <div className="absolute -top-2 -right-8 bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-bold transform rotate-12">
