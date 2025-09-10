@@ -329,42 +329,19 @@ export function ResultsDashboard({
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <div className="h-96">
+              <div className="h-[400px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <RadarChart data={radarData} margin={{ top: 40, right: 80, bottom: 40, left: 80 }}>
-                    <PolarGrid stroke="#e5e7eb" />
-                    <PolarAngleAxis 
-                      dataKey="module" 
-                      tick={{ fontSize: 12, fontWeight: 600 }}
-                      className="fill-gray-700"
-                    />
-                    <PolarRadiusAxis 
-                      angle={90}
-                      domain={[0, 100]}
-                      tick={{ fontSize: 10 }}
-                      tickCount={6}
-                    />
+                  <RadarChart data={radarData}>
+                    <PolarGrid />
+                    <PolarAngleAxis dataKey="module" tick={{ fontSize: 12 }} />
+                    <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 10 }} />
                     <Radar
-                      name="Puntuación"
+                      name="Puntuación Actual"
                       dataKey="score"
-                      stroke="#10b981"
-                      fill="#10b981"
-                      fillOpacity={0.1}
-                      strokeWidth={3}
-                      dot={{ r: 6, fill: '#10b981' }}
-                    />
-                    <Tooltip 
-                      formatter={(value: number, name: string, props: any) => [
-                        `${value}%`,
-                        props.payload?.fullName || name
-                      ]}
-                      labelFormatter={(label) => `Módulo: ${label}`}
-                      contentStyle={{
-                        backgroundColor: '#fff',
-                        border: '1px solid #e5e7eb',
-                        borderRadius: '8px',
-                        fontSize: '12px'
-                      }}
+                      stroke="#22c55e"
+                      fill="#22c55e"
+                      fillOpacity={0.3}
+                      strokeWidth={2}
                     />
                   </RadarChart>
                 </ResponsiveContainer>
