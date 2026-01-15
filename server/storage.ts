@@ -801,6 +801,10 @@ export class DatabaseStorage implements IStorage {
 // Asegurémonos de tener algunos datos iniciales de clientes
 async function initializeDatabase() {
   try {
+    if (!db) {
+      console.warn("Base de datos no disponible, saltando inicialización");
+      return;
+    }
     const existingClients = await db.select().from(clients);
     
     if (existingClients.length === 0) {

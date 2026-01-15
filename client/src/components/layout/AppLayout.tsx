@@ -1,20 +1,45 @@
 import { useState } from "react";
+import { useLocation } from "wouter";
 import Sidebar from "./Sidebar";
 import { Menu } from "lucide-react";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 
 interface AppLayoutProps {
   children: React.ReactNode;
+  title?: string;
+  subtitle?: string;
 }
 
-export default function AppLayout({ children }: AppLayoutProps) {
+export default function AppLayout({ children, title, subtitle }: AppLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [location] = useLocation();
   
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
+
+  // Determinar breadcrumbs y título según la ruta
+  const getBreadcrumbs = () => {
+    if (location === "/") {
+      return [{ label: "Inicio" }, { label: "Dashboard" }];
+    }
+    return [{ label: "Inicio", href: "/" }, { label: location.replace("/", "").replace(/-/g, " ") }];
+  };
+
+  const getTitle = () => {
+    if (title) return title;
+    if (location === "/") return "Dashboard Ejecutivo";
+    return "Dashboard";
+  };
+
+  const getSubtitle = () => {
+    if (subtitle) return subtitle;
+    if (location === "/") return "Vista general de KPIs y métricas de ventas - Econova";
+    return "";
+  };
   
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-white">
       {/* Desktop sidebar */}
       <div className="hidden md:flex md:flex-shrink-0">
         <Sidebar />
@@ -36,25 +61,46 @@ export default function AppLayout({ children }: AppLayoutProps) {
       </div>
       
       {/* Main content */}
-      <div className="flex flex-col flex-1 overflow-hidden">
-        {/* Mobile header */}
-        <div className="md:hidden flex items-center justify-between h-16 bg-navy text-white px-4">
-          <div className="flex items-center">
-            <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6z"></path>
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6z"></path>
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2z"></path>
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
-            </svg>
-            <span className="text-xl font-anton tracking-wider">ECONOVA</span>
+      <div className="flex flex-col flex-1 overflow-hidden bg-white">
+        {/* Header superior */}
+        <header className="hidden md:block border-b border-subtle bg-white px-8 py-6">
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <Breadcrumbs items={getBreadcrumbs()} />
+              <h1 className="text-2xl font-semibold text-gray-900 mt-3 tracking-tight">
+                {getTitle()}
+              </h1>
+              {getSubtitle() && (
+                <p className="text-sm text-gray-600 mt-1.5">
+                  {getSubtitle()}
+                </p>
+              )}
+            </div>
+            {/* Icono Econova circular */}
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-accent-green flex items-center justify-center shadow-sm">
+                <span className="text-white font-bold text-lg">E</span>
+              </div>
+              <span className="text-sm font-medium text-gray-700">Econova</span>
+            </div>
           </div>
-          <button onClick={toggleSidebar}>
-            <Menu className="w-6 h-6" />
-          </button>
+        </header>
+
+        {/* Mobile header */}
+        <div className="md:hidden flex items-center justify-between h-16 bg-white border-b border-subtle px-4">
+          <div className="flex items-center gap-3">
+            <button onClick={toggleSidebar}>
+              <Menu className="w-6 h-6 text-gray-700" />
+            </button>
+            <div className="w-8 h-8 rounded-full bg-accent-green flex items-center justify-center">
+              <span className="text-white font-bold">E</span>
+            </div>
+            <span className="text-lg font-semibold text-gray-900">Econova</span>
+          </div>
         </div>
         
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto bg-gray-50">
+        <main className="flex-1 overflow-y-auto bg-white">
           {children}
         </main>
       </div>
