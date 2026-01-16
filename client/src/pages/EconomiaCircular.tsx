@@ -1,8 +1,9 @@
+import { motion } from 'framer-motion';
 import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AppLayout from "../components/layout/AppLayout";
-import { ClubHeader } from "../components/dashboard/ClubHeader";
-import { RotateCcw, TrendingUp, Award, Target } from "lucide-react";
+import { RotateCcw, TrendingUp, Award, Target, Leaf, Recycle, Zap, Droplets, TreePine, Car, ArrowRight, Sparkles } from "lucide-react";
+import { AnimatedCounter } from '@/components/ui/animated-counter';
 
 // Datos del índice de circularidad
 const circularityMetrics = [
@@ -38,54 +39,225 @@ export default function EconomiaCircular() {
   return (
     <AppLayout>
       <div className="min-h-screen bg-gray-50">
-        <ClubHeader />
-        
         <div className="max-w-7xl mx-auto px-4 py-6">
-          {/* Header del módulo */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-anton text-gray-800 uppercase tracking-wider">
-              Economía Circular
-            </h1>
-            <p className="text-gray-600 mt-2">
-              Índice integral de circularidad y sostenibilidad del Club Campestre
-            </p>
-          </div>
+          {/* Hero Section - Índice de Circularidad */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-600 p-8 mb-8 shadow-2xl"
+          >
+            {/* Animación de ciclo circular */}
+            <div className="absolute inset-0 overflow-hidden">
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border-4 border-white/10 rounded-full"
+              />
+              <motion.div
+                animate={{ rotate: -360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] border-2 border-white/10 rounded-full"
+              />
+              {/* Partículas flotantes */}
+              {[...Array(6)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  animate={{
+                    y: [0, -30, 0],
+                    x: [0, 20, 0],
+                    rotate: 360
+                  }}
+                  transition={{
+                    duration: 5 + i,
+                    repeat: Infinity,
+                    delay: i * 0.5,
+                  }}
+                  className="absolute w-8 h-8 text-white/20"
+                  style={{ top: `${20 + i * 15}%`, left: `${10 + i * 15}%` }}
+                >
+                  <Recycle className="w-full h-full" />
+                </motion.div>
+              ))}
+            </div>
 
-          {/* Indicador principal de circularidad */}
-          <div className="bg-gradient-to-r from-green-50 via-blue-50 to-purple-50 rounded-xl p-8 mb-8 border-2 border-green-100">
-            <div className="text-center mb-6">
-              <div className="relative inline-block">
-                <div className="text-6xl font-bold text-green-600">{indiceCircularidad.toFixed(0)}%</div>
-                <div className="absolute -top-2 -right-8 bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-bold transform rotate-12">
-                  B+
+            <div className="relative z-10">
+              {/* Header */}
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-4">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+                    className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center"
+                  >
+                    <Recycle className="w-8 h-8 text-white" />
+                  </motion.div>
+                  <div>
+                    <h1 className="text-3xl font-bold text-white">Economía Circular</h1>
+                    <p className="text-white/80">Índice integral de sustentabilidad</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-xl">
+                  <Sparkles className="w-4 h-4 text-amber-300" />
+                  <span className="text-white font-medium">Nivel B+</span>
                 </div>
               </div>
-              <div className="text-lg text-gray-600 mt-2">Nivel: Avanzado</div>
-              <div className="text-sm text-gray-500 mt-1">Meta 2026: 85% (Nivel Excelente)</div>
+
+              {/* Indicador principal con círculo animado */}
+              <div className="flex items-center justify-center mb-8">
+                <div className="relative">
+                  <svg className="w-48 h-48 transform -rotate-90">
+                    <circle
+                      cx="96"
+                      cy="96"
+                      r="85"
+                      fill="none"
+                      stroke="rgba(255,255,255,0.2)"
+                      strokeWidth="12"
+                    />
+                    <motion.circle
+                      cx="96"
+                      cy="96"
+                      r="85"
+                      fill="none"
+                      stroke="white"
+                      strokeWidth="12"
+                      strokeLinecap="round"
+                      strokeDasharray={2 * Math.PI * 85}
+                      initial={{ strokeDashoffset: 2 * Math.PI * 85 }}
+                      animate={{ strokeDashoffset: 2 * Math.PI * 85 * (1 - indiceCircularidad / 100) }}
+                      transition={{ duration: 2, ease: 'easeOut' }}
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <div className="text-5xl font-bold text-white">
+                      <AnimatedCounter value={indiceCircularidad} decimals={0} suffix="%" duration={2} />
+                    </div>
+                    <div className="text-white/70 text-sm">Circularidad</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Métricas rápidas */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                  className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center"
+                >
+                  <Recycle className="w-6 h-6 text-white/80 mx-auto mb-2" />
+                  <div className="text-2xl font-bold text-white">68%</div>
+                  <div className="text-white/70 text-xs">Residuos</div>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center"
+                >
+                  <Zap className="w-6 h-6 text-white/80 mx-auto mb-2" />
+                  <div className="text-2xl font-bold text-white">75%</div>
+                  <div className="text-white/70 text-xs">Energía</div>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center"
+                >
+                  <Droplets className="w-6 h-6 text-white/80 mx-auto mb-2" />
+                  <div className="text-2xl font-bold text-white">82%</div>
+                  <div className="text-white/70 text-xs">Agua</div>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center"
+                >
+                  <Target className="w-6 h-6 text-white/80 mx-auto mb-2" />
+                  <div className="text-2xl font-bold text-white">85%</div>
+                  <div className="text-white/70 text-xs">Meta 2026</div>
+                </motion.div>
+              </div>
+
+              {/* Progreso hacia meta */}
+              <div className="mt-6 bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-white/80 text-sm">Progreso hacia meta 2026</span>
+                  <span className="text-white font-bold">{((indiceCircularidad / 85) * 100).toFixed(0)}%</span>
+                </div>
+                <div className="h-3 bg-white/20 rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${(indiceCircularidad / 85) * 100}%` }}
+                    transition={{ duration: 1.5, delay: 0.5 }}
+                    className="h-full bg-gradient-to-r from-white to-emerald-200 rounded-full"
+                  />
+                </div>
+              </div>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center bg-white rounded-lg p-4 shadow-sm">
-                <Award className="w-6 h-6 text-yellow-500 mx-auto mb-2" />
-                <div className="text-sm font-medium text-gray-700">Fortaleza</div>
-                <div className="text-lg font-bold text-green-600">{mejorCategoria.subject}</div>
-                <div className="text-xs text-gray-500">{mejorCategoria.score}% - {mejorCategoria.description}</div>
+          </motion.div>
+
+          {/* Tarjetas de fortaleza/oportunidad/tendencia */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+              className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-2xl p-6 border border-emerald-100"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center">
+                  <Award className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <div className="text-sm text-gray-500">Fortaleza</div>
+                  <div className="text-xl font-bold text-emerald-700">{mejorCategoria.subject}</div>
+                </div>
               </div>
-              
-              <div className="text-center bg-white rounded-lg p-4 shadow-sm">
-                <Target className="w-6 h-6 text-red-500 mx-auto mb-2" />
-                <div className="text-sm font-medium text-gray-700">Oportunidad</div>
-                <div className="text-lg font-bold text-red-600">{categoriaAMejorar.subject}</div>
-                <div className="text-xs text-gray-500">{categoriaAMejorar.score}% - {categoriaAMejorar.description}</div>
+              <div className="text-3xl font-bold text-emerald-600 mb-1">{mejorCategoria.score}%</div>
+              <div className="text-sm text-gray-600">{mejorCategoria.description}</div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-6 border border-amber-100"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center">
+                  <Target className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <div className="text-sm text-gray-500">Oportunidad</div>
+                  <div className="text-xl font-bold text-amber-700">{categoriaAMejorar.subject}</div>
+                </div>
               </div>
-              
-              <div className="text-center bg-white rounded-lg p-4 shadow-sm">
-                <TrendingUp className="w-6 h-6 text-blue-500 mx-auto mb-2" />
-                <div className="text-sm font-medium text-gray-700">Tendencia</div>
-                <div className="text-lg font-bold text-blue-600">+14%</div>
-                <div className="text-xs text-gray-500">Mejora en 6 meses</div>
+              <div className="text-3xl font-bold text-amber-600 mb-1">{categoriaAMejorar.score}%</div>
+              <div className="text-sm text-gray-600">{categoriaAMejorar.description}</div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 }}
+              className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
+                  <TrendingUp className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <div className="text-sm text-gray-500">Tendencia</div>
+                  <div className="text-xl font-bold text-blue-700">Positiva</div>
+                </div>
               </div>
-            </div>
+              <div className="text-3xl font-bold text-blue-600 mb-1">+14%</div>
+              <div className="text-sm text-gray-600">Mejora en últimos 6 meses</div>
+            </motion.div>
           </div>
 
           {/* Métricas por categoría */}
