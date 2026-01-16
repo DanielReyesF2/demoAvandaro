@@ -60,6 +60,26 @@ const nodeEmojis: Record<string, string> = {
   'Casa 506': '🏠',
 };
 
+// Mapeo de nombres cortos para mostrar en los labels
+const nodeLabels: Record<string, string> = {
+  'Kiosko 1': 'Kiosko 1',
+  'Kiosko 2': 'Kiosko 2',
+  'Habitaciones Hotel': 'Hotel',
+  'Suites': 'Suites',
+  'Club Residencial Avandaro': 'CRA',
+  'Restaurante Acuarimas': 'Acuarimas',
+  'Restaurante José': 'José',
+  'Campo': 'Campo',
+  'Canchas de Padel': 'Padel',
+  'Canchas de Tennis': 'Tennis',
+  'Casa 501': '501',
+  'Casa 502': '502',
+  'Casa 503': '503',
+  'Casa 504': '504',
+  'Casa 505': '505',
+  'Casa 506': '506',
+};
+
 // Nodos base para el diagrama
 const baseNodes: SankeyNode[] = [
   // Puntos de Origen - Áreas del Club
@@ -392,7 +412,8 @@ export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualiz
           labelTextColor="#374151"
           label={(node: any) => {
             const emoji = nodeEmojis[node.id] || '';
-            return emoji ? `${emoji} ${node.id}` : node.id;
+            const shortLabel = nodeLabels[node.id] || node.id;
+            return emoji ? `${emoji} ${shortLabel}` : shortLabel;
           }}
           animate={true}
           motionConfig="gentle"
