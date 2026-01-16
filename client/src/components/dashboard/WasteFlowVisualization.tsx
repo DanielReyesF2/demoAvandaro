@@ -40,6 +40,26 @@ interface SankeyData {
   links: SankeyLink[];
 }
 
+// Mapeo de emojis para cada punto de generación
+const nodeEmojis: Record<string, string> = {
+  'Kiosko 1': '🏪',
+  'Kiosko 2': '🏪',
+  'Habitaciones Hotel': '🏨',
+  'Suites': '🏨',
+  'Club Residencial Avandaro': '🏘️',
+  'Restaurante Acuarimas': '🍽️',
+  'Restaurante José': '🍽️',
+  'Campo': '🌿',
+  'Canchas de Padel': '🎾',
+  'Canchas de Tennis': '🎾',
+  'Casa 501': '🏠',
+  'Casa 502': '🏠',
+  'Casa 503': '🏠',
+  'Casa 504': '🏠',
+  'Casa 505': '🏠',
+  'Casa 506': '🏠',
+};
+
 // Nodos base para el diagrama
 const baseNodes: SankeyNode[] = [
   // Puntos de Origen - Áreas del Club
@@ -370,6 +390,10 @@ export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualiz
           labelOrientation="horizontal"
           labelPadding={18}
           labelTextColor="#374151"
+          label={(node: any) => {
+            const emoji = nodeEmojis[node.id] || '';
+            return emoji ? `${emoji} ${node.id}` : node.id;
+          }}
           animate={true}
           motionConfig="gentle"
           onClick={(data: any) => {
