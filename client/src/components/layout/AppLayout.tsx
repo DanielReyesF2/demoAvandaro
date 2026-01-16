@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import Sidebar from "./Sidebar";
 import { Menu } from "lucide-react";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { EconovaAI } from "@/components/chat/EconovaAI";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -62,26 +63,26 @@ export default function AppLayout({ children, title, subtitle }: AppLayoutProps)
       
       {/* Main content */}
       <div className="flex flex-col flex-1 overflow-hidden bg-white">
-        {/* Header superior */}
-        <header className="hidden md:block border-b border-subtle bg-white px-8 py-6">
+        {/* Header superior - Premium */}
+        <header className="hidden md:block border-b border-subtle bg-white px-8 py-6 shadow-premium-sm">
           <div className="flex items-center justify-between">
             <div className="flex-1">
               <Breadcrumbs items={getBreadcrumbs()} />
-              <h1 className="text-2xl font-semibold text-gray-900 mt-3 tracking-tight">
+              <h1 className="text-3xl font-semibold text-gray-900 mt-4 tracking-tight">
                 {getTitle()}
               </h1>
               {getSubtitle() && (
-                <p className="text-sm text-gray-600 mt-1.5">
+                <p className="text-sm text-gray-600 mt-2 leading-relaxed">
                   {getSubtitle()}
                 </p>
               )}
             </div>
-            {/* Icono Econova circular */}
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-accent-green flex items-center justify-center shadow-sm">
-                <span className="text-white font-bold text-lg">E</span>
+            {/* Icono Econova circular - Premium */}
+            <div className="flex items-center gap-3 px-4 py-2 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent-green to-accent-teal flex items-center justify-center shadow-premium-sm hover:shadow-premium-md transition-shadow">
+                <span className="text-white font-bold text-xl">E</span>
               </div>
-              <span className="text-sm font-medium text-gray-700">Econova</span>
+              <span className="text-sm font-semibold text-gray-900">Econova</span>
             </div>
           </div>
         </header>
@@ -104,6 +105,9 @@ export default function AppLayout({ children, title, subtitle }: AppLayoutProps)
           {children}
         </main>
       </div>
+      
+      {/* Chatbot Econova AI - Disponible en toda la app */}
+      <EconovaAI />
     </div>
   );
 }
