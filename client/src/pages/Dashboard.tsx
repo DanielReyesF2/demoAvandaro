@@ -28,6 +28,11 @@ import {
   Award,
   Leaf,
   Target,
+  DollarSign,
+  TrendingDown,
+  AlertTriangle,
+  Recycle,
+  Trash2,
 } from 'lucide-react';
 
 // Types for the Excel data
@@ -135,6 +140,46 @@ export default function Dashboard() {
   const energySaved = realTimeKPIs.totalCircular * 1.2; // ~1.2 kWh por kg reciclado
   const treesEquivalent = Math.round(co2Avoided / 21); // ~21 kg CO2 por árbol/año
 
+  // ===== INDICADORES FINANCIEROS DE MANEJO DE RESIDUOS =====
+  // Factores de costo y precio (MXN)
+  const COSTO_RELLENO_SANITARIO = 850; // $/tonelada
+  const PRECIO_RECICLABLES = 3500; // $/tonelada (promedio de materiales reciclables)
+  const PRECIO_COMPOSTA = 1200; // $/tonelada
+  const PRECIO_REUSO = 2500; // $/tonelada
+  const COSTO_GESTION_TOTAL = 450; // $/tonelada (procesamiento, transporte, etc.)
+  const TASA_RECHAZO_CONTAMINACION = 0.08; // 8% de reciclables rechazados por contaminación
+
+  // Cálculos financieros
+  const totalGeneradoTon = realTimeKPIs.totalWeight / 1000;
+  const totalRellenoTon = realTimeKPIs.totalLandfill / 1000;
+  const totalReciclablesTon = totals.recyclingTotal / 1000;
+  const totalCompostaTon = totals.compostTotal / 1000;
+  const totalReusoTon = totals.reuseTotal / 1000;
+
+  // Costos
+  const costoRellenoSanitario = totalRellenoTon * COSTO_RELLENO_SANITARIO;
+  const costoGestionTotal = totalGeneradoTon * COSTO_GESTION_TOTAL;
+  const costoTotalManejo = costoRellenoSanitario + costoGestionTotal;
+
+  // Ingresos
+  const ingresosReciclables = totalReciclablesTon * PRECIO_RECICLABLES;
+  const ingresosComposta = totalCompostaTon * PRECIO_COMPOSTA;
+  const ingresosReuso = totalReusoTon * PRECIO_REUSO;
+  const ingresosTotales = ingresosReciclables + ingresosComposta + ingresosReuso;
+
+  // Ingresos posibles (si todo se vendiera)
+  const ingresosPosiblesReciclables = totalReciclablesTon * PRECIO_RECICLABLES;
+  const ingresosPosiblesComposta = totalCompostaTon * PRECIO_COMPOSTA;
+  const ingresosPosiblesReuso = totalReusoTon * PRECIO_REUSO;
+  const ingresosPosiblesTotales = ingresosPosiblesReciclables + ingresosPosiblesComposta + ingresosPosiblesReuso;
+
+  // Ingresos perdidos por contaminación
+  const reciclablesRechazadosTon = totalReciclablesTon * TASA_RECHAZO_CONTAMINACION;
+  const ingresosPerdidosContaminacion = reciclablesRechazadosTon * PRECIO_RECICLABLES;
+
+  // Balance neto
+  const balanceNeto = ingresosTotales - costoTotalManejo;
+
   // Datos para gráfico mensual
   const monthlyData = wasteExcelData?.months.map(month => ({
     month: month.month.label,
@@ -205,6 +250,137 @@ export default function Dashboard() {
               energySaved={energySaved}
               wasteDeviated={realTimeKPIs.totalCircular}
             />
+          </motion.div>
+
+          {/* Indicadores Financieros de Manejo de Residuos */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <GlassCard variant="default" hover={false}>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center">
+                  <DollarSign className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900">Indicadores Financieros</h3>
+                  <p className="text-sm text-gray-500">Manejo de residuos - Análisis económico</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                {/* Costo Total de Manejo */}
+                <div className="bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-5 border border-red-200/50">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Costo Total</span>
+                    <Trash2 className="w-5 h-5 text-red-500" />
+                  </div>
+                  <div className="text-2xl font-bold text-gray-900 mb-1">
+                    ${(costoTotalManejo / 1000).toFixed(1)}K
+                  </div>
+                  <div className="text-xs text-gray-600">
+                    {totalGeneradoTon.toFixed(1)} ton × ${COSTO_GESTION_TOTAL}/ton
+                  </div>
+                </div>
+
+                {/* Costo Relleno Sanitario */}
+                <div className="bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl p-5 border border-gray-200/50">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Relleno Sanitario</span>
+                    <Trash2 className="w-5 h-5 text-gray-600" />
+                  </div>
+                  <div className="text-2xl font-bold text-gray-900 mb-1">
+                    ${(costoRellenoSanitario / 1000).toFixed(1)}K
+                  </div>
+                  <div className="text-xs text-gray-600">
+                    {totalRellenoTon.toFixed(1)} ton × ${COSTO_RELLENO_SANITARIO}/ton
+                  </div>
+                </div>
+
+                {/* Ingresos de Reciclables */}
+                <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-5 border border-blue-200/50">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Ingresos Reciclables</span>
+                    <Recycle className="w-5 h-5 text-blue-500" />
+                  </div>
+                  <div className="text-2xl font-bold text-gray-900 mb-1">
+                    ${(ingresosReciclables / 1000).toFixed(1)}K
+                  </div>
+                  <div className="text-xs text-gray-600">
+                    {totalReciclablesTon.toFixed(1)} ton × ${PRECIO_RECICLABLES}/ton
+                  </div>
+                </div>
+
+                {/* Ingresos Totales */}
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-5 border border-green-200/50">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Ingresos Totales</span>
+                    <TrendingUp className="w-5 h-5 text-green-500" />
+                  </div>
+                  <div className="text-2xl font-bold text-gray-900 mb-1">
+                    ${(ingresosTotales / 1000).toFixed(1)}K
+                  </div>
+                  <div className="text-xs text-gray-600">
+                    Reciclables + Composta + Reuso
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Ingresos Posibles */}
+                <div className="bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl p-5 border border-purple-200/50">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Ingresos Posibles</span>
+                    <Target className="w-5 h-5 text-purple-500" />
+                  </div>
+                  <div className="text-2xl font-bold text-gray-900 mb-1">
+                    ${(ingresosPosiblesTotales / 1000).toFixed(1)}K
+                  </div>
+                  <div className="text-xs text-gray-600">
+                    Potencial máximo de venta
+                  </div>
+                </div>
+
+                {/* Ingresos Perdidos por Contaminación */}
+                <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-5 border border-amber-200/50">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Perdidos por Contaminación</span>
+                    <AlertTriangle className="w-5 h-5 text-amber-500" />
+                  </div>
+                  <div className="text-2xl font-bold text-gray-900 mb-1">
+                    ${(ingresosPerdidosContaminacion / 1000).toFixed(1)}K
+                  </div>
+                  <div className="text-xs text-gray-600">
+                    {reciclablesRechazadosTon.toFixed(2)} ton rechazadas ({(TASA_RECHAZO_CONTAMINACION * 100).toFixed(0)}%)
+                  </div>
+                </div>
+
+                {/* Balance Neto */}
+                <div className={`rounded-xl p-5 border ${
+                  balanceNeto >= 0 
+                    ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-200/50' 
+                    : 'bg-gradient-to-br from-red-50 to-rose-50 border-red-200/50'
+                }`}>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Balance Neto</span>
+                    {balanceNeto >= 0 ? (
+                      <TrendingUp className="w-5 h-5 text-green-500" />
+                    ) : (
+                      <TrendingDown className="w-5 h-5 text-red-500" />
+                    )}
+                  </div>
+                  <div className={`text-2xl font-bold mb-1 ${
+                    balanceNeto >= 0 ? 'text-green-600' : 'text-red-600'
+                  }`}>
+                    ${(balanceNeto / 1000).toFixed(1)}K
+                  </div>
+                  <div className="text-xs text-gray-600">
+                    Ingresos - Costos
+                  </div>
+                </div>
+              </div>
+            </GlassCard>
           </motion.div>
 
           {/* Grid de dos columnas: Insights IA + Tendencias */}
