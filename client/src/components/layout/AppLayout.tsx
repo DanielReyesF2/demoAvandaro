@@ -29,13 +29,11 @@ export default function AppLayout({ children, title, subtitle }: AppLayoutProps)
 
   const getTitle = () => {
     if (title) return title;
-    if (location === "/") return "Dashboard Ejecutivo";
-    return "Dashboard";
+    return "";
   };
 
   const getSubtitle = () => {
     if (subtitle) return subtitle;
-    if (location === "/") return "Vista general de KPIs y métricas de ventas - Econova";
     return "";
   };
   
@@ -68,9 +66,11 @@ export default function AppLayout({ children, title, subtitle }: AppLayoutProps)
           <div className="flex items-center justify-between">
             <div className="flex-1">
               <Breadcrumbs items={getBreadcrumbs()} />
-              <h1 className="text-3xl font-semibold text-gray-900 mt-4 tracking-tight">
-                {getTitle()}
-              </h1>
+              {getTitle() && (
+                <h1 className="text-3xl font-semibold text-gray-900 mt-4 tracking-tight">
+                  {getTitle()}
+                </h1>
+              )}
               {getSubtitle() && (
                 <p className="text-sm text-gray-600 mt-2 leading-relaxed">
                   {getSubtitle()}

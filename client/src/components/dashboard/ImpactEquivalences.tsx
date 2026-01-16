@@ -125,23 +125,6 @@ export function ImpactEquivalences({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 tracking-tight">
-            Impacto Ambiental Real
-          </h2>
-          <p className="text-gray-500 mt-1">
-            Equivalencias que hacen tangible nuestro compromiso
-          </p>
-        </div>
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-          className="w-12 h-12 rounded-full bg-gradient-to-r from-emerald-400 to-teal-500 flex items-center justify-center"
-        >
-          <TreePine className="w-6 h-6 text-white" />
-        </motion.div>
-      </div>
 
       <motion.div
         variants={containerVariants}
