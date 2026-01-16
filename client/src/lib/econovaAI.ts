@@ -7,13 +7,17 @@ interface ChatMessage {
 }
 
 const DEMO_RESPONSES: Record<string, string> = {
+  // Pregunta 1: Operativa - Sorprendente y específica
+  'cuál es el área que genera más residuos orgánicos': '🏨 **¡Los restaurantes Acuarimas y José juntos!** Generan **14.2 ton/mes de residuos orgánicos**, lo que representa más del **65% de todo el flujo orgánico** del Club Avandaro. Solo Acuarimas aporta **7.8 ton/mes** - eso es equivalente a lo que generan **4 casas del Club Residencial completo**. \n\nLa buena noticia: Todo este flujo orgánico se está procesando correctamente en **Biodegradación ORKA**, convirtiendo los residuos en composta para el campo de golf. Sin embargo, hay una oportunidad: mejorar la separación en origen podría reducir la contaminación cruzada y aumentar el valor de los reciclables.',
+  
+  // Pregunta 2: Financiera - Impactante con números concretos
+  'cuánto dinero estamos perdiendo al no recuperar todos los residuos': '💰 **¡Estás dejando $18K mensuales en la basura!** \n\nActualmente envías **6.2 ton/mes** al relleno sanitario. Si esos residuos se reciclaran correctamente (a $3,500/ton), generarían **$21.7K en ingresos mensuales**. Considerando tus costos actuales de **$3.8K/mes** en manejo, el **potencial de mejora neto es de $17.9K mensuales**.\n\n💡 **Eso son $214.8K anuales** que podrías estar ganando solo mejorando la separación en origen y el proceso de reciclaje. Con ese dinero podrías financiar mejoras en infraestructura, capacitación del personal, o incluso proyectos de energía renovable.',
+  
+  // Pregunta 3: Reportes - Completa y accionable
+  'qué información necesito para la certificación true zero waste': '📊 Para la **Certificación TRUE Zero Waste**, el sistema ya está preparado para generar todo lo necesario:\n\n✅ **1. Trazabilidad completa**: El módulo de Trazabilidad muestra el flujo desde cada punto de generación (casas 501-506, restaurantes, hotel) hasta destino final\n✅ **2. Desviación mínima del 90%**: Actualmente estás en **72%** - necesitas reducir el relleno sanitario de **6.2 ton/mes** a menos de **3.3 ton/mes**\n✅ **3. Auditoría anual**: Los reportes del dashboard incluyen todos los datos mensuales necesarios\n✅ **4. Documentación de compradores**: Ya tienes registrados a "Recupera" y "Verde Ciudad" como compradores\n✅ **5. Eliminación de tóxicos**: Verifica que no haya materiales peligrosos mezclados\n\n🎯 **Próximos pasos**: Enfócate en mejorar la separación en restaurantes y hotel. El sistema tiene toda la infraestructura de datos lista - solo necesitas mejorar los procesos operativos.',
+  
   'hola': '¡Hola! Soy Econova AI, tu asistente de gestión ambiental. Puedo ayudarte a entender tus datos de residuos, agua y energía. ¿Qué te gustaría saber?',
-  'cuánto': 'Según los datos más recientes, el Club Avandaro ha desviado **72%** de sus residuos del relleno sanitario. Esto incluye reciclaje, compostaje y reutilización. ¿Te gustaría saber más sobre algún módulo específico?',
-  'residuos': 'En el módulo de Trazabilidad de Residuos puedes ver el flujo completo desde las áreas de generación (casas 501-506, restaurantes, etc.) hasta los destinos finales. Actualmente procesamos **33 ton/mes** con una desviación del **72%**.',
-  'agua': 'El módulo de Agua muestra el consumo, reciclaje a través de la PTAR, y eficiencia del sistema. Actualmente reciclamos **28.9%** del agua total, principalmente para riego del campo de golf.',
-  'energía': 'El módulo de Energía muestra el consumo, generación renovable de paneles solares, y emisiones de CO₂. Actualmente **29.1%** de nuestra energía es renovable, reduciendo significativamente las emisiones.',
-  'casas': 'Las casas 501-506 del Club Residencial Avandaro generan aproximadamente **1.5 ton/mes** de residuos orgánicos, **1.0 ton/mes** de reciclables, y **0.8 ton/mes** de inorgánicos. Puedes expandir el diagrama en el dashboard para ver cada casa individualmente.',
-  'default': 'Puedo ayudarte con información sobre:\n\n• **Residuos**: Flujos, desviación, y trazabilidad\n• **Agua**: Consumo, reciclaje PTAR, y eficiencia\n• **Energía**: Renovables, emisiones, y ahorros\n• **Casas 501-506**: Generación por vivienda\n\n¿Qué te gustaría conocer?'
+  'default': 'Puedo ayudarte con información sobre:\n\n• **Operaciones**: Áreas de generación, flujos de residuos, eficiencia\n• **Finanzas**: Costos, ingresos, potencial de mejora\n• **Certificaciones**: Reportes para TRUE Zero Waste, ISO 14001\n\n¿Qué te gustaría conocer?'
 };
 
 export async function sendMessageToAI(

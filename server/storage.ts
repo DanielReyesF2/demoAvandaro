@@ -345,8 +345,14 @@ export class MemStorage implements IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
+  // Check if database is available
+  isDatabaseAvailable(): boolean {
+    return db !== null;
+  }
+
   // Client operations
   async getClients(): Promise<Client[]> {
+    if (!db) throw new Error('Database not available');
     return await db.select().from(clients);
   }
   

@@ -8,6 +8,7 @@ import { ImpactEquivalences } from '@/components/dashboard/ImpactEquivalences';
 import { AIInsights } from '@/components/dashboard/AIInsights';
 import { GlassCard } from '@/components/ui/glass-card';
 import { generateMonthlyWasteData, IMPACT_EQUIVALENCES } from '@/lib/avandaroData';
+import avandaroLogo from '@assets/logo-avandaro.svg';
 import {
   BarChart,
   Bar,
@@ -33,6 +34,8 @@ import {
   AlertTriangle,
   Recycle,
   Trash2,
+  MinusCircle,
+  PlusCircle,
 } from 'lucide-react';
 
 // Types for the Excel data
@@ -59,14 +62,21 @@ export default function Dashboard() {
   const currentYear = 2025;
 
   // Obtener datos de la tabla de trazabilidad (FUENTE DE VERDAD)
-  const { data: wasteExcelData, isLoading } = useQuery<WasteExcelData>({
+  const { data: wasteExcelData, isLoading, error } = useQuery<WasteExcelData>({
     queryKey: ['/api/waste-excel', currentYear],
     queryFn: async () => {
-      const response = await fetch(`/api/waste-excel/${currentYear}`);
-      if (!response.ok) throw new Error('Failed to fetch data');
-      return response.json();
+      try {
+        const response = await fetch(`/api/waste-excel/${currentYear}`);
+        if (!response.ok) throw new Error('Failed to fetch data');
+        return response.json();
+      } catch (err) {
+        // Si hay error, retornar undefined para usar datos mock
+        console.warn('Error fetching data, using mock data:', err);
+        return undefined;
+      }
     },
     refetchOnWindowFocus: false,
+    retry: false, // No reintentar si falla
   });
 
   // Calcular totales de cada sección
@@ -260,120 +270,113 @@ export default function Dashboard() {
             transition={{ delay: 0.4 }}
           >
             <GlassCard variant="default" hover={false}>
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center">
-                  <DollarSign className="w-5 h-5 text-white" />
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center">
+                    <DollarSign className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900">Análisis Financiero de Residuos</h3>
+                    <p className="text-sm text-gray-500">Impacto económico de tu gestión actual</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900">Análisis Financiero</h3>
-                  <p className="text-sm text-gray-500">Lo que gastas vs. lo que ganas</p>
-                </div>
+                {/* Logo Grupo Avandaro */}
+                <img 
+                  src={avandaroLogo} 
+                  alt="Grupo Avandaro" 
+                  className="h-12 w-auto opacity-90"
+                />
               </div>
 
-              {/* Comparación Principal: Gastas vs. Dinero en la Basura */}
-              <div className="mb-8 bg-gradient-to-br from-red-50 via-orange-50 to-amber-50 rounded-2xl p-6 border border-red-200/50">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Lo que gastas */}
-                  <div className="bg-white rounded-xl p-6 border-2 border-red-200 shadow-lg">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 rounded-xl bg-red-500 flex items-center justify-center">
-                        <TrendingDown className="w-6 h-6 text-white" />
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Lo que gastas</h4>
-                        <p className="text-xs text-gray-500">En manejo de residuos</p>
-                      </div>
-                    </div>
-                    <div className="text-4xl font-bold text-red-600 mb-2">
-                      ${(costoTotalManejo / 1000).toFixed(1)}K
-                    </div>
-                    <div className="space-y-1 text-sm text-gray-600">
-                      <div className="flex justify-between">
-                        <span>Gestión total:</span>
-                        <span className="font-medium">${(costoGestionTotal / 1000).toFixed(1)}K</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Relleno sanitario:</span>
-                        <span className="font-medium">${(costoRellenoSanitario / 1000).toFixed(1)}K</span>
-                      </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                {/* Costos en manejo de residuos */}
+                <div className="bg-gradient-to-br from-red-50 to-rose-50 rounded-2xl p-6 border-2 border-red-200 shadow-lg">
+                  <div className="flex items-center gap-3 mb-4">
+                    <MinusCircle className="w-8 h-8 text-red-600" />
+                    <div>
+                      <h4 className="text-lg font-bold text-gray-900">Costos en manejo de residuos</h4>
+                      <p className="text-sm text-gray-600">Mensual</p>
                     </div>
                   </div>
-
-                  {/* Dinero en la basura */}
-                  <div className="bg-white rounded-xl p-6 border-2 border-orange-200 shadow-lg">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 rounded-xl bg-orange-500 flex items-center justify-center">
-                        <Trash2 className="w-6 h-6 text-white" />
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Dinero en la basura</h4>
-                        <p className="text-xs text-gray-500">Lo que podrías ganar</p>
-                      </div>
+                  <div className="text-5xl font-bold text-red-600 mb-4">
+                    ${(costoTotalManejo / 1000).toFixed(1)}K
+                  </div>
+                  <div className="space-y-2 text-sm bg-white/50 rounded-lg p-3 border border-red-100">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-700">Gestión operativa:</span>
+                      <span className="font-bold text-red-700">${(costoGestionTotal / 1000).toFixed(1)}K</span>
                     </div>
-                    <div className="text-4xl font-bold text-orange-600 mb-2">
-                      ${((totalRellenoTon * PRECIO_RECICLABLES) / 1000).toFixed(1)}K
-                    </div>
-                    <div className="text-sm text-gray-600">
-                      <div className="mb-2">Si lo que va al relleno se reciclara:</div>
-                      <div className="space-y-1">
-                        <div className="flex justify-between">
-                          <span>{totalRellenoTon.toFixed(1)} ton:</span>
-                          <span className="font-medium">× ${PRECIO_RECICLABLES}/ton</span>
-                        </div>
-                        <div className="mt-2 pt-2 border-t border-gray-200 text-xs text-amber-700 font-medium">
-                          💡 Opción de ingresos perdida
-                        </div>
-                      </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-700">Relleno sanitario:</span>
+                      <span className="font-bold text-red-700">${(costoRellenoSanitario / 1000).toFixed(1)}K</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Diferencia visual */}
-                <div className="mt-6 pt-6 border-t border-red-300/50">
-                  <div className="flex items-center justify-between">
-                    <div className="text-sm text-gray-600">
-                      <span className="font-semibold">Diferencia:</span> Lo que podrías ganar menos lo que gastas
-                    </div>
-                    <div className="text-2xl font-bold text-amber-600">
-                      ${(((totalRellenoTon * PRECIO_RECICLABLES) - costoTotalManejo) / 1000).toFixed(1)}K
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Métricas secundarias simplificadas */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Ingresos actuales */}
-                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-5 border border-green-200/50">
-                  <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Ingresos actuales</div>
-                  <div className="text-3xl font-bold text-green-600 mb-1">
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 border-2 border-green-200 shadow-lg">
+                  <div className="flex items-center gap-3 mb-4">
+                    <PlusCircle className="w-8 h-8 text-green-600" />
+                    <div>
+                      <h4 className="text-lg font-bold text-gray-900">Ingresos actuales</h4>
+                      <p className="text-sm text-gray-600">Por reciclables vendidos</p>
+                    </div>
+                  </div>
+                  <div className="text-5xl font-bold text-green-600 mb-4">
                     ${(ingresosTotales / 1000).toFixed(1)}K
                   </div>
-                  <div className="text-xs text-gray-600">Por reciclables vendidos</div>
-                </div>
-
-                {/* Perdidos por contaminación */}
-                <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-5 border border-amber-200/50">
-                  <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Rechazados</div>
-                  <div className="text-3xl font-bold text-amber-600 mb-1">
-                    ${(ingresosPerdidosContaminacion / 1000).toFixed(1)}K
+                  <div className="space-y-2 text-sm bg-white/50 rounded-lg p-3 border border-green-100">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-700">Reciclables:</span>
+                      <span className="font-bold text-green-700">${(ingresosReciclables / 1000).toFixed(1)}K</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-700">Composta y reuso:</span>
+                      <span className="font-bold text-green-700">${((ingresosComposta + ingresosReuso) / 1000).toFixed(1)}K</span>
+                    </div>
                   </div>
-                  <div className="text-xs text-gray-600">Por contaminación (8%)</div>
                 </div>
+              </div>
 
-                {/* Balance neto */}
-                <div className={`rounded-xl p-5 border ${
-                  balanceNeto >= 0 
-                    ? 'bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-200/50' 
-                    : 'bg-gradient-to-br from-red-50 to-rose-50 border-red-200/50'
-                }`}>
-                  <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Balance neto</div>
-                  <div className={`text-3xl font-bold mb-1 ${
-                    balanceNeto >= 0 ? 'text-blue-600' : 'text-red-600'
-                  }`}>
-                    ${(balanceNeto / 1000).toFixed(1)}K
+              {/* Resultado si mejoras tu proceso */}
+              <div className="bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 rounded-2xl p-6 border-2 border-blue-200 shadow-lg">
+                <div className="flex items-center gap-3 mb-4">
+                  <Target className="w-8 h-8 text-blue-600" />
+                  <div>
+                    <h4 className="text-lg font-bold text-gray-900">Resultado si mejoras tu proceso</h4>
+                    <p className="text-sm text-gray-600">Potencial de ingresos no recuperados</p>
                   </div>
-                  <div className="text-xs text-gray-600">Ganancias - Costos</div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Residuos no recuperados */}
+                  <div className="bg-white/50 rounded-xl p-4 border border-blue-100">
+                    <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">
+                      Residuos no recuperados
+                    </div>
+                    <div className="text-3xl font-bold text-amber-600 mb-2">
+                      {totalRellenoTon.toFixed(1)} ton
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      Enviados a relleno sanitario
+                    </div>
+                  </div>
+                  
+                  {/* Total no recuperado */}
+                  <div className="bg-white/50 rounded-xl p-4 border border-blue-100">
+                    <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">
+                      Total no recuperado
+                    </div>
+                    <div className={`text-3xl font-bold mb-2 ${
+                      ((totalRellenoTon * PRECIO_RECICLABLES) - costoTotalManejo) >= 0 
+                        ? 'text-green-600' 
+                        : 'text-red-600'
+                    }`}>
+                      ${(((totalRellenoTon * PRECIO_RECICLABLES) - costoTotalManejo) / 1000).toFixed(1)}K
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      Potencial de mejora mensual
+                    </div>
+                  </div>
                 </div>
               </div>
             </GlassCard>

@@ -17,7 +17,8 @@ import {
   ChevronDown,
   ChevronRight,
   ShoppingBag,
-  UtensilsCrossed
+  UtensilsCrossed,
+  ArrowLeft
 } from 'lucide-react';
 
 // Interfaces para el diagrama Sankey
@@ -230,50 +231,107 @@ export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualiz
     setExpandedNodes(newExpanded);
   };
 
+  // Puntos de origen que se ocultan cuando se expande una categoría
+  const originNodes = ['Kiosko 1', 'Kiosko 2', 'Habitaciones Hotel', 'Suites', 'Club Residencial Avandaro',
+                       'Restaurantes', 'Campo', 'Canchas de Padel', 'Canchas de Tennis'];
+  
+  // Categorías intermedias y destinos finales (siempre visibles)
+  const intermediateAndDestNodes = ['Orgánicos', 'Reciclables', 'Inorgánicos', 
+                                   'Biodegradación ORKA', 'Reciclaje Recupera', 
+                                   'Reciclaje Verde Ciudad', 'Disposición Controlada'];
+
   // Construir datos del Sankey según estado de expansión
   const getSankeyData = (): SankeyData => {
     const visibleNodes: SankeyNode[] = [];
-    const visibleLinks: SankeyLink[] = [...baseLinks];
+    let visibleLinks: SankeyLink[] = [];
 
-    // Agregar nodos base (excepto hijos si no están expandidos)
-    baseNodes.forEach(node => {
-      if (node.parentId === 'Club Residencial Avandaro') {
-        // Solo mostrar casas si el Club Residencial está expandido
-        if (expandedNodes.has('Club Residencial Avandaro')) {
+    // Determinar si hay alguna categoría expandida
+    const isClubExpanded = expandedNodes.has('Club Residencial Avandaro');
+    const isRestaurantsExpanded = expandedNodes.has('Restaurantes');
+    const hasAnyExpanded = isClubExpanded || isRestaurantsExpanded;
+
+    if (hasAnyExpanded) {
+      // MODO EXPANDIDO: Solo mostrar la categoría expandida y sus hijos
+      
+      // Agregar categorías intermedias y destinos (siempre visibles)
+      baseNodes.forEach(node => {
+        if (intermediateAndDestNodes.includes(node.id)) {
           visibleNodes.push(node);
-          // Agregar links de casas
-          houseLinks.forEach(link => {
-            if (link.source === node.id) {
-              visibleLinks.push(link);
-            }
-          });
         }
-      } else if (node.parentId === 'Restaurantes') {
-        // Solo mostrar restaurantes individuales si Restaurantes está expandido
-        if (expandedNodes.has('Restaurantes')) {
-          visibleNodes.push(node);
-          // Agregar links de restaurantes
-          restaurantLinks.forEach(link => {
-            if (link.source === node.id) {
-              visibleLinks.push(link);
-            }
-          });
-        }
-      } else {
-        visibleNodes.push(node);
+      });
+
+      if (isClubExpanded) {
+        // Solo mostrar casas del Club Residencial
+        baseNodes.forEach(node => {
+          if (node.parentId === 'Club Residencial Avandaro') {
+            visibleNodes.push(node);
+            // Agregar links de casas
+            houseLinks.forEach(link => {
+              if (link.source === node.id) {
+                visibleLinks.push(link);
+              }
+            });
+          }
+        });
       }
-    });
 
-    // Si Club Residencial no está expandido, agregar su link consolidado
-    if (!expandedNodes.has('Club Residencial Avandaro')) {
-      visibleLinks.push(clubResidentialLink);
-      visibleLinks.push({ source: 'Club Residencial Avandaro', target: 'Reciclables', value: 1.0 });
-      visibleLinks.push({ source: 'Club Residencial Avandaro', target: 'Inorgánicos', value: 0.8 });
-    }
+      if (isRestaurantsExpanded) {
+        // Solo mostrar restaurantes individuales
+        baseNodes.forEach(node => {
+          if (node.parentId === 'Restaurantes') {
+            visibleNodes.push(node);
+            // Agregar links de restaurantes
+            restaurantLinks.forEach(link => {
+              if (link.source === node.id) {
+                visibleLinks.push(link);
+              }
+            });
+          }
+        });
+      }
+    } else {
+      // MODO COMPLETO: Mostrar todos los puntos de origen
+      
+      // Agregar todos los nodos base (excepto hijos que solo aparecen cuando están expandidos)
+      baseNodes.forEach(node => {
+        if (node.parentId) {
+          // Solo mostrar hijos si su padre está expandido
+          if (expandedNodes.has(node.parentId)) {
+            visibleNodes.push(node);
+            if (node.parentId === 'Club Residencial Avandaro') {
+              houseLinks.forEach(link => {
+                if (link.source === node.id) {
+                  visibleLinks.push(link);
+                }
+              });
+            } else if (node.parentId === 'Restaurantes') {
+              restaurantLinks.forEach(link => {
+                if (link.source === node.id) {
+                  visibleLinks.push(link);
+                }
+              });
+            }
+          }
+        } else {
+          // Nodos principales (siempre visibles en modo completo)
+          visibleNodes.push(node);
+        }
+      });
 
-    // Si Restaurantes no está expandido, agregar sus links consolidados
-    if (!expandedNodes.has('Restaurantes')) {
-      restaurantsConsolidatedLinks.forEach(link => visibleLinks.push(link));
+      // Agregar links base
+      visibleLinks = [...baseLinks];
+
+      // Si Club Residencial no está expandido, agregar su link consolidado
+      if (!isClubExpanded) {
+        visibleLinks.push(clubResidentialLink);
+        visibleLinks.push({ source: 'Club Residencial Avandaro', target: 'Reciclables', value: 1.0 });
+        visibleLinks.push({ source: 'Club Residencial Avandaro', target: 'Inorgánicos', value: 0.8 });
+      }
+
+      // Si Restaurantes no está expandido, agregar sus links consolidados
+      if (!isRestaurantsExpanded) {
+        restaurantsConsolidatedLinks.forEach(link => visibleLinks.push(link));
+      }
     }
 
     return { nodes: visibleNodes, links: visibleLinks };
@@ -359,6 +417,13 @@ export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualiz
   const isClubExpanded = expandedNodes.has('Club Residencial Avandaro');
   const restaurantsNode = baseNodes.find(n => n.id === 'Restaurantes');
   const isRestaurantsExpanded = expandedNodes.has('Restaurantes');
+  const hasAnyExpanded = isClubExpanded || isRestaurantsExpanded;
+
+  // Función para volver a vista completa
+  const resetToFullView = () => {
+    setExpandedNodes(new Set());
+    setSelectedNode(null);
+  };
 
   return (
     <div className="bg-white rounded-xl border border-subtle p-8 shadow-premium-md card-hover animate-fade-in">
@@ -369,56 +434,43 @@ export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualiz
             Flujos de Materiales
           </h2>
           <p className="text-sm text-gray-600 leading-relaxed">
-            Visualización del flujo de residuos desde puntos de generación hasta destino final
+            {hasAnyExpanded 
+              ? 'Vista enfocada: solo mostrando la categoría expandida'
+              : 'Visualización del flujo de residuos desde puntos de generación hasta destino final'}
           </p>
         </div>
         
         <div className="flex items-center gap-2">
-          {/* Botón expandir/c colapsar Club Residencial */}
-          {clubResidentialNode && (
+          {/* Botón volver a vista completa (solo cuando hay expansión) */}
+          {hasAnyExpanded && (
             <button
-              onClick={() => toggleExpansion('Club Residencial Avandaro')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                isClubExpanded
-                  ? 'bg-accent-green text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+              onClick={resetToFullView}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors shadow-md"
             >
-              {isClubExpanded ? (
-                <>
-                  <ChevronDown className="w-4 h-4" />
-                  <span>Colapsar Casas</span>
-                </>
-              ) : (
-                <>
-                  <ChevronRight className="w-4 h-4" />
-                  <span>Expandir Casas</span>
-                </>
-              )}
+              <ArrowLeft className="w-4 h-4" />
+              <span>Vista Completa</span>
             </button>
           )}
 
-          {/* Botón expandir/c colapsar Restaurantes */}
-          {restaurantsNode && (
+          {/* Botón expandir/c colapsar Club Residencial (solo cuando no hay expansión activa) */}
+          {clubResidentialNode && !hasAnyExpanded && (
+            <button
+              onClick={() => toggleExpansion('Club Residencial Avandaro')}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-gray-100 text-gray-700 hover:bg-gray-200"
+            >
+              <ChevronRight className="w-4 h-4" />
+              <span>Expandir Casas</span>
+            </button>
+          )}
+
+          {/* Botón expandir/c colapsar Restaurantes (solo cuando no hay expansión activa) */}
+          {restaurantsNode && !hasAnyExpanded && (
             <button
               onClick={() => toggleExpansion('Restaurantes')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                isRestaurantsExpanded
-                  ? 'bg-orange-500 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-gray-100 text-gray-700 hover:bg-gray-200"
             >
-              {isRestaurantsExpanded ? (
-                <>
-                  <ChevronDown className="w-4 h-4" />
-                  <span>Colapsar Restaurantes</span>
-                </>
-              ) : (
-                <>
-                  <ChevronRight className="w-4 h-4" />
-                  <span>Expandir Restaurantes</span>
-                </>
-              )}
+              <ChevronRight className="w-4 h-4" />
+              <span>Expandir Restaurantes</span>
             </button>
           )}
 
@@ -486,24 +538,23 @@ export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualiz
       </div>
 
       {/* Información de expansión */}
-      {(isClubExpanded || isRestaurantsExpanded) && (
-        <div className="mt-6 space-y-2">
-          {isClubExpanded && (
-            <div className="p-4 bg-gradient-to-r from-accent-green/10 to-accent-teal/10 border border-accent-green/20 rounded-xl animate-fade-in">
-              <div className="flex items-center gap-2 text-accent-green font-medium text-sm">
-                <ChevronDown className="w-4 h-4" />
-                <span>CRA expandido - Mostrando Casas 501-506</span>
-              </div>
+      {hasAnyExpanded && (
+        <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200 rounded-xl animate-fade-in">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-blue-700 font-medium text-sm">
+              <ChevronDown className="w-4 h-4" />
+              <span>
+                {isClubExpanded && 'Vista enfocada: Casas del Club Residencial (501-506)'}
+                {isRestaurantsExpanded && 'Vista enfocada: Restaurantes (Acuarimas y José)'}
+              </span>
             </div>
-          )}
-          {isRestaurantsExpanded && (
-            <div className="p-4 bg-gradient-to-r from-orange-500/10 to-amber-500/10 border border-orange-500/20 rounded-xl animate-fade-in">
-              <div className="flex items-center gap-2 text-orange-600 font-medium text-sm">
-                <ChevronDown className="w-4 h-4" />
-                <span>Restaurantes expandido - Mostrando Acuarimas y José</span>
-              </div>
-            </div>
-          )}
+            <button
+              onClick={resetToFullView}
+              className="text-xs text-blue-600 hover:text-blue-800 underline font-medium"
+            >
+              Ver todos los puntos →
+            </button>
+          </div>
         </div>
       )}
 

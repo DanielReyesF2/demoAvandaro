@@ -1,0 +1,14 @@
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Logo AV Grupo Avandaro - Línea continua estilizada -->
+  <path d="M15 85 L25 25 L45 25 L40 50 M45 25 L55 25 M55 25 L75 85 L85 85 L65 25" 
+        stroke="#1f2937" 
+        stroke-width="3.5" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"/>
+  <!-- Trazo horizontal bajo de la A -->
+  <path d="M30 55 L50 55" 
+        stroke="#1f2937" 
+        stroke-width="3.5" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"/>
+</svg>
