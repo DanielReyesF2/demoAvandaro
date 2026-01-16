@@ -265,120 +265,115 @@ export default function Dashboard() {
                   <DollarSign className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900">Indicadores Financieros</h3>
-                  <p className="text-sm text-gray-500">Manejo de residuos - Análisis económico</p>
+                  <h3 className="text-xl font-bold text-gray-900">Análisis Financiero</h3>
+                  <p className="text-sm text-gray-500">Lo que gastas vs. lo que ganas</p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                {/* Costo Total de Manejo */}
-                <div className="bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-5 border border-red-200/50">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Costo Total</span>
-                    <Trash2 className="w-5 h-5 text-red-500" />
+              {/* Comparación Principal: Gastas vs. Dinero en la Basura */}
+              <div className="mb-8 bg-gradient-to-br from-red-50 via-orange-50 to-amber-50 rounded-2xl p-6 border border-red-200/50">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Lo que gastas */}
+                  <div className="bg-white rounded-xl p-6 border-2 border-red-200 shadow-lg">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-12 h-12 rounded-xl bg-red-500 flex items-center justify-center">
+                        <TrendingDown className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Lo que gastas</h4>
+                        <p className="text-xs text-gray-500">En manejo de residuos</p>
+                      </div>
+                    </div>
+                    <div className="text-4xl font-bold text-red-600 mb-2">
+                      ${(costoTotalManejo / 1000).toFixed(1)}K
+                    </div>
+                    <div className="space-y-1 text-sm text-gray-600">
+                      <div className="flex justify-between">
+                        <span>Gestión total:</span>
+                        <span className="font-medium">${(costoGestionTotal / 1000).toFixed(1)}K</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Relleno sanitario:</span>
+                        <span className="font-medium">${(costoRellenoSanitario / 1000).toFixed(1)}K</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-2xl font-bold text-gray-900 mb-1">
-                    ${(costoTotalManejo / 1000).toFixed(1)}K
-                  </div>
-                  <div className="text-xs text-gray-600">
-                    {totalGeneradoTon.toFixed(1)} ton × ${COSTO_GESTION_TOTAL}/ton
+
+                  {/* Dinero en la basura */}
+                  <div className="bg-white rounded-xl p-6 border-2 border-orange-200 shadow-lg">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-12 h-12 rounded-xl bg-orange-500 flex items-center justify-center">
+                        <Trash2 className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Dinero en la basura</h4>
+                        <p className="text-xs text-gray-500">Lo que podrías ganar</p>
+                      </div>
+                    </div>
+                    <div className="text-4xl font-bold text-orange-600 mb-2">
+                      ${((totalRellenoTon * PRECIO_RECICLABLES) / 1000).toFixed(1)}K
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      <div className="mb-2">Si lo que va al relleno se reciclara:</div>
+                      <div className="space-y-1">
+                        <div className="flex justify-between">
+                          <span>{totalRellenoTon.toFixed(1)} ton:</span>
+                          <span className="font-medium">× ${PRECIO_RECICLABLES}/ton</span>
+                        </div>
+                        <div className="mt-2 pt-2 border-t border-gray-200 text-xs text-amber-700 font-medium">
+                          💡 Opción de ingresos perdida
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                {/* Costo Relleno Sanitario */}
-                <div className="bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl p-5 border border-gray-200/50">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Relleno Sanitario</span>
-                    <Trash2 className="w-5 h-5 text-gray-600" />
-                  </div>
-                  <div className="text-2xl font-bold text-gray-900 mb-1">
-                    ${(costoRellenoSanitario / 1000).toFixed(1)}K
-                  </div>
-                  <div className="text-xs text-gray-600">
-                    {totalRellenoTon.toFixed(1)} ton × ${COSTO_RELLENO_SANITARIO}/ton
+                {/* Diferencia visual */}
+                <div className="mt-6 pt-6 border-t border-red-300/50">
+                  <div className="flex items-center justify-between">
+                    <div className="text-sm text-gray-600">
+                      <span className="font-semibold">Diferencia:</span> Lo que podrías ganar menos lo que gastas
+                    </div>
+                    <div className="text-2xl font-bold text-amber-600">
+                      ${(((totalRellenoTon * PRECIO_RECICLABLES) - costoTotalManejo) / 1000).toFixed(1)}K
+                    </div>
                   </div>
                 </div>
+              </div>
 
-                {/* Ingresos de Reciclables */}
-                <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-5 border border-blue-200/50">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Ingresos Reciclables</span>
-                    <Recycle className="w-5 h-5 text-blue-500" />
-                  </div>
-                  <div className="text-2xl font-bold text-gray-900 mb-1">
-                    ${(ingresosReciclables / 1000).toFixed(1)}K
-                  </div>
-                  <div className="text-xs text-gray-600">
-                    {totalReciclablesTon.toFixed(1)} ton × ${PRECIO_RECICLABLES}/ton
-                  </div>
-                </div>
-
-                {/* Ingresos Totales */}
+              {/* Métricas secundarias simplificadas */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Ingresos actuales */}
                 <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-5 border border-green-200/50">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Ingresos Totales</span>
-                    <TrendingUp className="w-5 h-5 text-green-500" />
-                  </div>
-                  <div className="text-2xl font-bold text-gray-900 mb-1">
+                  <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Ingresos actuales</div>
+                  <div className="text-3xl font-bold text-green-600 mb-1">
                     ${(ingresosTotales / 1000).toFixed(1)}K
                   </div>
-                  <div className="text-xs text-gray-600">
-                    Reciclables + Composta + Reuso
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* Ingresos Posibles */}
-                <div className="bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl p-5 border border-purple-200/50">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Ingresos Posibles</span>
-                    <Target className="w-5 h-5 text-purple-500" />
-                  </div>
-                  <div className="text-2xl font-bold text-gray-900 mb-1">
-                    ${(ingresosPosiblesTotales / 1000).toFixed(1)}K
-                  </div>
-                  <div className="text-xs text-gray-600">
-                    Potencial máximo de venta
-                  </div>
+                  <div className="text-xs text-gray-600">Por reciclables vendidos</div>
                 </div>
 
-                {/* Ingresos Perdidos por Contaminación */}
+                {/* Perdidos por contaminación */}
                 <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-5 border border-amber-200/50">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Perdidos por Contaminación</span>
-                    <AlertTriangle className="w-5 h-5 text-amber-500" />
-                  </div>
-                  <div className="text-2xl font-bold text-gray-900 mb-1">
+                  <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Rechazados</div>
+                  <div className="text-3xl font-bold text-amber-600 mb-1">
                     ${(ingresosPerdidosContaminacion / 1000).toFixed(1)}K
                   </div>
-                  <div className="text-xs text-gray-600">
-                    {reciclablesRechazadosTon.toFixed(2)} ton rechazadas ({(TASA_RECHAZO_CONTAMINACION * 100).toFixed(0)}%)
-                  </div>
+                  <div className="text-xs text-gray-600">Por contaminación (8%)</div>
                 </div>
 
-                {/* Balance Neto */}
+                {/* Balance neto */}
                 <div className={`rounded-xl p-5 border ${
                   balanceNeto >= 0 
-                    ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-200/50' 
+                    ? 'bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-200/50' 
                     : 'bg-gradient-to-br from-red-50 to-rose-50 border-red-200/50'
                 }`}>
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Balance Neto</span>
-                    {balanceNeto >= 0 ? (
-                      <TrendingUp className="w-5 h-5 text-green-500" />
-                    ) : (
-                      <TrendingDown className="w-5 h-5 text-red-500" />
-                    )}
-                  </div>
-                  <div className={`text-2xl font-bold mb-1 ${
-                    balanceNeto >= 0 ? 'text-green-600' : 'text-red-600'
+                  <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Balance neto</div>
+                  <div className={`text-3xl font-bold mb-1 ${
+                    balanceNeto >= 0 ? 'text-blue-600' : 'text-red-600'
                   }`}>
                     ${(balanceNeto / 1000).toFixed(1)}K
                   </div>
-                  <div className="text-xs text-gray-600">
-                    Ingresos - Costos
-                  </div>
+                  <div className="text-xs text-gray-600">Ganancias - Costos</div>
                 </div>
               </div>
             </GlassCard>
