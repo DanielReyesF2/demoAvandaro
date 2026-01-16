@@ -152,13 +152,14 @@ export default function Dashboard() {
   const treesEquivalent = Math.round(co2Avoided / 21); // ~21 kg CO2 por árbol/año
 
   // ===== INDICADORES FINANCIEROS DE MANEJO DE RESIDUOS =====
-  // Factores de costo y precio (MXN)
-  const COSTO_RELLENO_SANITARIO = 850; // $/tonelada
-  const PRECIO_RECICLABLES = 3500; // $/tonelada (promedio de materiales reciclables)
-  const PRECIO_COMPOSTA = 1200; // $/tonelada
-  const PRECIO_REUSO = 2500; // $/tonelada
-  const COSTO_GESTION_TOTAL = 450; // $/tonelada (procesamiento, transporte, etc.)
-  const TASA_RECHAZO_CONTAMINACION = 0.08; // 8% de reciclables rechazados por contaminación
+  // Factores de costo y precio (MXN) - Escenario actual: COSTOS > INGRESOS
+  // Esto muestra la oportunidad de mejora al optimizar la gestión de residuos
+  const COSTO_RELLENO_SANITARIO = 1200; // $/tonelada (incluye transporte)
+  const PRECIO_RECICLABLES = 2800; // $/tonelada (promedio de materiales reciclables)
+  const PRECIO_COMPOSTA = 800; // $/tonelada (mercado local limitado)
+  const PRECIO_REUSO = 1500; // $/tonelada
+  const COSTO_GESTION_TOTAL = 650; // $/tonelada (procesamiento, transporte, personal, etc.)
+  const EFICIENCIA_VENTA = 0.45; // Solo se vende el 45% de lo separado (falta de compradores, logística)
 
   // Cálculos financieros
   const totalGeneradoTon = realTimeKPIs.totalWeight / 1000;
@@ -167,29 +168,29 @@ export default function Dashboard() {
   const totalCompostaTon = totals.compostTotal / 1000;
   const totalReusoTon = totals.reuseTotal / 1000;
 
-  // Costos
+  // Costos (altos porque aún no optimizan)
   const costoRellenoSanitario = totalRellenoTon * COSTO_RELLENO_SANITARIO;
   const costoGestionTotal = totalGeneradoTon * COSTO_GESTION_TOTAL;
   const costoTotalManejo = costoRellenoSanitario + costoGestionTotal;
 
-  // Ingresos
-  const ingresosReciclables = totalReciclablesTon * PRECIO_RECICLABLES;
-  const ingresosComposta = totalCompostaTon * PRECIO_COMPOSTA;
-  const ingresosReuso = totalReusoTon * PRECIO_REUSO;
+  // Ingresos actuales (bajos por falta de eficiencia en venta)
+  const ingresosReciclables = totalReciclablesTon * PRECIO_RECICLABLES * EFICIENCIA_VENTA;
+  const ingresosComposta = totalCompostaTon * PRECIO_COMPOSTA * EFICIENCIA_VENTA;
+  const ingresosReuso = totalReusoTon * PRECIO_REUSO * EFICIENCIA_VENTA;
   const ingresosTotales = ingresosReciclables + ingresosComposta + ingresosReuso;
 
-  // Ingresos posibles (si todo se vendiera)
-  const ingresosPosiblesReciclables = totalReciclablesTon * PRECIO_RECICLABLES;
-  const ingresosPosiblesComposta = totalCompostaTon * PRECIO_COMPOSTA;
-  const ingresosPosiblesReuso = totalReusoTon * PRECIO_REUSO;
-  const ingresosPosiblesTotales = ingresosPosiblesReciclables + ingresosPosiblesComposta + ingresosPosiblesReuso;
+  // Ingresos POTENCIALES (si se vendiera todo al 90% de eficiencia)
+  const EFICIENCIA_POTENCIAL = 0.90;
+  const ingresosPotencialesReciclables = totalReciclablesTon * PRECIO_RECICLABLES * EFICIENCIA_POTENCIAL;
+  const ingresosPotencialesComposta = totalCompostaTon * PRECIO_COMPOSTA * EFICIENCIA_POTENCIAL;
+  const ingresosPotencialesReuso = totalReusoTon * PRECIO_REUSO * EFICIENCIA_POTENCIAL;
+  const ingresosPotencialesTotales = ingresosPotencialesReciclables + ingresosPotencialesComposta + ingresosPotencialesReuso;
 
-  // Ingresos perdidos por contaminación
-  const reciclablesRechazadosTon = totalReciclablesTon * TASA_RECHAZO_CONTAMINACION;
-  const ingresosPerdidosContaminacion = reciclablesRechazadosTon * PRECIO_RECICLABLES;
-
-  // Balance neto
+  // Balance neto actual (NEGATIVO - están perdiendo dinero)
   const balanceNeto = ingresosTotales - costoTotalManejo;
+
+  // Potencial de mejora mensual
+  const potencialMejora = ingresosPotencialesTotales - ingresosTotales;
 
   // Datos para gráfico mensual
   const monthlyData = wasteExcelData?.months.map(month => ({
@@ -338,43 +339,93 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* Resultado si mejoras tu proceso */}
+              {/* Balance Actual - NEGATIVO */}
+              <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 rounded-2xl p-6 border-2 border-amber-300 shadow-lg mb-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <AlertTriangle className="w-8 h-8 text-amber-600" />
+                  <div>
+                    <h4 className="text-lg font-bold text-gray-900">Balance Actual</h4>
+                    <p className="text-sm text-gray-600">Situación financiera mensual de residuos</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="bg-white/60 rounded-xl p-4 border border-amber-200">
+                    <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
+                      Balance mensual
+                    </div>
+                    <div className="text-3xl font-bold text-red-600">
+                      -${Math.abs(balanceNeto / 1000).toFixed(1)}K
+                    </div>
+                    <div className="text-sm text-red-600 font-medium">
+                      Pérdida actual
+                    </div>
+                  </div>
+                  <div className="bg-white/60 rounded-xl p-4 border border-amber-200">
+                    <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
+                      Eficiencia de venta
+                    </div>
+                    <div className="text-3xl font-bold text-amber-600">
+                      45%
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      De materiales separados
+                    </div>
+                  </div>
+                  <div className="bg-white/60 rounded-xl p-4 border border-amber-200">
+                    <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
+                      A relleno sanitario
+                    </div>
+                    <div className="text-3xl font-bold text-gray-600">
+                      {totalRellenoTon.toFixed(1)} ton
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      Sin recuperar valor
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Potencial de Mejora */}
               <div className="bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 rounded-2xl p-6 border-2 border-blue-200 shadow-lg">
                 <div className="flex items-center gap-3 mb-4">
                   <Target className="w-8 h-8 text-blue-600" />
                   <div>
-                    <h4 className="text-lg font-bold text-gray-900">Resultado si mejoras tu proceso</h4>
-                    <p className="text-sm text-gray-600">Potencial de ingresos no recuperados</p>
+                    <h4 className="text-lg font-bold text-gray-900">Oportunidad de Mejora</h4>
+                    <p className="text-sm text-gray-600">Si optimizas la gestión y venta de materiales</p>
                   </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Residuos no recuperados */}
-                  <div className="bg-white/50 rounded-xl p-4 border border-blue-100">
-                    <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">
-                      Residuos no recuperados
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="bg-white/60 rounded-xl p-4 border border-blue-200">
+                    <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
+                      Ingresos potenciales
                     </div>
-                    <div className="text-3xl font-bold text-amber-600 mb-2">
-                      {totalRellenoTon.toFixed(1)} ton
+                    <div className="text-3xl font-bold text-green-600">
+                      +${(potencialMejora / 1000).toFixed(1)}K
                     </div>
                     <div className="text-sm text-gray-600">
-                      Enviados a relleno sanitario
+                      Adicionales por mes
                     </div>
                   </div>
-                  
-                  {/* Total no recuperado */}
-                  <div className="bg-white/50 rounded-xl p-4 border border-blue-100">
-                    <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">
-                      Total no recuperado
+                  <div className="bg-white/60 rounded-xl p-4 border border-blue-200">
+                    <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
+                      Meta de eficiencia
                     </div>
-                    <div className={`text-3xl font-bold mb-2 ${
-                      ((totalRellenoTon * PRECIO_RECICLABLES) - costoTotalManejo) >= 0 
-                        ? 'text-green-600' 
-                        : 'text-red-600'
-                    }`}>
-                      ${(((totalRellenoTon * PRECIO_RECICLABLES) - costoTotalManejo) / 1000).toFixed(1)}K
+                    <div className="text-3xl font-bold text-blue-600">
+                      90%
                     </div>
                     <div className="text-sm text-gray-600">
-                      Potencial de mejora mensual
+                      De materiales vendidos
+                    </div>
+                  </div>
+                  <div className="bg-white/60 rounded-xl p-4 border border-blue-200">
+                    <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
+                      Ahorro anual posible
+                    </div>
+                    <div className="text-3xl font-bold text-emerald-600">
+                      ${((potencialMejora + Math.abs(balanceNeto)) * 12 / 1000).toFixed(0)}K
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      Al optimizar procesos
                     </div>
                   </div>
                 </div>

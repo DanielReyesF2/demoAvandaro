@@ -21,13 +21,22 @@
    - Botón "Vista Completa" para regresar
    - Mejor UX en navegación
 
-3. **Chatbot Econova AI**
-   - 3 preguntas preparadas:
+3. **Chatbot Econova AI** ✨ MEJORADO
+   - Sistema de matching flexible con normalización de texto (sin acentos)
+   - 3 preguntas preparadas con múltiples variaciones reconocidas:
      - **Operativa**: "¿Cuál es el área que genera más residuos orgánicos?"
      - **Financiera**: "¿Cuánto dinero estamos perdiendo al no recuperar todos los residuos?"
      - **Reportes**: "¿Qué información necesito para la certificación TRUE Zero Waste?"
+   - Palabras clave flexibles (ej: "dinero perdiendo", "area organicos", "certificacion true")
 
-4. **Correcciones Técnicas**
+4. **Análisis Financiero Invertido** ✨ NUEVO
+   - **COSTOS > INGRESOS** para mostrar situación actual de pérdida
+   - Eficiencia de venta actual: 45% (falta de compradores/logística)
+   - Balance mensual negativo visible
+   - Sección "Oportunidad de Mejora" muestra potencial de recuperación
+   - Meta de eficiencia: 90% de materiales vendidos
+
+5. **Correcciones Técnicas**
    - Servidor devuelve datos mock cuando no hay base de datos
    - Frontend maneja errores de API correctamente
    - Pantalla en blanco resuelta
@@ -142,13 +151,15 @@
   ```
 
 ### Cálculos Financieros (Dashboard)
-- Factores de costo/precio (MXN):
-  - `COSTO_RELLENO_SANITARIO = 850` $/ton
-  - `PRECIO_RECICLABLES = 3500` $/ton
-  - `PRECIO_COMPOSTA = 1200` $/ton
-  - `PRECIO_REUSO = 2500` $/ton
-  - `COSTO_GESTION_TOTAL = 450` $/ton
-  - `TASA_RECHAZO_CONTAMINACION = 0.08` (8%)
+- Factores de costo/precio (MXN) - **Escenario: COSTOS > INGRESOS**:
+  - `COSTO_RELLENO_SANITARIO = 1200` $/ton (incluye transporte)
+  - `PRECIO_RECICLABLES = 2800` $/ton
+  - `PRECIO_COMPOSTA = 800` $/ton (mercado local limitado)
+  - `PRECIO_REUSO = 1500` $/ton
+  - `COSTO_GESTION_TOTAL = 650` $/ton (procesamiento, transporte, personal)
+  - `EFICIENCIA_VENTA = 0.45` (solo se vende 45% de lo separado)
+  - `EFICIENCIA_POTENCIAL = 0.90` (meta: vender 90%)
+- **Resultado**: Balance mensual NEGATIVO, mostrando oportunidad de mejora
 
 ---
 
@@ -298,4 +309,4 @@ npm start
 
 ---
 
-**Última actualización:** Cambios completados para simplificación de análisis financiero y mejora de UX en flujo de materiales. Sistema funcional con datos mock para demo.
+**Última actualización:** Chatbot Econova AI con matching flexible, análisis financiero invertido (costos > ingresos) para mostrar oportunidad de mejora. Sistema funcional con datos mock para demo.
