@@ -1,8 +1,10 @@
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, AreaChart, Area, BarChart, Bar } from "recharts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AppLayout from "../components/layout/AppLayout";
-import { ClubHeader } from "../components/dashboard/ClubHeader";
-import { Droplets, TrendingDown, Recycle, Gauge } from "lucide-react";
+import { Droplets, TrendingDown, Recycle, Gauge, Waves, Sparkles, Activity, ThermometerSun, Beaker } from "lucide-react";
+import { AnimatedCounter } from '@/components/ui/animated-counter';
 
 // Datos simulados de agua
 const waterData = [
@@ -22,37 +24,185 @@ export default function Agua() {
   const ahorroAnual = 890000; // Pesos mexicanos
   const reduccionHuella = 34.2; // Porcentaje
 
+  // Simulación de datos en tiempo real
+  const [currentFlow, setCurrentFlow] = useState(145);
+  const [ptarStatus, setPtarStatus] = useState({ ph: 7.2, turbidity: 0.8, temp: 22.5 });
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const flowInterval = setInterval(() => {
+      setCurrentFlow(prev => {
+        const variation = (Math.random() - 0.5) * 10;
+        return Math.max(130, Math.min(160, prev + variation));
+      });
+      setPtarStatus({
+        ph: 7.0 + Math.random() * 0.4,
+        turbidity: 0.5 + Math.random() * 0.5,
+        temp: 21 + Math.random() * 3
+      });
+    }, 4000);
+
+    const timeInterval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => {
+      clearInterval(flowInterval);
+      clearInterval(timeInterval);
+    };
+  }, []);
+
   return (
     <AppLayout>
       <div className="min-h-screen bg-gray-50">
-        <ClubHeader />
-        
         <div className="max-w-7xl mx-auto px-4 py-6">
-          {/* Header del módulo */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-anton text-gray-800 uppercase tracking-wider">
-              Gestión Hídrica
-            </h1>
-            <p className="text-gray-600 mt-2">
-              PTAR, laguna de riego y sistema de conservación integral
-            </p>
-            
-            {/* Infraestructura del club */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-              <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
-                <h3 className="font-medium text-blue-900 mb-2">🏭 Planta PTAR</h3>
-                <p className="text-sm text-blue-700">
-                  Planta de Tratamiento de Aguas Residuales en operación para el procesamiento y reutilización del agua
-                </p>
+          {/* Hero Dashboard Hídrico */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-cyan-500 via-blue-500 to-indigo-600 p-8 mb-8 shadow-2xl"
+          >
+            {/* Efectos de agua animados */}
+            <div className="absolute inset-0 overflow-hidden">
+              <motion.div
+                animate={{ x: [0, 100, 0], y: [0, -50, 0] }}
+                transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
+                className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-r from-cyan-400/30 to-transparent rounded-full blur-3xl"
+              />
+              <motion.div
+                animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.4, 0.2] }}
+                transition={{ duration: 5, repeat: Infinity }}
+                className="absolute bottom-10 right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"
+              />
+              {/* Burbujas animadas */}
+              {[...Array(5)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  animate={{
+                    y: [-20, -100],
+                    opacity: [0, 1, 0],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    delay: i * 0.8,
+                  }}
+                  className="absolute bottom-0 w-4 h-4 bg-white/20 rounded-full"
+                  style={{ left: `${15 + i * 18}%` }}
+                />
+              ))}
+            </div>
+
+            <div className="relative z-10">
+              {/* Header con tiempo real */}
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-4">
+                  <motion.div
+                    animate={{ rotate: [0, 5, -5, 0] }}
+                    transition={{ duration: 3, repeat: Infinity }}
+                    className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center"
+                  >
+                    <Waves className="w-8 h-8 text-white" />
+                  </motion.div>
+                  <div>
+                    <h1 className="text-3xl font-bold text-white">Gestión Hídrica Integral</h1>
+                    <p className="text-white/80">PTAR · Laguna de Riego · Sistema de Conservación</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-xl">
+                  <motion.div
+                    animate={{ scale: [1, 1.3, 1] }}
+                    transition={{ duration: 1, repeat: Infinity }}
+                    className="w-3 h-3 bg-cyan-300 rounded-full"
+                  />
+                  <div className="text-white">
+                    <div className="text-xs text-white/70">PTAR EN LÍNEA</div>
+                    <div className="text-sm font-mono">
+                      {currentTime.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="bg-green-50 rounded-lg p-4 border border-green-100">
-                <h3 className="font-medium text-green-900 mb-2">🏌️ Sistema de Riego</h3>
-                <p className="text-sm text-green-700">
-                  Laguna de almacenamiento para riego eficiente del campo de golf
-                </p>
+
+              {/* Métricas principales en tiempo real */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.1 }}
+                  className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 text-center"
+                >
+                  <div className="text-4xl font-bold text-white mb-1">
+                    <AnimatedCounter value={parseFloat(porcentajeReciclada)} decimals={1} suffix="%" duration={2} />
+                  </div>
+                  <div className="text-white/70 text-sm">Agua Reciclada</div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 text-center"
+                >
+                  <div className="text-4xl font-bold text-white mb-1">
+                    {Math.round(currentFlow)} <span className="text-xl">L/s</span>
+                  </div>
+                  <div className="text-white/70 text-sm flex items-center justify-center gap-1">
+                    <Activity className="w-3 h-3" />
+                    Flujo PTAR
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 text-center"
+                >
+                  <div className="text-4xl font-bold text-white mb-1">
+                    {(totalLluvia / 1000).toFixed(1)} <span className="text-xl">ML</span>
+                  </div>
+                  <div className="text-white/70 text-sm">Lluvia Captada</div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.4 }}
+                  className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 text-center"
+                >
+                  <div className="text-4xl font-bold text-white mb-1">98%</div>
+                  <div className="text-white/70 text-sm">Calidad Agua</div>
+                </motion.div>
+              </div>
+
+              {/* Indicadores PTAR en tiempo real */}
+              <div className="grid grid-cols-3 gap-4">
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Beaker className="w-5 h-5 text-cyan-200" />
+                    <span className="text-white/80 text-sm">pH</span>
+                  </div>
+                  <span className="text-white font-bold">{ptarStatus.ph.toFixed(1)}</span>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-cyan-200" />
+                    <span className="text-white/80 text-sm">Turbidez</span>
+                  </div>
+                  <span className="text-white font-bold">{ptarStatus.turbidity.toFixed(1)} NTU</span>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <ThermometerSun className="w-5 h-5 text-cyan-200" />
+                    <span className="text-white/80 text-sm">Temp</span>
+                  </div>
+                  <span className="text-white font-bold">{ptarStatus.temp.toFixed(1)}°C</span>
+                </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Métricas principales */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
