@@ -6,17 +6,10 @@ import AppLayout from "../components/layout/AppLayout";
 import { Zap, TrendingDown, Battery, Sun, Target, Gauge, Bolt, Activity, TrendingUp, ArrowUp, Sparkles, Clock } from "lucide-react";
 import { AnimatedCounter } from '@/components/ui/animated-counter';
 
-// Datos energéticos del Club de Golf Avandaro
-const energyData = [
-  { month: 'Ene', consumo: 45600, renovable: 12300, eficiencia: 89, costo: 87500, meta: 15000, proyeccion: 14500 },
-  { month: 'Feb', consumo: 42800, renovable: 13100, eficiencia: 91, costo: 82100, meta: 15500, proyeccion: 15200 },
-  { month: 'Mar', consumo: 48200, renovable: 14800, eficiencia: 88, costo: 92300, meta: 16000, proyeccion: 16800 },
-  { month: 'Abr', consumo: 51300, renovable: 16200, eficiencia: 86, costo: 98600, meta: 16500, proyeccion: 18200 },
-  { month: 'May', consumo: 54700, renovable: 18500, eficiencia: 87, costo: 104800, meta: 17000, proyeccion: 19800 },
-  { month: 'Jun', consumo: 58900, renovable: 20100, eficiencia: 85, costo: 112900, meta: 17500, proyeccion: 21400 },
-  { month: 'Jul', consumo: 62100, renovable: 22300, eficiencia: 87, costo: 118600, meta: 18000, proyeccion: 23100 },
-  { month: 'Ago', consumo: 59800, renovable: 24100, eficiencia: 89, costo: 114200, meta: 18500, proyeccion: 24800 },
-];
+import { generateEnergyData } from "@/lib/avandaroData";
+
+// Datos energéticos realistas para Avandaro
+const energyData = generateEnergyData();
 
 // Datos para gráficas circulares
 const energySourcesData = [

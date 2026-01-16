@@ -1,32 +1,34 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { motion, AnimatePresence } from 'framer-motion';
 import AppLayout from '@/components/layout/AppLayout';
-import { WasteFlowVisualization } from '@/components/dashboard/WasteFlowVisualization';
-import { HeroMetrics } from '@/components/dashboard/HeroMetrics';
-import { ImpactEquivalences } from '@/components/dashboard/ImpactEquivalences';
-import { AIInsights } from '@/components/dashboard/AIInsights';
-import { PresentationMode } from '@/components/dashboard/PresentationMode';
-import { GlassCard } from '@/components/ui/glass-card';
+import { MetricCard } from '@/components/ui/metric-card';
+import { ChartCard } from '@/components/ui/chart-card';
+import { generateMonthlyWasteData, IMPACT_EQUIVALENCES } from '@/lib/avandaroData';
 import {
   BarChart,
   Bar,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  ComposedChart,
   AreaChart,
   Area,
 } from 'recharts';
 import {
-  Calendar,
+  Trash2,
+  DollarSign,
   TrendingUp,
-  Award,
-  Leaf,
-  Target,
-  Presentation,
-  Play
+  TrendingDown,
+  Droplets,
+  Package,
+  Recycle,
+  Activity,
+  Zap,
+  RefreshCw,
 } from 'lucide-react';
 
 // Types for the Excel data
@@ -51,369 +53,343 @@ interface WasteExcelData {
 
 export default function Dashboard() {
   const currentYear = 2025;
-  const [isPresentationOpen, setIsPresentationOpen] = useState(false);
 
-  // Obtener datos de la tabla de trazabilidad (FUENTE DE VERDAD)
-  const { data: wasteExcelData, isLoading } = useQuery<WasteExcelData>({
-    queryKey: ['/api/waste-excel', currentYear],
-    queryFn: async () => {
-      const response = await fetch(`/api/waste-excel/${currentYear}`);
-      if (!response.ok) throw new Error('Failed to fetch data');
-      return response.json();
-    },
-    refetchOnWindowFocus: false,
-  });
+  // Usar datos realistas de Avandaro
+  const monthlyWasteData = generateMonthlyWasteData(currentYear);
+  
+  // Calcular totales anuales
+  const annualTotals = monthlyWasteData.reduce((acc, month) => ({
+    total: acc.total + month.total,
+    organic: acc.organic + month.organic,
+    recyclable: acc.recyclable + month.recyclable,
+    reuse: acc.reuse + month.reuse,
+    landfill: acc.landfill + month.landfill,
+    circular: acc.circular + month.circular,
+  }), { total: 0, organic: 0, recyclable: 0, reuse: 0, landfill: 0, circular: 0 });
 
-  // Calcular totales de cada sección
-  const calculateSectionTotals = () => {
-    if (!wasteExcelData) return { recyclingTotal: 0, compostTotal: 0, reuseTotal: 0, landfillTotal: 0 };
-
-    let recyclingTotal = 0;
-    let compostTotal = 0;
-    let reuseTotal = 0;
-    let landfillTotal = 0;
-
-    wasteExcelData.months.forEach(monthData => {
-      monthData.recycling.forEach(entry => {
-        recyclingTotal += entry.kg;
-      });
-      monthData.compost.forEach(entry => {
-        compostTotal += entry.kg;
-      });
-      monthData.reuse.forEach(entry => {
-        reuseTotal += entry.kg;
-      });
-      monthData.landfill.forEach(entry => {
-        landfillTotal += entry.kg;
-      });
-    });
-
-    return { recyclingTotal, compostTotal, reuseTotal, landfillTotal };
-  };
-
-  // Calcular KPIs
-  const calculateRealTimeKPIs = () => {
-    const totals = calculateSectionTotals();
-    const totalCircular = totals.recyclingTotal + totals.compostTotal + totals.reuseTotal;
-    const totalLandfill = totals.landfillTotal;
-    const totalWeight = totalCircular + totalLandfill;
-    const deviationPercentage = totalWeight > 0 ? (totalCircular / totalWeight) * 100 : 0;
-
-    return {
-      totalCircular,
-      totalLandfill,
-      totalWeight,
-      deviationPercentage
-    };
-  };
-
-  const realTimeKPIs = calculateRealTimeKPIs();
-
-  // Datos calculados en tiempo real
-  const processedData = {
-    wasteDeviation: realTimeKPIs.deviationPercentage,
-    energyRenewable: 29.1,
-    waterRecycled: 28.9,
-    circularityIndex: 72
-  };
-
-  // Calcular impacto ambiental con datos reales
-  const totalWasteDiverted = realTimeKPIs.totalCircular / 1000; // kg a toneladas
-
-  // Datos de impacto ambiental basados en residuos desviados
-  const co2Avoided = realTimeKPIs.totalCircular * 0.5; // ~0.5 kg CO2 por kg reciclado
-  const waterSaved = realTimeKPIs.totalCircular * 5.5; // ~5.5 L agua por kg reciclado
-  const energySaved = realTimeKPIs.totalCircular * 1.2; // ~1.2 kWh por kg reciclado
-  const treesEquivalent = Math.round(co2Avoided / 21); // ~21 kg CO2 por árbol/año
-
-  // Datos para gráfico mensual
-  const monthlyData = wasteExcelData?.months.map(month => ({
-    month: month.month.label,
-    recycling: month.recycling.reduce((sum, e) => sum + e.kg, 0),
-    compost: month.compost.reduce((sum, e) => sum + e.kg, 0),
-    reuse: month.reuse.reduce((sum, e) => sum + e.kg, 0),
-    landfill: month.landfill.reduce((sum, e) => sum + e.kg, 0),
-    total: month.recycling.reduce((sum, e) => sum + e.kg, 0) +
-           month.compost.reduce((sum, e) => sum + e.kg, 0) +
-           month.reuse.reduce((sum, e) => sum + e.kg, 0) +
-           month.landfill.reduce((sum, e) => sum + e.kg, 0),
-  })) || [];
-
-  // Calcular tasa de desviación por mes para gráfico de tendencia
-  const trendData = monthlyData.map(month => {
-    const circular = month.recycling + month.compost + month.reuse;
-    const total = circular + month.landfill;
-    return {
-      month: month.month,
-      desviacion: total > 0 ? ((circular / total) * 100).toFixed(1) : 0,
-    };
-  });
-
-  // Loading state con animación
-  if (isLoading) {
-    return (
-      <AppLayout>
-        <div className="p-8 bg-gray-50 min-h-screen flex items-center justify-center">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-            className="w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full"
-          />
-        </div>
-      </AppLayout>
-    );
-  }
+  // Calcular métricas ejecutivas
+  const totalGenerado = annualTotals.total / 1000; // toneladas
+  const totalReciclables = annualTotals.circular / 1000; // toneladas
+  const deviationPercentage = (annualTotals.circular / annualTotals.total) * 100;
+  
+  // Costos y finanzas (datos realistas para Avandaro)
+  const costoTotalGestion = 485000; // Pesos al mes
+  const ingresosReciclables = 145000; // Pesos al mes
+  const aguaTratadaMes = 12400; // m³ tratados este mes
+  const pipasCompradasMes = 18; // Número de pipas compradas
+  const costoPipasMes = 324000; // Costo total de pipas este mes
+  
+  // Tendencias vs mes anterior
+  const variacionGestion = -5.2; // % vs mes anterior
+  const variacionIngresos = +12.5; // % vs mes anterior
+  
+  // Impacto ambiental
+  const impact = IMPACT_EQUIVALENCES.getEquivalences(annualTotals.circular);
+  
+  // Datos financieros mensuales
+  const financialData = [
+    { month: 'Ene', gestion: 520000, ingresos: 128000, pipas: 20, agua: 12800 },
+    { month: 'Feb', gestion: 495000, ingresos: 132000, pipas: 19, agua: 11900 },
+    { month: 'Mar', gestion: 505000, ingresos: 138000, pipas: 21, agua: 13500 },
+    { month: 'Abr', gestion: 490000, ingresos: 140000, pipas: 18, agua: 14200 },
+    { month: 'May', gestion: 485000, ingresos: 145000, pipas: 18, agua: 15800 },
+    { month: 'Jun', gestion: 488000, ingresos: 148000, pipas: 17, agua: 17300 },
+  ];
+  
+  // Datos para gráfico de flujo financiero
+  const cashFlowData = financialData.map(month => ({
+    month: month.month,
+    costos: month.gestion + (month.pipas * 18000),
+    ingresos: month.ingresos,
+    balance: month.ingresos - (month.gestion + (month.pipas * 18000)),
+  }));
+  
+  // Datos mensuales para gráficas
+  const monthlyData = monthlyWasteData.map(month => ({
+    month: month.month,
+    recycling: month.recyclable,
+    compost: month.organic,
+    reuse: month.reuse,
+    landfill: month.landfill,
+    total: month.total,
+  }));
 
   return (
     <AppLayout>
-      <div className="p-6 md:p-8 bg-gray-50 min-h-screen">
-        <div className="max-w-7xl mx-auto space-y-8">
-
-          {/* Hero Section con métricas principales */}
-          <HeroMetrics
-            deviationRate={processedData.wasteDeviation}
-            energyRenewable={processedData.energyRenewable}
-            waterRecycled={processedData.waterRecycled}
-            circularityIndex={processedData.circularityIndex}
-            totalWasteDiverted={totalWasteDiverted}
-          />
-
-          {/* Sección de Impacto Ambiental con Equivalencias */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            <ImpactEquivalences
-              co2Avoided={co2Avoided}
-              waterSaved={waterSaved}
-              energySaved={energySaved}
-              wasteDeviated={realTimeKPIs.totalCircular}
-            />
-          </motion.div>
-
-          {/* Grid de dos columnas: Insights IA + Tendencias */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* AI Insights */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 }}
-            >
-              <AIInsights
-                deviationRate={processedData.wasteDeviation}
-                monthlyData={monthlyData}
+      <div className="p-8 bg-white min-h-screen">
+        <div className="max-w-7xl mx-auto space-y-8 animate-fade-in">
+          {/* Métricas Ejecutivas Principales - Residuos */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="card-hover">
+              <MetricCard
+                title="Total Generado"
+                value={`${totalGenerado.toFixed(1)}`}
+                subtitle="toneladas este mes"
+                icon={<Trash2 className="w-5 h-5" />}
               />
-            </motion.div>
-
-            {/* Gráfico de Tendencia de Desviación */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.5 }}
-            >
-              <GlassCard variant="default" hover={false} className="h-full">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center">
-                      <TrendingUp className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-gray-900">Tendencia de Desviación</h3>
-                      <p className="text-sm text-gray-500">Evolución mensual 2025</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-sm font-medium">
-                    <Target className="w-4 h-4" />
-                    <span>Meta: 90%</span>
-                  </div>
-                </div>
-
-                <div style={{ height: '280px' }}>
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={trendData}>
-                      <defs>
-                        <linearGradient id="colorDesviacion" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
-                          <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                      <XAxis dataKey="month" stroke="#6b7280" fontSize={12} />
-                      <YAxis stroke="#6b7280" fontSize={12} domain={[0, 100]} unit="%" />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: 'white',
-                          border: '1px solid #e5e7eb',
-                          borderRadius: '12px',
-                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                        }}
-                        formatter={(value: any) => [`${value}%`, 'Desviación']}
-                      />
-                      <Area
-                        type="monotone"
-                        dataKey="desviacion"
-                        stroke="#10b981"
-                        strokeWidth={3}
-                        fill="url(#colorDesviacion)"
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-              </GlassCard>
-            </motion.div>
+            </div>
+            <div className="card-hover">
+              <MetricCard
+                title="Total Reciclables"
+                value={`${totalReciclables.toFixed(1)}`}
+                subtitle="toneladas procesadas"
+                icon={<Recycle className="w-5 h-5" />}
+              />
+            </div>
+            <div className="card-hover">
+              <MetricCard
+                title="Costo Gestión"
+                value={`$${(costoTotalGestion / 1000).toFixed(0)}K`}
+                subtitle={`${variacionGestion > 0 ? '+' : ''}${variacionGestion}% vs mes anterior`}
+                icon={<DollarSign className="w-5 h-5" />}
+              />
+            </div>
+            <div className="card-hover">
+              <MetricCard
+                title="Ingresos Reciclables"
+                value={`$${(ingresosReciclables / 1000).toFixed(0)}K`}
+                subtitle={`${variacionIngresos > 0 ? '+' : ''}${variacionIngresos}% vs mes anterior`}
+                icon={<TrendingUp className="w-5 h-5" />}
+              />
+            </div>
           </div>
 
-          {/* Flujos Dinámicos de Residuos - Sankey */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-          >
-            <WasteFlowVisualization totalWasteDiverted={totalWasteDiverted} />
-          </motion.div>
-
-          {/* Gráfico de Composición Mensual */}
-          {monthlyData.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
-            >
-              <GlassCard variant="default" hover={false}>
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-violet-500 to-purple-600 flex items-center justify-center">
-                      <Calendar className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900">Composición por Mes</h3>
-                      <p className="text-sm text-gray-500">Desglose de residuos por categoría</p>
-                    </div>
-                  </div>
-
-                  {/* Leyenda */}
-                  <div className="hidden md:flex items-center gap-4 text-sm">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-teal-500" />
-                      <span className="text-gray-600">Reciclaje</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-emerald-500" />
-                      <span className="text-gray-600">Composta</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-violet-500" />
-                      <span className="text-gray-600">Reuso</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-gray-400" />
-                      <span className="text-gray-600">Relleno</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div style={{ height: '350px' }}>
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={monthlyData} barCategoryGap="15%">
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
-                      <XAxis dataKey="month" stroke="#6b7280" fontSize={12} />
-                      <YAxis stroke="#6b7280" fontSize={12} />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: 'white',
-                          border: '1px solid #e5e7eb',
-                          borderRadius: '12px',
-                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                        }}
-                        formatter={(value: any) => [`${value.toLocaleString()} kg`, '']}
-                      />
-                      <Bar
-                        dataKey="recycling"
-                        fill="#14b8a6"
-                        radius={[4, 4, 0, 0]}
-                        stackId="a"
-                        name="Reciclaje"
-                      />
-                      <Bar
-                        dataKey="compost"
-                        fill="#10b981"
-                        radius={[4, 4, 0, 0]}
-                        stackId="a"
-                        name="Composta"
-                      />
-                      <Bar
-                        dataKey="reuse"
-                        fill="#8b5cf6"
-                        radius={[4, 4, 0, 0]}
-                        stackId="a"
-                        name="Reuso"
-                      />
-                      <Bar
-                        dataKey="landfill"
-                        fill="#9ca3af"
-                        radius={[4, 4, 0, 0]}
-                        stackId="a"
-                        name="Relleno"
-                      />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </GlassCard>
-            </motion.div>
-          )}
-
-          {/* Footer con certificaciones */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            className="flex items-center justify-center gap-8 py-6 border-t border-gray-200"
-          >
-            <div className="flex items-center gap-2 text-gray-500">
-              <Award className="w-5 h-5 text-amber-500" />
-              <span className="text-sm font-medium">Certificación TRUE en progreso</span>
+          {/* Métricas Ejecutivas Secundarias - Agua y Operaciones */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="card-hover">
+              <MetricCard
+                title="Agua Tratada"
+                value={`${(aguaTratadaMes / 1000).toFixed(1)}K`}
+                subtitle="m³ este mes"
+                icon={<Droplets className="w-5 h-5" />}
+              />
             </div>
-            <div className="h-4 w-px bg-gray-300" />
-            <div className="flex items-center gap-2 text-gray-500">
-              <Leaf className="w-5 h-5 text-emerald-500" />
-              <span className="text-sm font-medium">Compromiso Sustentable 2025</span>
+            <div className="card-hover">
+              <MetricCard
+                title="Pipas Compradas"
+                value={`${pipasCompradasMes}`}
+                subtitle="unidades este mes"
+                icon={<Package className="w-5 h-5" />}
+              />
             </div>
-          </motion.div>
+            <div className="card-hover">
+              <MetricCard
+                title="Costo Pipas"
+                value={`$${(costoPipasMes / 1000).toFixed(0)}K`}
+                subtitle={`${pipasCompradasMes} pipas × $${(costoPipasMes / pipasCompradasMes).toLocaleString()}`}
+                icon={<Activity className="w-5 h-5" />}
+              />
+            </div>
+          </div>
 
+          {/* Resumen Financiero Consolidado - SIN FONDO OSCURO */}
+          <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-8 shadow-premium-md border border-blue-100 animate-slide-up">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-semibold text-gray-900 mb-2">Resumen Financiero</h2>
+                <p className="text-gray-600 text-sm">Balance operativo mensual</p>
+              </div>
+              <div className="text-right">
+                <div className="text-3xl font-bold text-green-600 mb-1">
+                  ${((ingresosReciclables - costoTotalGestion - costoPipasMes) / 1000).toFixed(1)}K
+                </div>
+                <div className="text-sm text-gray-600">Balance Neto</div>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-white rounded-xl p-6 border border-blue-100 shadow-sm">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-gray-600 text-sm">Ingresos</span>
+                  <TrendingUp className="w-5 h-5 text-green-500" />
+                </div>
+                <div className="text-2xl font-bold text-green-600 mb-1">${(ingresosReciclables / 1000).toFixed(1)}K</div>
+                <div className="text-xs text-gray-500">Por reciclables vendidos</div>
+              </div>
+              
+              <div className="bg-white rounded-xl p-6 border border-blue-100 shadow-sm">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-gray-600 text-sm">Costos Gestión</span>
+                  <TrendingDown className="w-5 h-5 text-red-500" />
+                </div>
+                <div className="text-2xl font-bold text-red-500 mb-1">-${(costoTotalGestion / 1000).toFixed(1)}K</div>
+                <div className="text-xs text-gray-500">Procesamiento y tratamiento</div>
+              </div>
+              
+              <div className="bg-white rounded-xl p-6 border border-blue-100 shadow-sm">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-gray-600 text-sm">Costo Pipas</span>
+                  <Package className="w-5 h-5 text-orange-500" />
+                </div>
+                <div className="text-2xl font-bold text-orange-500 mb-1">-${(costoPipasMes / 1000).toFixed(1)}K</div>
+                <div className="text-xs text-gray-500">Abastecimiento de agua</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Impacto Ambiental - Equivalencias Reales */}
+          <div className="bg-white rounded-xl p-8 shadow-premium-md border border-subtle animate-slide-up">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-6 tracking-tight">
+              Impacto Ambiental - Equivalencias
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-green-600 mb-2">
+                  {(impact.co2Avoided / 1000).toFixed(1)} ton
+                </div>
+                <div className="text-sm text-gray-600 mb-1">CO₂ evitado</div>
+                <div className="text-xs text-gray-500">≈ {impact.carsOffRoad} autos menos en carretera</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-blue-600 mb-2">
+                  {(impact.waterSaved / 1000000).toFixed(1)}M L
+                </div>
+                <div className="text-sm text-gray-600 mb-1">Agua ahorrada</div>
+                <div className="text-xs text-gray-500">≈ {impact.swimmingPools} albercas olímpicas</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-purple-600 mb-2">
+                  {(impact.energySaved / 1000).toFixed(1)}M kWh
+                </div>
+                <div className="text-sm text-gray-600 mb-1">Energía ahorrada</div>
+                <div className="text-xs text-gray-500">≈ {impact.homesPowered} casas por año</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-emerald-600 mb-2">
+                  {impact.treesSaved}
+                </div>
+                <div className="text-sm text-gray-600 mb-1">Árboles salvados</div>
+                <div className="text-xs text-gray-500">Equivalente en captura CO₂</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Gráfica de Flujo de Caja */}
+          <div className="animate-slide-up" style={{ animationDelay: '100ms' }}>
+            <ChartCard title="Flujo de Caja Mensual" subtitle="Ingresos vs Costos de gestión y pipas">
+              <div style={{ height: '320px' }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <ComposedChart data={cashFlowData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
+                    <XAxis 
+                      dataKey="month" 
+                      stroke="#6b7280" 
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <YAxis 
+                      stroke="#6b7280" 
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                      tickFormatter={(value) => `$${(value / 1000).toFixed(0)}K`}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'white',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '12px',
+                        padding: '12px',
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                      }}
+                      formatter={(value: number) => [`$${(value / 1000).toFixed(1)}K`, '']}
+                      cursor={{ fill: 'rgba(14, 184, 166, 0.1)' }}
+                    />
+                    <Bar dataKey="ingresos" fill="#10b981" radius={[6, 6, 0, 0]} name="Ingresos" />
+                    <Bar dataKey="costos" fill="#ef4444" radius={[6, 6, 0, 0]} name="Costos" />
+                    <Line
+                      type="monotone"
+                      dataKey="balance"
+                      stroke="#3b82f6"
+                      strokeWidth={3}
+                      dot={{ fill: '#3b82f6', r: 5 }}
+                      activeDot={{ r: 7 }}
+                      name="Balance"
+                    />
+                  </ComposedChart>
+                </ResponsiveContainer>
+              </div>
+            </ChartCard>
+          </div>
+
+          {/* Tendencias Operativas */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-slide-up" style={{ animationDelay: '200ms' }}>
+            <ChartCard title="Agua Tratada Mensual" subtitle="m³ procesados por PTAR">
+              <div style={{ height: '280px' }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={financialData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
+                    <XAxis 
+                      dataKey="month" 
+                      stroke="#6b7280" 
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <YAxis 
+                      stroke="#6b7280" 
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'white',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '12px',
+                        padding: '12px',
+                      }}
+                      formatter={(value: number) => [`${value.toLocaleString()} m³`, '']}
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="agua" 
+                      stroke="#3b82f6" 
+                      fill="#3b82f6" 
+                      fillOpacity={0.3}
+                      strokeWidth={2}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </ChartCard>
+
+            <ChartCard title="Pipas Compradas Mensual" subtitle="Unidades de abastecimiento">
+              <div style={{ height: '280px' }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={financialData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
+                    <XAxis 
+                      dataKey="month" 
+                      stroke="#6b7280" 
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <YAxis 
+                      stroke="#6b7280" 
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'white',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '12px',
+                        padding: '12px',
+                      }}
+                      cursor={{ fill: 'rgba(251, 191, 36, 0.1)' }}
+                    />
+                    <Bar dataKey="pipas" fill="#f59e0b" radius={[6, 6, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </ChartCard>
+          </div>
         </div>
       </div>
-
-      {/* Botón flotante para modo presentación */}
-      <motion.button
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 1 }}
-        onClick={() => setIsPresentationOpen(true)}
-        className="fixed bottom-8 right-8 flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 z-40"
-      >
-        <Play className="w-5 h-5" />
-        <span className="font-semibold">Modo Presentación</span>
-      </motion.button>
-
-      {/* Modo Presentación */}
-      <AnimatePresence>
-        {isPresentationOpen && (
-          <PresentationMode
-            isOpen={isPresentationOpen}
-            onClose={() => setIsPresentationOpen(false)}
-            data={{
-              deviationRate: processedData.wasteDeviation,
-              totalWasteDiverted: totalWasteDiverted,
-              co2Avoided: co2Avoided,
-              treesEquivalent: treesEquivalent,
-              energyRenewable: processedData.energyRenewable,
-              waterRecycled: processedData.waterRecycled,
-              circularityIndex: processedData.circularityIndex,
-            }}
-          />
-        )}
-      </AnimatePresence>
     </AppLayout>
   );
 }

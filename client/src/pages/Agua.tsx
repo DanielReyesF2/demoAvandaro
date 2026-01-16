@@ -3,26 +3,24 @@ import { motion } from 'framer-motion';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, AreaChart, Area, BarChart, Bar } from "recharts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AppLayout from "../components/layout/AppLayout";
+import { MetricCard } from "@/components/ui/metric-card";
+import { ChartCard } from "@/components/ui/chart-card";
+import { generateWaterData } from "@/lib/avandaroData";
 import { Droplets, TrendingDown, Recycle, Gauge, Waves, Sparkles, Activity, ThermometerSun, Beaker } from "lucide-react";
-import { AnimatedCounter } from '@/components/ui/animated-counter';
 
-// Datos simulados de agua
-const waterData = [
-  { month: 'Ene', consumo: 12800, reciclada: 3200, lluvia: 1850, calidad: 98, costo: 78500 },
-  { month: 'Feb', consumo: 11900, reciclada: 3400, lluvia: 2100, calidad: 97, costo: 73200 },
-  { month: 'Mar', consumo: 13500, reciclada: 3800, lluvia: 1200, calidad: 99, costo: 83100 },
-  { month: 'Abr', consumo: 14200, reciclada: 4100, lluvia: 2800, calidad: 98, costo: 87400 },
-  { month: 'May', consumo: 15800, reciclada: 4600, lluvia: 3900, calidad: 96, costo: 97200 },
-  { month: 'Jun', consumo: 17300, reciclada: 5100, lluvia: 4200, calidad: 97, costo: 106500 },
-];
+// Datos realistas de agua para Avandaro
+const waterData = generateWaterData();
 
 export default function Agua() {
   const totalConsumo = waterData.reduce((sum, month) => sum + month.consumo, 0);
   const totalReciclada = waterData.reduce((sum, month) => sum + month.reciclada, 0);
   const totalLluvia = waterData.reduce((sum, month) => sum + month.lluvia, 0);
   const porcentajeReciclada = ((totalReciclada / totalConsumo) * 100).toFixed(1);
-  const ahorroAnual = 890000; // Pesos mexicanos
-  const reduccionHuella = 34.2; // Porcentaje
+  
+  // Calcular ahorro realista (agua reciclada vs comprada)
+  const costoAguaPotable = 12.5; // $/m³
+  const ahorroAnual = (totalReciclada / 1000) * costoAguaPotable * 12; // Ahorro anual
+  const reduccionHuella = ((totalReciclada + totalLluvia) / totalConsumo * 100).toFixed(1);
 
   // Simulación de datos en tiempo real
   const [currentFlow, setCurrentFlow] = useState(145);

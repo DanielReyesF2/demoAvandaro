@@ -10,6 +10,7 @@ import Analysis from "@/pages/analysis";
 import DataEntry from "@/pages/DataEntry";
 import ResiduosExcel from "@/pages/ResiduosExcel";
 import RegistroDiario from "@/pages/RegistroDiario";
+import TrazabilidadResiduos from "@/pages/trazabilidad-residuos";
 import HistorialMensual from "@/pages/HistorialMensual";
 import Energia from "@/pages/Energia";
 import Agua from "@/pages/Agua";
@@ -23,7 +24,7 @@ function Router() {
       <Route path="/" component={Dashboard} />
       <Route path="/registro-diario" component={RegistroDiario} />
       <Route path="/historial-mensual" component={HistorialMensual} />
-      <Route path="/trazabilidad-residuos" component={ResiduosExcel} />
+      <Route path="/trazabilidad-residuos" component={TrazabilidadResiduos} />
       <Route path="/energia" component={Energia} />
       <Route path="/agua" component={Agua} />
       <Route path="/economia-circular" component={EconomiaCircular} />
