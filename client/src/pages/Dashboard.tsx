@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import AppLayout from '@/components/layout/AppLayout';
 import { WasteFlowVisualization } from '@/components/dashboard/WasteFlowVisualization';
 import { HeroMetrics } from '@/components/dashboard/HeroMetrics';
 import { ImpactEquivalences } from '@/components/dashboard/ImpactEquivalences';
 import { AIInsights } from '@/components/dashboard/AIInsights';
+import { PresentationMode } from '@/components/dashboard/PresentationMode';
 import { GlassCard } from '@/components/ui/glass-card';
 import {
   BarChart,
@@ -23,7 +24,9 @@ import {
   TrendingUp,
   Award,
   Leaf,
-  Target
+  Target,
+  Presentation,
+  Play
 } from 'lucide-react';
 
 // Types for the Excel data
@@ -48,6 +51,7 @@ interface WasteExcelData {
 
 export default function Dashboard() {
   const currentYear = 2025;
+  const [isPresentationOpen, setIsPresentationOpen] = useState(false);
 
   // Obtener datos de la tabla de trazabilidad (FUENTE DE VERDAD)
   const { data: wasteExcelData, isLoading } = useQuery<WasteExcelData>({
@@ -120,6 +124,7 @@ export default function Dashboard() {
   const co2Avoided = realTimeKPIs.totalCircular * 0.5; // ~0.5 kg CO2 por kg reciclado
   const waterSaved = realTimeKPIs.totalCircular * 5.5; // ~5.5 L agua por kg reciclado
   const energySaved = realTimeKPIs.totalCircular * 1.2; // ~1.2 kWh por kg reciclado
+  const treesEquivalent = Math.round(co2Avoided / 21); // ~21 kg CO2 por árbol/año
 
   // Datos para gráfico mensual
   const monthlyData = wasteExcelData?.months.map(month => ({
@@ -378,6 +383,37 @@ export default function Dashboard() {
 
         </div>
       </div>
+
+      {/* Botón flotante para modo presentación */}
+      <motion.button
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 1 }}
+        onClick={() => setIsPresentationOpen(true)}
+        className="fixed bottom-8 right-8 flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 z-40"
+      >
+        <Play className="w-5 h-5" />
+        <span className="font-semibold">Modo Presentación</span>
+      </motion.button>
+
+      {/* Modo Presentación */}
+      <AnimatePresence>
+        {isPresentationOpen && (
+          <PresentationMode
+            isOpen={isPresentationOpen}
+            onClose={() => setIsPresentationOpen(false)}
+            data={{
+              deviationRate: processedData.wasteDeviation,
+              totalWasteDiverted: totalWasteDiverted,
+              co2Avoided: co2Avoided,
+              treesEquivalent: treesEquivalent,
+              energyRenewable: processedData.energyRenewable,
+              waterRecycled: processedData.waterRecycled,
+              circularityIndex: processedData.circularityIndex,
+            }}
+          />
+        )}
+      </AnimatePresence>
     </AppLayout>
   );
 }
