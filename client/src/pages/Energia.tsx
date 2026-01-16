@@ -1,8 +1,10 @@
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, AreaChart, Area, PieChart, Pie, Cell, RadialBarChart, RadialBar, ComposedChart, Bar } from "recharts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AppLayout from "../components/layout/AppLayout";
-import { ClubHeader } from "../components/dashboard/ClubHeader";
-import { Zap, TrendingDown, Battery, Sun, Target, Gauge, Bolt, Activity, TrendingUp, ArrowUp } from "lucide-react";
+import { Zap, TrendingDown, Battery, Sun, Target, Gauge, Bolt, Activity, TrendingUp, ArrowUp, Sparkles, Clock } from "lucide-react";
+import { AnimatedCounter } from '@/components/ui/animated-counter';
 
 // Datos energéticos del Club de Golf Avandaro
 const energyData = [
@@ -43,7 +45,30 @@ export default function Energia() {
   const eficienciaPromedio = (energyData.reduce((sum, month) => sum + month.eficiencia, 0) / energyData.length).toFixed(1);
   const ahorroAnual = 1350000; // Pesos mexicanos
   const reduccionCO2 = 125.7; // Toneladas CO2
-  
+
+  // Simulación de generación en tiempo real
+  const [currentPower, setCurrentPower] = useState(612);
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const powerInterval = setInterval(() => {
+      // Simular variación en generación solar (+/- 5%)
+      setCurrentPower(prev => {
+        const variation = (Math.random() - 0.5) * 30;
+        return Math.max(580, Math.min(680, prev + variation));
+      });
+    }, 3000);
+
+    const timeInterval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => {
+      clearInterval(powerInterval);
+      clearInterval(timeInterval);
+    };
+  }, []);
+
   // Colores para las gráficas
   const COLORS = ['#fbbf24', '#60a5fa', '#94a3b8', '#22c55e'];
   const RAMP = (t: number) => {
@@ -53,47 +78,127 @@ export default function Energia() {
   return (
     <AppLayout>
       <div className="min-h-screen bg-gray-50">
-        <ClubHeader />
-        
         <div className="max-w-7xl mx-auto px-4 py-6">
-          {/* Dashboard de Paneles Solares - Espectacular */}
-          <div className="bg-gradient-to-br from-yellow-400 via-orange-400 to-red-400 rounded-3xl p-8 mb-8 shadow-2xl border border-yellow-200 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
-            <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-12 -translate-x-12"></div>
-            
+          {/* Hero Dashboard Solar - Con datos en tiempo real */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-500 via-orange-500 to-red-500 p-8 mb-8 shadow-2xl"
+          >
+            {/* Efectos de fondo animados */}
+            <div className="absolute inset-0 overflow-hidden">
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 60, repeat: Infinity, ease: 'linear' }}
+                className="absolute -top-1/2 -right-1/2 w-full h-full bg-gradient-to-r from-yellow-400/30 to-transparent rounded-full blur-3xl"
+              />
+              <motion.div
+                animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+                transition={{ duration: 4, repeat: Infinity }}
+                className="absolute top-20 right-20 w-32 h-32 bg-white/20 rounded-full blur-2xl"
+              />
+            </div>
+
             <div className="relative z-10">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center space-x-4">
-                  <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+              {/* Header con tiempo real */}
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-4">
+                  <motion.div
+                    animate={{ rotate: [0, 10, -10, 0] }}
+                    transition={{ duration: 4, repeat: Infinity }}
+                    className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center"
+                  >
                     <Sun className="w-8 h-8 text-white" />
-                  </div>
+                  </motion.div>
                   <div>
-                    <h2 className="text-2xl font-anton text-white uppercase tracking-wide">Proyecto Solar Avandaro</h2>
-                    <p className="text-white/90 text-sm">Sistema fotovoltaico de 850 kW instalados</p>
+                    <h1 className="text-3xl font-bold text-white">Proyecto Solar Avándaro</h1>
+                    <p className="text-white/80">Sistema fotovoltaico de 850 kW instalados</p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-4xl font-black text-white">{porcentajeRenovable}%</div>
-                  <div className="text-white/90 text-sm">Energía Renovable</div>
+
+                {/* Indicador de tiempo real */}
+                <div className="flex items-center gap-3 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-xl">
+                  <motion.div
+                    animate={{ scale: [1, 1.3, 1] }}
+                    transition={{ duration: 1, repeat: Infinity }}
+                    className="w-3 h-3 bg-green-400 rounded-full"
+                  />
+                  <div className="text-white">
+                    <div className="text-xs text-white/70">EN VIVO</div>
+                    <div className="text-sm font-mono">
+                      {currentTime.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                    </div>
+                  </div>
                 </div>
               </div>
-              
-              <div className="grid grid-cols-3 gap-6">
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center">
-                  <div className="text-2xl font-bold text-white">850 kW</div>
-                  <div className="text-white/80 text-sm">Capacidad Instalada</div>
+
+              {/* Métricas principales en tiempo real */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.1 }}
+                  className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 text-center"
+                >
+                  <div className="text-4xl font-bold text-white mb-1">
+                    <AnimatedCounter value={parseFloat(porcentajeRenovable)} decimals={1} suffix="%" duration={2} />
+                  </div>
+                  <div className="text-white/70 text-sm">Energía Renovable</div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 text-center"
+                >
+                  <div className="text-4xl font-bold text-white mb-1">
+                    {Math.round(currentPower)} <span className="text-xl">kW</span>
+                  </div>
+                  <div className="text-white/70 text-sm flex items-center justify-center gap-1">
+                    <Sparkles className="w-3 h-3" />
+                    Generando ahora
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 text-center"
+                >
+                  <div className="text-4xl font-bold text-white mb-1">1,247</div>
+                  <div className="text-white/70 text-sm">Paneles Activos</div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.4 }}
+                  className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 text-center"
+                >
+                  <div className="text-4xl font-bold text-white mb-1">98.7%</div>
+                  <div className="text-white/70 text-sm">Uptime Sistema</div>
+                </motion.div>
+              </div>
+
+              {/* Barra de progreso de generación */}
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-white/80 text-sm">Capacidad actual</span>
+                  <span className="text-white font-bold">{Math.round((currentPower / 850) * 100)}% de 850 kW</span>
                 </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center">
-                  <div className="text-2xl font-bold text-white">1,247</div>
-                  <div className="text-white/80 text-sm">Paneles Solares</div>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center">
-                  <div className="text-2xl font-bold text-white">98.7%</div>
-                  <div className="text-white/80 text-sm">Uptime</div>
+                <div className="h-3 bg-white/20 rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${(currentPower / 850) * 100}%` }}
+                    transition={{ duration: 0.5 }}
+                    className="h-full bg-gradient-to-r from-yellow-300 to-white rounded-full"
+                  />
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Métricas principales - Rediseñadas */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
