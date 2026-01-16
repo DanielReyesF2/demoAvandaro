@@ -24,19 +24,19 @@ interface SidebarItemProps {
 const SidebarItem = ({ to, icon, children, isActive, hasArrow = false }: SidebarItemProps) => {
   return (
     <Link href={to} className={`
-      flex items-center justify-between px-4 py-2.5 rounded-lg transition-colors
+      flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 group
       ${
         isActive 
-          ? "bg-accent-green/10 text-accent-green font-medium" 
-          : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+          ? "bg-accent-green/10 text-accent-green font-medium shadow-premium-sm" 
+          : "text-gray-700 hover:bg-gray-100/80 hover:text-gray-900"
       }
     `}>
       <div className="flex items-center gap-3">
-        <span className="w-5 h-5">{icon}</span>
-        <span className="text-sm">{children}</span>
+        <span className={`w-4 h-4 transition-transform ${isActive ? 'scale-110' : 'group-hover:scale-110'}`}>{icon}</span>
+        <span className="text-sm font-medium">{children}</span>
       </div>
       {hasArrow && (
-        <ChevronRight className="w-4 h-4 text-gray-400" />
+        <ChevronRight className={`w-4 h-4 text-gray-400 transition-transform ${isActive ? 'translate-x-0 opacity-100' : 'group-hover:translate-x-0.5 opacity-0 group-hover:opacity-100'}`} />
       )}
     </Link>
   );
@@ -47,25 +47,25 @@ export default function Sidebar() {
   const [selectedCompany, setSelectedCompany] = useState("Rancho Avandaro");
   
   return (
-    <div className="flex flex-col w-72 bg-sidebar border-r border-subtle h-screen">
-      {/* Icono Econova circular pequeño */}
-      <div className="flex items-center justify-center h-16 px-4 border-b border-subtle">
-        <div className="w-10 h-10 rounded-full bg-accent-green flex items-center justify-center">
-          <span className="text-white font-bold text-lg">E</span>
+    <div className="flex flex-col w-72 bg-white border-r border-subtle h-screen shadow-premium-sm">
+      {/* Icono Econova circular pequeño - Premium */}
+      <div className="flex items-center justify-center h-20 px-4 border-b border-subtle bg-gradient-to-br from-white to-gray-50/50">
+        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent-green to-accent-teal flex items-center justify-center shadow-premium-sm hover:shadow-premium-md transition-shadow">
+          <span className="text-white font-bold text-xl">E</span>
         </div>
       </div>
       
-      {/* Barra de búsqueda */}
-      <div className="p-4 border-b border-subtle">
+      {/* Barra de búsqueda - Premium */}
+      <div className="p-5 border-b border-subtle bg-white">
         <SearchBar />
-        <p className="text-xs text-gray-500 mt-2 text-center">
+        <p className="text-xs text-gray-500 mt-3 text-center leading-relaxed">
           Pregunta lo que quieras sobre tus datos
         </p>
       </div>
       
-      {/* Selector de Empresa */}
-      <div className="p-4 border-b border-subtle">
-        <div className="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-3">
+      {/* Selector de Empresa - Premium */}
+      <div className="p-5 border-b border-subtle bg-white">
+        <div className="text-xs font-semibold text-gray-700 uppercase tracking-wider mb-4">
           EMPRESA
         </div>
         <CompanyToggle
@@ -75,12 +75,12 @@ export default function Sidebar() {
         />
       </div>
       
-      {/* Navigation */}
-      <nav className="flex-1 pt-6 px-4 pb-4 overflow-y-auto">
-        <div className="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-3">
+      {/* Navigation - Premium */}
+      <nav className="flex-1 pt-6 px-5 pb-4 overflow-y-auto bg-white">
+        <div className="text-xs font-semibold text-gray-700 uppercase tracking-wider mb-4">
           PRINCIPAL
         </div>
-        <div className="space-y-1 mb-6">
+        <div className="space-y-1.5 mb-8">
           <SidebarItem 
             to="/" 
             icon={<LayoutDashboard className="w-5 h-5" />} 
@@ -123,13 +123,13 @@ export default function Sidebar() {
           </SidebarItem>
         </div>
         
-        <div className="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-3 mt-6">
+        <div className="text-xs font-semibold text-gray-700 uppercase tracking-wider mb-4 mt-8">
           SISTEMA
         </div>
-        <div className="space-y-1">
+        <div className="space-y-1.5">
           <SidebarItem 
             to="/documents" 
-            icon={<Settings className="w-5 h-5" />} 
+            icon={<Settings className="w-4 h-4" />} 
             isActive={location === "/documents"}
             hasArrow={false}
           >
@@ -138,9 +138,9 @@ export default function Sidebar() {
         </div>
       </nav>
       
-      {/* Cerrar sesión */}
-      <div className="p-4 border-t border-subtle">
-        <button className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors w-full">
+      {/* Cerrar sesión - Premium */}
+      <div className="p-5 border-t border-subtle bg-white">
+        <button className="flex items-center gap-2.5 text-sm font-medium text-gray-600 hover:text-gray-900 transition-all duration-200 w-full px-3 py-2 rounded-lg hover:bg-gray-100/80">
           <LogOut className="w-4 h-4" />
           <span>→ Cerrar sesión</span>
         </button>

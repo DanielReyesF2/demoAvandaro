@@ -1,8 +1,11 @@
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, AreaChart, Area, PieChart, Pie, Cell, RadialBarChart, RadialBar, ComposedChart, Bar } from "recharts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AppLayout from "../components/layout/AppLayout";
-import { ClubHeader } from "../components/dashboard/ClubHeader";
-import { Zap, TrendingDown, Battery, Sun, Target, Gauge, Bolt, Activity, TrendingUp, ArrowUp } from "lucide-react";
+import { MetricCard } from "@/components/ui/metric-card";
+import { ChartCard } from "@/components/ui/chart-card";
+import { calculateCarbonEmissions, calculateEnergyMetrics, formatCarbonEmissions, projectFutureEmissions } from "@/lib/carbonEmissionsCalculator";
+import { compareEnergyUsage, formatEnergyValues } from "@/lib/energyMetricsCalculator";
+import { Zap, TrendingDown, Battery, Sun, Target, Gauge, Bolt, Activity, TrendingUp, ArrowUp, Leaf } from "lucide-react";
 
 // Datos energéticos del Club de Golf Avandaro
 const energyData = [
@@ -50,14 +53,33 @@ export default function Energia() {
     return `hsl(${120 * t + 60}, 70%, ${50 + t * 30}%)`;
   };
 
+  // Calcular emisiones usando las calculadoras
+  const carbonEmissions = calculateCarbonEmissions(totalConsumo, totalRenovable);
+  const formattedEmissions = formatCarbonEmissions(carbonEmissions);
+  const energyMetrics = calculateEnergyMetrics(totalConsumo, totalRenovable);
+  const futureProjection = projectFutureEmissions(
+    carbonEmissions.netCo2,
+    parseFloat(porcentajeRenovable),
+    50, // Meta de 50% renovable
+    totalConsumo * 1.1 // Proyección 10% más consumo
+  );
+
   return (
     <AppLayout>
-      <div className="min-h-screen bg-gray-50">
-        <ClubHeader />
-        
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          {/* Dashboard de Paneles Solares - Espectacular */}
-          <div className="bg-gradient-to-br from-yellow-400 via-orange-400 to-red-400 rounded-3xl p-8 mb-8 shadow-2xl border border-yellow-200 relative overflow-hidden">
+      <div className="p-8 bg-white min-h-screen">
+        <div className="max-w-7xl mx-auto space-y-8 animate-fade-in">
+          {/* Header Premium */}
+          <div className="space-y-2">
+            <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">
+              Gestión Energética
+            </h1>
+            <p className="text-sm text-gray-600 leading-relaxed">
+              Paneles solares, energía renovable y eficiencia energética
+            </p>
+          </div>
+
+          {/* Dashboard de Paneles Solares - Premium */}
+          <div className="bg-gradient-to-br from-yellow-400 via-orange-400 to-red-400 rounded-2xl p-8 shadow-premium-xl border border-yellow-200 relative overflow-hidden card-hover">
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
             <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-12 -translate-x-12"></div>
             
@@ -171,8 +193,78 @@ export default function Energia() {
             </div>
           </div>
 
+          {/* Tabla Detallada de Energía Mensual */}
+          <div className="bg-white rounded-xl p-8 shadow-premium-md border border-subtle animate-slide-up">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-semibold text-gray-900 tracking-tight">
+                  Consumo Energético Mensual Detallado
+                </h2>
+                <p className="text-sm text-gray-600 mt-1">Datos en kWh y emisiones en kg CO₂</p>
+              </div>
+            </div>
+            
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="border-b-2 border-subtle bg-gray-50">
+                    <th className="text-left p-4 font-semibold text-gray-900 min-w-[100px]">Mes</th>
+                    <th className="text-center p-4 font-semibold text-gray-900 min-w-[120px]">Consumo Total</th>
+                    <th className="text-center p-4 font-semibold text-gray-900 min-w-[120px]">Renovable</th>
+                    <th className="text-center p-4 font-semibold text-gray-900 min-w-[100px]">% Renovable</th>
+                    <th className="text-center p-4 font-semibold text-gray-900 min-w-[120px]">Emisiones CO₂</th>
+                    <th className="text-center p-4 font-semibold text-gray-900 min-w-[100px]">Eficiencia</th>
+                    <th className="text-center p-4 font-semibold text-gray-900 min-w-[120px]">Costo</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {energyData.map((month, index) => {
+                    const porcentajeRen = ((month.renovable / month.consumo) * 100).toFixed(1);
+                    // Calcular emisiones: (consumo - renovable) * 0.5 + (renovable * 0.02)
+                    const emisionesCo2 = ((month.consumo - month.renovable) * 0.5) + (month.renovable * 0.02);
+                    return (
+                      <tr key={index} className="border-b border-subtle hover:bg-gray-50 transition-colors">
+                        <td className="p-4 font-medium text-gray-900">{month.month}</td>
+                        <td className="p-4 text-center text-gray-700 font-medium">{month.consumo.toLocaleString()} kWh</td>
+                        <td className="p-4 text-center text-green-600 font-medium">{month.renovable.toLocaleString()} kWh</td>
+                        <td className="p-4 text-center text-gray-700 font-semibold">{porcentajeRen}%</td>
+                        <td className="p-4 text-center text-orange-600 font-medium">{(emisionesCo2 / 1000).toFixed(1)} ton</td>
+                        <td className="p-4 text-center">
+                          <div className="flex items-center justify-center gap-2">
+                            <div className="w-16 bg-gray-200 rounded-full h-2">
+                              <div 
+                                className={`h-2 rounded-full ${month.eficiencia >= 90 ? 'bg-green-500' : month.eficiencia >= 85 ? 'bg-yellow-500' : 'bg-orange-500'}`}
+                                style={{ width: `${month.eficiencia}%` }}
+                              ></div>
+                            </div>
+                            <span className="text-sm font-medium text-gray-700">{month.eficiencia}%</span>
+                          </div>
+                        </td>
+                        <td className="p-4 text-center text-gray-700 font-medium">${month.costo.toLocaleString()}</td>
+                      </tr>
+                    );
+                  })}
+                  {/* Totales */}
+                  <tr className="border-t-2 border-subtle bg-gray-50 font-semibold">
+                    <td className="p-4 text-gray-900">TOTAL</td>
+                    <td className="p-4 text-center text-gray-900">{totalConsumo.toLocaleString()} kWh</td>
+                    <td className="p-4 text-center text-green-600">{totalRenovable.toLocaleString()} kWh</td>
+                    <td className="p-4 text-center text-gray-900">{porcentajeRenovable}%</td>
+                    <td className="p-4 text-center text-orange-600">
+                      {(((totalConsumo - totalRenovable) * 0.5) + (totalRenovable * 0.02)) / 1000).toFixed(1)} ton
+                    </td>
+                    <td className="p-4 text-center text-gray-900">{eficienciaPromedio}%</td>
+                    <td className="p-4 text-center text-gray-900">
+                      ${energyData.reduce((sum, m) => sum + m.costo, 0).toLocaleString()}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           {/* Impacto ambiental específico de energía */}
-          <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-8 mb-8 border border-green-100">
+          <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-8 mb-8 border border-green-100 animate-slide-up">
             <h2 className="text-xl font-anton text-gray-800 mb-6 uppercase tracking-wide">
               Impacto Ambiental Energético
             </h2>

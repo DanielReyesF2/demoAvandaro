@@ -289,14 +289,14 @@ export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualiz
   const isClubExpanded = expandedNodes.has('Club Residencial Avandaro');
 
   return (
-    <div className="bg-white rounded-lg border border-subtle p-6 shadow-sm">
+    <div className="bg-white rounded-xl border border-subtle p-8 shadow-premium-md card-hover animate-fade-in">
       {/* Header y Controles */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-2xl font-semibold text-gray-900 mb-1 tracking-tight">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-2 tracking-tight">
             Flujos de Materiales
           </h2>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 leading-relaxed">
             Visualización del flujo de residuos desde puntos de generación hasta destino final
           </p>
         </div>
@@ -347,7 +347,7 @@ export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualiz
       </div>
 
       {/* Diagrama Sankey */}
-      <div ref={sankeyRef} className="h-[500px] bg-gray-50 rounded-lg border border-subtle p-4">
+      <div ref={sankeyRef} className="h-[500px] bg-gradient-to-br from-gray-50 to-white rounded-xl border border-subtle p-6 shadow-premium-sm">
         <ResponsiveSankey
           data={filteredData}
           margin={{ top: 20, right: 160, bottom: 20, left: 160 }}
@@ -384,7 +384,7 @@ export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualiz
 
       {/* Información de expansión */}
       {isClubExpanded && (
-        <div className="mt-4 p-4 bg-accent-green/10 border border-accent-green/20 rounded-lg">
+        <div className="mt-6 p-4 bg-gradient-to-r from-accent-green/10 to-accent-teal/10 border border-accent-green/20 rounded-xl animate-fade-in">
           <div className="flex items-center gap-2 text-accent-green font-medium text-sm">
             <ChevronDown className="w-4 h-4" />
             <span>Club Residencial Avandaro expandido - Mostrando Casas 501-506</span>
@@ -392,19 +392,22 @@ export function WasteFlowVisualization({ totalWasteDiverted }: WasteFlowVisualiz
         </div>
       )}
 
-      {/* Métricas de Resumen */}
-      <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-gray-50 rounded-lg p-4 border border-subtle">
-          <div className="text-sm text-gray-600 mb-1">Total Generado</div>
-          <div className="text-2xl font-bold text-gray-900">{totalValue.toFixed(1)} ton/mes</div>
+      {/* Métricas de Resumen Premium */}
+      <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl p-5 border border-subtle shadow-premium-sm card-hover">
+          <div className="text-xs font-medium text-gray-600 mb-2 uppercase tracking-wide">Total Generado</div>
+          <div className="text-3xl font-bold text-gray-900 tracking-tight">{totalValue.toFixed(1)}</div>
+          <div className="text-sm text-gray-500 mt-1">ton/mes</div>
         </div>
-        <div className="bg-gray-50 rounded-lg p-4 border border-subtle">
-          <div className="text-sm text-gray-600 mb-1">Desviación</div>
-          <div className="text-2xl font-bold text-accent-green">{diversionRate}%</div>
+        <div className="bg-gradient-to-br from-white to-accent-green/5 rounded-xl p-5 border border-accent-green/20 shadow-premium-sm card-hover">
+          <div className="text-xs font-medium text-gray-600 mb-2 uppercase tracking-wide">Desviación</div>
+          <div className="text-3xl font-bold text-accent-green tracking-tight">{diversionRate}%</div>
+          <div className="text-sm text-gray-500 mt-1">TRUE Zero Waste</div>
         </div>
-        <div className="bg-gray-50 rounded-lg p-4 border border-subtle">
-          <div className="text-sm text-gray-600 mb-1">Procesado Circularmente</div>
-          <div className="text-2xl font-bold text-accent-teal">{(totalValue - 6.2).toFixed(1)} ton/mes</div>
+        <div className="bg-gradient-to-br from-white to-accent-teal/5 rounded-xl p-5 border border-accent-teal/20 shadow-premium-sm card-hover">
+          <div className="text-xs font-medium text-gray-600 mb-2 uppercase tracking-wide">Procesado Circularmente</div>
+          <div className="text-3xl font-bold text-accent-teal tracking-tight">{(totalValue - 6.2).toFixed(1)}</div>
+          <div className="text-sm text-gray-500 mt-1">ton/mes</div>
         </div>
       </div>
     </div>

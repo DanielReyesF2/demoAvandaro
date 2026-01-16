@@ -1,8 +1,11 @@
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, AreaChart, Area, BarChart, Bar } from "recharts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AppLayout from "../components/layout/AppLayout";
-import { ClubHeader } from "../components/dashboard/ClubHeader";
-import { Droplets, TrendingDown, Recycle, Gauge } from "lucide-react";
+import { MetricCard } from "@/components/ui/metric-card";
+import { ChartCard } from "@/components/ui/chart-card";
+import { calculateWaterImpact, calculateWaterEfficiency, formatWaterImpact } from "@/lib/waterEmissionsCalculator";
+import { calculateWaterFootprint, calculateWaterSavings } from "@/lib/waterFootprintCalculator";
+import { Droplets, TrendingDown, Recycle, Gauge, Leaf, Zap } from "lucide-react";
 
 // Datos simulados de agua
 const waterData = [
@@ -19,85 +22,83 @@ export default function Agua() {
   const totalReciclada = waterData.reduce((sum, month) => sum + month.reciclada, 0);
   const totalLluvia = waterData.reduce((sum, month) => sum + month.lluvia, 0);
   const porcentajeReciclada = ((totalReciclada / totalConsumo) * 100).toFixed(1);
-  const ahorroAnual = 890000; // Pesos mexicanos
-  const reduccionHuella = 34.2; // Porcentaje
+  
+  // Calcular impacto ambiental usando las calculadoras
+  const consumoM3 = totalConsumo / 1000; // Convertir litros a m³
+  const recicladaM3 = totalReciclada / 1000;
+  const lluviaM3 = totalLluvia / 1000;
+  
+  const waterImpact = calculateWaterImpact(consumoM3, recicladaM3);
+  const waterEfficiency = calculateWaterEfficiency(consumoM3, recicladaM3, lluviaM3);
+  const formattedImpact = formatWaterImpact(waterImpact);
+  const waterSavings = calculateWaterSavings(totalConsumo, totalReciclada);
 
   return (
     <AppLayout>
-      <div className="min-h-screen bg-gray-50">
-        <ClubHeader />
-        
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          {/* Header del módulo */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-anton text-gray-800 uppercase tracking-wider">
+      <div className="p-8 bg-white min-h-screen">
+        <div className="max-w-7xl mx-auto space-y-8 animate-fade-in">
+          {/* Header Premium */}
+          <div className="space-y-2">
+            <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">
               Gestión Hídrica
             </h1>
-            <p className="text-gray-600 mt-2">
+            <p className="text-sm text-gray-600 leading-relaxed">
               PTAR, laguna de riego y sistema de conservación integral
             </p>
             
-            {/* Infraestructura del club */}
+            {/* Infraestructura Premium */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-              <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
-                <h3 className="font-medium text-blue-900 mb-2">🏭 Planta PTAR</h3>
-                <p className="text-sm text-blue-700">
+              <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-5 border border-blue-100 shadow-premium-sm card-hover">
+                <h3 className="font-semibold text-blue-900 mb-2">Planta PTAR</h3>
+                <p className="text-sm text-blue-700 leading-relaxed">
                   Planta de Tratamiento de Aguas Residuales en operación para el procesamiento y reutilización del agua
                 </p>
               </div>
-              <div className="bg-green-50 rounded-lg p-4 border border-green-100">
-                <h3 className="font-medium text-green-900 mb-2">🏌️ Sistema de Riego</h3>
-                <p className="text-sm text-green-700">
+              <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-5 border border-green-100 shadow-premium-sm card-hover">
+                <h3 className="font-semibold text-green-900 mb-2">Sistema de Riego</h3>
+                <p className="text-sm text-green-700 leading-relaxed">
                   Laguna de almacenamiento para riego eficiente del campo de golf
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Métricas principales */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-6 shadow-sm border border-blue-100">
-              <div className="flex items-center justify-between mb-3">
-                <Droplets className="w-8 h-8 text-blue-600" />
-                <div className="text-right">
-                  <div className="text-2xl font-bold text-gray-900">{(totalConsumo/1000).toFixed(1)}</div>
-                  <div className="text-sm text-gray-600">ML consumidos</div>
-                </div>
-              </div>
-              <div className="text-xs text-gray-500">Millones de litros - semestre</div>
+          {/* Métricas principales - Premium */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="card-hover">
+              <MetricCard
+                title="Consumo Total"
+                value={`${(totalConsumo/1000).toFixed(1)}`}
+                subtitle="ML consumidos (semestre)"
+                icon={<Droplets className="w-5 h-5" />}
+              />
             </div>
             
-            <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 shadow-sm border border-green-100">
-              <div className="flex items-center justify-between mb-3">
-                <Recycle className="w-8 h-8 text-green-600" />
-                <div className="text-right">
-                  <div className="text-2xl font-bold text-green-600">{porcentajeReciclada}%</div>
-                  <div className="text-sm text-gray-600">Agua reciclada</div>
-                </div>
-              </div>
-              <div className="text-xs text-gray-500">Meta: 35% en 2026</div>
+            <div className="card-hover">
+              <MetricCard
+                title="Reciclada"
+                value={`${porcentajeReciclada}%`}
+                subtitle="Agua reciclada"
+                icon={<Recycle className="w-5 h-5" />}
+              />
             </div>
             
-            <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-6 shadow-sm border border-purple-100">
-              <div className="flex items-center justify-between mb-3">
-                <TrendingDown className="w-8 h-8 text-purple-600" />
-                <div className="text-right">
-                  <div className="text-2xl font-bold text-purple-600">$890K</div>
-                  <div className="text-sm text-gray-600">Ahorro anual</div>
-                </div>
-              </div>
-              <div className="text-xs text-gray-500">vs. año anterior</div>
+            <div className="card-hover">
+              <MetricCard
+                title="Ahorro"
+                value={formattedImpact.costFormatted}
+                subtitle="Ahorro anual estimado"
+                icon={<TrendingDown className="w-5 h-5" />}
+              />
             </div>
             
-            <div className="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-xl p-6 shadow-sm border border-teal-100">
-              <div className="flex items-center justify-between mb-3">
-                <Gauge className="w-8 h-8 text-teal-600" />
-                <div className="text-right">
-                  <div className="text-2xl font-bold text-teal-600">{reduccionHuella}%</div>
-                  <div className="text-sm text-gray-600">Huella hídrica reducida</div>
-                </div>
-              </div>
-              <div className="text-xs text-gray-500">Impacto ambiental</div>
+            <div className="card-hover">
+              <MetricCard
+                title="Eficiencia"
+                value={`${waterEfficiency.efficiency.toFixed(1)}%`}
+                subtitle={waterEfficiency.sustainability}
+                icon={<Gauge className="w-5 h-5" />}
+              />
             </div>
           </div>
 
@@ -128,9 +129,75 @@ export default function Agua() {
             </div>
           </div>
 
+          {/* Tabla Detallada de Consumo Mensual */}
+          <div className="bg-white rounded-xl p-8 shadow-premium-md border border-subtle animate-slide-up">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-semibold text-gray-900 tracking-tight">
+                  Consumo Mensual Detallado
+                </h2>
+                <p className="text-sm text-gray-600 mt-1">Datos en miles de litros (kL)</p>
+              </div>
+            </div>
+            
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="border-b-2 border-subtle bg-gray-50">
+                    <th className="text-left p-4 font-semibold text-gray-900 min-w-[150px]">Mes</th>
+                    <th className="text-center p-4 font-semibold text-gray-900 min-w-[120px]">Consumo Total</th>
+                    <th className="text-center p-4 font-semibold text-gray-900 min-w-[120px]">Agua Reciclada</th>
+                    <th className="text-center p-4 font-semibold text-gray-900 min-w-[120px]">Agua de Lluvia</th>
+                    <th className="text-center p-4 font-semibold text-gray-900 min-w-[120px]">% Reciclada</th>
+                    <th className="text-center p-4 font-semibold text-gray-900 min-w-[120px]">Calidad %</th>
+                    <th className="text-center p-4 font-semibold text-gray-900 min-w-[120px]">Costo</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {waterData.map((month, index) => {
+                    const porcentajeRec = ((month.reciclada / month.consumo) * 100).toFixed(1);
+                    return (
+                      <tr key={index} className="border-b border-subtle hover:bg-gray-50 transition-colors">
+                        <td className="p-4 font-medium text-gray-900">{month.month}</td>
+                        <td className="p-4 text-center text-gray-700 font-medium">{(month.consumo / 1000).toFixed(1)} kL</td>
+                        <td className="p-4 text-center text-green-600 font-medium">{(month.reciclada / 1000).toFixed(1)} kL</td>
+                        <td className="p-4 text-center text-blue-600 font-medium">{(month.lluvia / 1000).toFixed(1)} kL</td>
+                        <td className="p-4 text-center text-gray-700 font-semibold">{porcentajeRec}%</td>
+                        <td className="p-4 text-center">
+                          <div className="flex items-center justify-center gap-2">
+                            <div className="w-16 bg-gray-200 rounded-full h-2">
+                              <div 
+                                className={`h-2 rounded-full ${month.calidad >= 98 ? 'bg-green-500' : month.calidad >= 96 ? 'bg-yellow-500' : 'bg-orange-500'}`}
+                                style={{ width: `${month.calidad}%` }}
+                              ></div>
+                            </div>
+                            <span className="text-sm font-medium text-gray-700">{month.calidad}%</span>
+                          </div>
+                        </td>
+                        <td className="p-4 text-center text-gray-700 font-medium">${month.costo.toLocaleString()}</td>
+                      </tr>
+                    );
+                  })}
+                  {/* Totales */}
+                  <tr className="border-t-2 border-subtle bg-gray-50 font-semibold">
+                    <td className="p-4 text-gray-900">TOTAL</td>
+                    <td className="p-4 text-center text-gray-900">{(totalConsumo / 1000).toFixed(1)} kL</td>
+                    <td className="p-4 text-center text-green-600">{(totalReciclada / 1000).toFixed(1)} kL</td>
+                    <td className="p-4 text-center text-blue-600">{(totalLluvia / 1000).toFixed(1)} kL</td>
+                    <td className="p-4 text-center text-gray-900">{porcentajeReciclada}%</td>
+                    <td className="p-4 text-center text-gray-900">-</td>
+                    <td className="p-4 text-center text-gray-900">
+                      ${waterData.reduce((sum, m) => sum + m.costo, 0).toLocaleString()}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           {/* Análisis detallado */}
-          <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
-            <h2 className="text-xl font-anton text-gray-800 mb-6 uppercase tracking-wide">
+          <div className="bg-white rounded-xl p-8 shadow-premium-md border border-subtle animate-slide-up">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-6 tracking-tight">
               Análisis Hídrico Detallado
             </h2>
             
