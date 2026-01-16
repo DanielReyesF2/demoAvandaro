@@ -122,6 +122,7 @@ export default function Dashboard() {
   };
 
   const realTimeKPIs = calculateRealTimeKPIs();
+  const totals = calculateSectionTotals();
 
   // Datos calculados en tiempo real
   const processedData = {
