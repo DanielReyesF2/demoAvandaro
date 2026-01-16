@@ -36,7 +36,9 @@ import {
   Trash2,
   MinusCircle,
   PlusCircle,
+  ClipboardList,
 } from 'lucide-react';
+import { DailyLogModal } from '@/components/dashboard/DailyLogModal';
 
 // Types for the Excel data
 interface MonthData {
@@ -60,6 +62,7 @@ interface WasteExcelData {
 
 export default function Dashboard() {
   const currentYear = 2025;
+  const [isDailyLogOpen, setIsDailyLogOpen] = useState(false);
 
   // Obtener datos de la tabla de trazabilidad (FUENTE DE VERDAD)
   const { data: wasteExcelData, isLoading, error } = useQuery<WasteExcelData>({
@@ -240,6 +243,26 @@ export default function Dashboard() {
     <AppLayout>
       <div className="p-6 md:p-8 bg-gray-50 min-h-screen">
         <div className="max-w-7xl mx-auto space-y-8">
+          {/* Botón de Registro Diario - Minimalista y accesible */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex justify-end"
+          >
+            <button
+              onClick={() => setIsDailyLogOpen(true)}
+              className="group flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-emerald-50 border border-gray-200 hover:border-emerald-300 rounded-xl shadow-sm hover:shadow-md transition-all duration-200"
+            >
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+                <ClipboardList className="w-4 h-4 text-white" />
+              </div>
+              <div className="text-left">
+                <span className="block text-sm font-semibold text-gray-900">Registro Diario</span>
+                <span className="block text-xs text-gray-500">Captura de residuos</span>
+              </div>
+            </button>
+          </motion.div>
+
           {/* Hero Section con métricas principales */}
           <HeroMetrics
             deviationRate={processedData.wasteDeviation}
@@ -573,6 +596,9 @@ export default function Dashboard() {
 
         </div>
       </div>
+
+      {/* Modal de Registro Diario */}
+      <DailyLogModal open={isDailyLogOpen} onOpenChange={setIsDailyLogOpen} />
     </AppLayout>
   );
 }
