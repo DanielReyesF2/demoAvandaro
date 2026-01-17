@@ -504,10 +504,10 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
     if (step === 6) {
       const totals = getTotalsByType();
       return (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4 sm:space-y-6">
           <div className="text-center">
-            <h3 className="text-xl font-bold text-gray-900">Registros del Día</h3>
-            <p className="text-sm text-gray-500">
+            <h3 className="text-lg sm:text-xl font-bold text-gray-900">Registros del Día</h3>
+            <p className="text-xs sm:text-sm text-gray-500">
               {new Date().toLocaleDateString('es-MX', {
                 weekday: 'long',
                 year: 'numeric',
@@ -518,26 +518,26 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
           </div>
 
           {/* Resumen de totales en grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3">
             {Object.entries(totals).map(([type, total]) => {
               const wasteType = WASTE_TYPES.find((w) => w.name === type);
               return (
                 <div
                   key={type}
-                  className={cn('rounded-xl p-4 border-2', wasteType?.color || 'bg-gray-50 border-gray-200')}
+                  className={cn('rounded-xl p-3 sm:p-4 border-2', wasteType?.color || 'bg-gray-50 border-gray-200')}
                 >
-                  <div className="flex items-center gap-2 mb-2">
-                    {wasteType?.icon}
-                    <span className="text-xs font-medium truncate">{type}</span>
+                  <div className="flex items-center gap-1 sm:gap-2 mb-1 sm:mb-2">
+                    <span className="flex-shrink-0">{wasteType?.icon}</span>
+                    <span className="text-[10px] sm:text-xs font-medium truncate">{type}</span>
                   </div>
-                  <span className="text-2xl font-bold">{total.toFixed(0)} kg</span>
+                  <span className="text-xl sm:text-2xl font-bold">{total.toFixed(0)} kg</span>
                 </div>
               );
             })}
           </div>
 
           {/* Lista de registros con fotos */}
-          <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+          <div className="space-y-3 sm:space-y-4 max-h-[300px] sm:max-h-[400px] overflow-y-auto pr-1 sm:pr-2">
             {records.map((record, index) => {
               const isNew = record.id === newRecordId;
               return (
@@ -547,59 +547,59 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
                 className={cn(
-                  "bg-white rounded-2xl border p-5 shadow-sm hover:shadow-md transition-shadow",
+                  "bg-white rounded-xl sm:rounded-2xl border p-3 sm:p-5 shadow-sm",
                   isNew ? "border-emerald-400 ring-2 ring-emerald-100" : "border-gray-200"
                 )}
               >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
+                <div className="flex items-start justify-between mb-3 sm:mb-4">
+                  <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                     <div className={cn(
-                      "w-12 h-12 rounded-xl flex items-center justify-center",
+                      "w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0",
                       isNew ? "bg-gradient-to-br from-emerald-100 to-teal-100 text-emerald-600" : "bg-gradient-to-br from-gray-100 to-gray-50 text-gray-600"
                     )}>
                       {record.areaIcon}
                     </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <p className="font-semibold text-gray-900">{record.area}</p>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
+                        <p className="font-semibold text-gray-900 text-sm sm:text-base truncate">{record.area}</p>
                         {isNew && (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-500 text-white animate-pulse">
-                            <Sparkles className="w-3 h-3" />
+                          <span className="inline-flex items-center gap-0.5 sm:gap-1 px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-bold bg-emerald-500 text-white animate-pulse">
+                            <Sparkles className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                             NUEVO
                           </span>
                         )}
                       </div>
-                      <p className="text-sm text-gray-500">{record.responsible}</p>
+                      <p className="text-xs sm:text-sm text-gray-500 truncate">{record.responsible}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1 text-sm text-gray-400 bg-gray-50 px-3 py-1 rounded-full">
-                    <Clock className="w-4 h-4" />
+                  <div className="flex items-center gap-1 text-xs sm:text-sm text-gray-400 bg-gray-50 px-2 sm:px-3 py-1 rounded-full flex-shrink-0 ml-2">
+                    <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
                     {formatTime(record.timestamp)}
                   </div>
                 </div>
 
                 {/* Fotos del registro */}
                 {record.photos && record.photos.length > 0 && (
-                  <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
+                  <div className="flex gap-2 mb-3 sm:mb-4 overflow-x-auto pb-1">
                     {record.photos.map((photo, idx) => (
                       <img
                         key={idx}
                         src={photo}
                         alt={`Evidencia ${idx + 1}`}
-                        className="w-20 h-20 md:w-24 md:h-24 rounded-xl object-cover flex-shrink-0 border-2 border-gray-100"
+                        className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-lg sm:rounded-xl object-cover flex-shrink-0 border-2 border-gray-100"
                       />
                     ))}
                   </div>
                 )}
 
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1.5 sm:gap-2">
                   {record.entries.map((entry, idx) => {
                     const wasteType = WASTE_TYPES.find((w) => w.name === entry.type);
                     return (
                       <span
                         key={idx}
                         className={cn(
-                          'text-sm px-3 py-1.5 rounded-full border font-medium',
+                          'text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-1.5 rounded-full border font-medium',
                           wasteType?.color || 'bg-gray-50 border-gray-200'
                         )}
                       >
@@ -622,9 +622,9 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
               setSelectedSubArea('');
               setSelectedResponsible('');
             }}
-            className="w-full h-12 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-lg"
+            className="w-full h-11 sm:h-12 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-base sm:text-lg touch-manipulation"
           >
-            <Plus className="w-5 h-5 mr-2" />
+            <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
             Nuevo Registro
           </Button>
         </motion.div>
@@ -653,7 +653,7 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
               <p className="text-sm text-gray-500">¿Dónde se generaron los residuos?</p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
               {AREAS_DATA.map((area) => (
                 <button
                   key={area.id}
@@ -663,7 +663,7 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
                     setSelectedResponsible('');
                   }}
                   className={cn(
-                    'flex items-center gap-4 p-4 rounded-xl border-2 transition-all text-left hover:scale-[1.02]',
+                    'flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl border-2 transition-all text-left active:scale-[0.98] touch-manipulation',
                     selectedArea === area.id
                       ? 'border-emerald-500 bg-emerald-50 shadow-lg shadow-emerald-100'
                       : 'border-gray-200 hover:border-emerald-300 hover:bg-gray-50'
@@ -671,7 +671,7 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
                 >
                   <div
                     className={cn(
-                      'w-12 h-12 rounded-xl flex items-center justify-center transition-colors',
+                      'w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center transition-colors flex-shrink-0',
                       selectedArea === area.id
                         ? 'bg-emerald-500 text-white'
                         : 'bg-gray-100 text-gray-600'
@@ -679,7 +679,7 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
                   >
                     {area.icon}
                   </div>
-                  <span className="font-medium text-gray-900">{area.name}</span>
+                  <span className="font-medium text-gray-900 text-sm sm:text-base">{area.name}</span>
                 </button>
               ))}
             </div>
@@ -692,13 +692,13 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
                 className="mt-4"
               >
                 <p className="text-sm font-medium text-gray-700 mb-3">Selecciona la sección:</p>
-                <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
                   {currentAreaData.subAreas.map((subArea) => (
                     <button
                       key={subArea.id}
                       onClick={() => setSelectedSubArea(subArea.id)}
                       className={cn(
-                        'p-3 rounded-xl border-2 transition-all text-center font-semibold hover:scale-105',
+                        'p-3 sm:p-3 min-h-[48px] rounded-xl border-2 transition-all text-center font-semibold active:scale-95 touch-manipulation',
                         selectedSubArea === subArea.id
                           ? 'border-violet-500 bg-violet-50 text-violet-700 shadow-lg shadow-violet-100'
                           : 'border-gray-200 hover:border-violet-300 hover:bg-gray-50 text-gray-700'
@@ -721,18 +721,18 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
             exit={{ opacity: 0, x: -20 }}
             className="space-y-4"
           >
-            <div className="text-center mb-6">
-              <h3 className="text-xl font-bold text-gray-900">¿Quién realiza el registro?</h3>
+            <div className="text-center mb-4 sm:mb-6">
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900">¿Quién realiza el registro?</h3>
               <p className="text-sm text-gray-500">Selecciona al responsable</p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
               {currentAreaData?.responsibles.map((responsible) => (
                 <button
                   key={responsible}
                   onClick={() => setSelectedResponsible(responsible)}
                   className={cn(
-                    'flex flex-col items-center gap-3 p-5 rounded-xl border-2 transition-all hover:scale-[1.02]',
+                    'flex sm:flex-col items-center gap-3 sm:gap-3 p-3 sm:p-5 rounded-xl border-2 transition-all active:scale-[0.98] touch-manipulation',
                     selectedResponsible === responsible
                       ? 'border-violet-500 bg-violet-50 shadow-lg shadow-violet-100'
                       : 'border-gray-200 hover:border-violet-300 hover:bg-gray-50'
@@ -740,7 +740,7 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
                 >
                   <div
                     className={cn(
-                      'w-14 h-14 rounded-full flex items-center justify-center text-lg font-bold transition-colors',
+                      'w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center text-base sm:text-lg font-bold transition-colors flex-shrink-0',
                       selectedResponsible === responsible
                         ? 'bg-violet-500 text-white'
                         : 'bg-gray-100 text-gray-600'
@@ -751,7 +751,7 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
                       .map((n) => n[0])
                       .join('')}
                   </div>
-                  <span className="font-medium text-gray-900 text-center text-sm">{responsible}</span>
+                  <span className="font-medium text-gray-900 text-left sm:text-center text-sm">{responsible}</span>
                 </button>
               ))}
             </div>
@@ -766,12 +766,12 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
             exit={{ opacity: 0, x: -20 }}
             className="space-y-4"
           >
-            <div className="text-center mb-6">
-              <h3 className="text-xl font-bold text-gray-900">Tipo de Residuos</h3>
+            <div className="text-center mb-4 sm:mb-6">
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900">Tipo de Residuos</h3>
               <p className="text-sm text-gray-500">¿Qué tipo de residuos vas a registrar?</p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
               {WASTE_TYPES.map((wasteType) => (
                 <button
                   key={wasteType.id}
@@ -780,7 +780,7 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
                     setSelectedCategory('');
                   }}
                   className={cn(
-                    'flex items-center gap-4 p-5 rounded-xl border-2 transition-all text-left hover:scale-[1.02]',
+                    'flex items-center gap-3 sm:gap-4 p-3 sm:p-5 rounded-xl border-2 transition-all text-left active:scale-[0.98] touch-manipulation',
                     selectedWasteType === wasteType.id
                       ? `border-2 ${wasteType.color} shadow-lg`
                       : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
@@ -788,15 +788,15 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
                 >
                   <div
                     className={cn(
-                      'w-14 h-14 rounded-xl flex items-center justify-center',
+                      'w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center flex-shrink-0',
                       selectedWasteType === wasteType.id ? wasteType.colorSolid + ' text-white' : 'bg-gray-100'
                     )}
                   >
                     {wasteType.icon}
                   </div>
-                  <div>
-                    <span className="font-semibold text-gray-900 block">{wasteType.name}</span>
-                    <span className="text-xs text-gray-500">{wasteType.categories.slice(0, 3).join(', ')}...</span>
+                  <div className="min-w-0">
+                    <span className="font-semibold text-gray-900 block text-sm sm:text-base">{wasteType.name}</span>
+                    <span className="text-xs text-gray-500 truncate block">{wasteType.categories.slice(0, 3).join(', ')}...</span>
                   </div>
                 </button>
               ))}
@@ -810,25 +810,25 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
-            className="space-y-6"
+            className="space-y-4 sm:space-y-6"
           >
-            <div className="text-center mb-4">
-              <h3 className="text-xl font-bold text-gray-900">Detalles del Registro</h3>
-              <p className="text-sm text-gray-500">Especifica cantidad y agrega evidencia fotográfica</p>
+            <div className="text-center mb-2 sm:mb-4">
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900">Detalles del Registro</h3>
+              <p className="text-xs sm:text-sm text-gray-500">Especifica cantidad y agrega evidencia fotográfica</p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
               {/* Columna izquierda: Formulario */}
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Categoría específica</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">Categoría específica</label>
                   <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                    <SelectTrigger className="h-12">
+                    <SelectTrigger className="h-11 sm:h-12 text-sm sm:text-base">
                       <SelectValue placeholder="Selecciona una categoría" />
                     </SelectTrigger>
                     <SelectContent>
                       {currentWasteType?.categories.map((category) => (
-                        <SelectItem key={category} value={category}>
+                        <SelectItem key={category} value={category} className="text-sm sm:text-base">
                           {category}
                         </SelectItem>
                       ))}
@@ -837,46 +837,47 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Cantidad (kg)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">Cantidad (kg)</label>
                   <Input
                     type="number"
+                    inputMode="decimal"
                     placeholder="Ej: 15.5"
                     value={quantity}
                     onChange={(e) => setQuantity(e.target.value)}
-                    className="h-12 text-lg"
+                    className="h-11 sm:h-12 text-base sm:text-lg"
                   />
                 </div>
 
                 <Button
                   onClick={handleAddEntry}
                   disabled={!selectedCategory || !quantity}
-                  className="w-full h-12"
+                  className="w-full h-11 sm:h-12 text-sm sm:text-base"
                   variant="outline"
                 >
-                  <Plus className="w-5 h-5 mr-2" />
+                  <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                   Agregar residuo
                 </Button>
 
                 {entries.length > 0 && (
-                  <div className="border-2 border-dashed rounded-xl p-4 bg-gray-50">
-                    <p className="text-sm font-medium text-gray-700 mb-3">
+                  <div className="border-2 border-dashed rounded-xl p-3 sm:p-4 bg-gray-50">
+                    <p className="text-sm font-medium text-gray-700 mb-2 sm:mb-3">
                       Residuos agregados ({entries.length}):
                     </p>
-                    <div className="space-y-2 max-h-32 overflow-y-auto">
+                    <div className="space-y-2 max-h-24 sm:max-h-32 overflow-y-auto">
                       {entries.map((entry, idx) => {
                         const wasteType = WASTE_TYPES.find((w) => w.name === entry.type);
                         return (
                           <div
                             key={idx}
                             className={cn(
-                              'flex items-center justify-between px-3 py-2 rounded-lg border',
+                              'flex items-center justify-between px-2 sm:px-3 py-2 rounded-lg border text-xs sm:text-sm',
                               wasteType?.color || 'bg-white'
                             )}
                           >
-                            <span className="text-sm font-medium">
-                              {entry.type} - {entry.category}
+                            <span className="font-medium truncate mr-2">
+                              {entry.category}
                             </span>
-                            <span className="font-bold">{entry.quantity} kg</span>
+                            <span className="font-bold flex-shrink-0">{entry.quantity} kg</span>
                           </div>
                         );
                       })}
@@ -886,9 +887,9 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
               </div>
 
               {/* Columna derecha: Fotos */}
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                     Evidencia fotográfica (opcional)
                   </label>
                   <input
@@ -896,44 +897,45 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
                     ref={fileInputRef}
                     onChange={handlePhotoUpload}
                     accept="image/*"
+                    capture="environment"
                     multiple
                     className="hidden"
                   />
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="w-full h-32 border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-emerald-400 hover:bg-emerald-50 transition-colors"
+                    className="w-full h-24 sm:h-32 border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-emerald-400 hover:bg-emerald-50 active:bg-emerald-100 transition-colors touch-manipulation"
                   >
                     <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
                       <Camera className="w-6 h-6 text-gray-400" />
                     </div>
-                    <span className="text-sm text-gray-500">Click para subir fotos</span>
+                    <span className="text-xs sm:text-sm text-gray-500">Toca para subir fotos</span>
                   </button>
                 </div>
 
                 {/* Preview de fotos */}
                 {photos.length > 0 && (
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-3 sm:grid-cols-2 gap-2">
                     {photos.map((photo, idx) => (
-                      <div key={idx} className="relative group">
+                      <div key={idx} className="relative">
                         <img
                           src={photo}
                           alt={`Foto ${idx + 1}`}
-                          className="w-full h-24 object-cover rounded-xl border-2 border-gray-200"
+                          className="w-full h-20 sm:h-24 object-cover rounded-xl border-2 border-gray-200"
                         />
                         <button
                           onClick={() => removePhoto(idx)}
-                          className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg touch-manipulation"
                         >
-                          <X className="w-4 h-4" />
+                          <X className="w-3 h-3" />
                         </button>
                       </div>
                     ))}
                     {photos.length < 4 && (
                       <button
                         onClick={() => fileInputRef.current?.click()}
-                        className="w-full h-24 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center hover:border-emerald-400 hover:bg-emerald-50 transition-colors"
+                        className="w-full h-20 sm:h-24 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center hover:border-emerald-400 hover:bg-emerald-50 active:bg-emerald-100 transition-colors touch-manipulation"
                       >
-                        <ImagePlus className="w-6 h-6 text-gray-400" />
+                        <ImagePlus className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400" />
                       </button>
                     )}
                   </div>
@@ -949,33 +951,33 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
-            className="space-y-6"
+            className="space-y-4 sm:space-y-6"
           >
-            <div className="text-center mb-4">
-              <h3 className="text-xl font-bold text-gray-900">Confirmar Registro</h3>
-              <p className="text-sm text-gray-500">Revisa los datos antes de guardar</p>
+            <div className="text-center mb-2 sm:mb-4">
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900">Confirmar Registro</h3>
+              <p className="text-xs sm:text-sm text-gray-500">Revisa los datos antes de guardar</p>
             </div>
 
-            <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 space-y-5">
-              <div className="flex items-center gap-4 pb-4 border-b border-gray-200">
-                <div className="w-14 h-14 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600">
+            <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl sm:rounded-2xl p-4 sm:p-6 space-y-4 sm:space-y-5">
+              <div className="flex items-center gap-3 sm:gap-4 pb-3 sm:pb-4 border-b border-gray-200">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600 flex-shrink-0">
                   {currentAreaData?.icon}
                 </div>
-                <div>
-                  <p className="font-semibold text-gray-900 text-lg">
-                    {currentAreaData?.name}
+                <div className="min-w-0">
+                  <p className="font-semibold text-gray-900 text-sm sm:text-lg flex flex-wrap items-center gap-1 sm:gap-2">
+                    <span className="truncate">{currentAreaData?.name}</span>
                     {selectedSubArea && (
-                      <span className="ml-2 px-2 py-0.5 bg-violet-100 text-violet-700 text-sm rounded-lg font-bold">
+                      <span className="px-2 py-0.5 bg-violet-100 text-violet-700 text-xs sm:text-sm rounded-lg font-bold flex-shrink-0">
                         {currentAreaData?.subAreas?.find(s => s.id === selectedSubArea)?.name}
                       </span>
                     )}
                   </p>
-                  <p className="text-gray-500">{selectedResponsible}</p>
+                  <p className="text-gray-500 text-sm truncate">{selectedResponsible}</p>
                 </div>
               </div>
 
               <div>
-                <p className="text-sm font-medium text-gray-600 mb-3">Residuos a registrar:</p>
+                <p className="text-sm font-medium text-gray-600 mb-2 sm:mb-3">Residuos a registrar:</p>
                 <div className="space-y-2">
                   {entries.map((entry, idx) => {
                     const wasteType = WASTE_TYPES.find((w) => w.name === entry.type);
@@ -983,15 +985,15 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
                       <div
                         key={idx}
                         className={cn(
-                          'flex items-center justify-between px-4 py-3 rounded-xl border',
+                          'flex items-center justify-between px-3 sm:px-4 py-2 sm:py-3 rounded-xl border',
                           wasteType?.color || 'bg-white'
                         )}
                       >
-                        <div className="flex items-center gap-3">
-                          {wasteType?.icon}
-                          <span className="font-medium">{entry.category}</span>
+                        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                          <span className="flex-shrink-0">{wasteType?.icon}</span>
+                          <span className="font-medium text-sm sm:text-base truncate">{entry.category}</span>
                         </div>
-                        <span className="font-bold text-lg">{entry.quantity} kg</span>
+                        <span className="font-bold text-base sm:text-lg flex-shrink-0 ml-2">{entry.quantity} kg</span>
                       </div>
                     );
                   })}
@@ -1001,24 +1003,24 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
               {/* Fotos adjuntas */}
               {photos.length > 0 && (
                 <div>
-                  <p className="text-sm font-medium text-gray-600 mb-3">Evidencia fotográfica:</p>
-                  <div className="flex gap-2">
+                  <p className="text-sm font-medium text-gray-600 mb-2 sm:mb-3">Evidencia fotográfica:</p>
+                  <div className="flex gap-2 overflow-x-auto pb-1">
                     {photos.map((photo, idx) => (
                       <img
                         key={idx}
                         src={photo}
                         alt={`Foto ${idx + 1}`}
-                        className="w-16 h-16 object-cover rounded-lg border-2 border-gray-200"
+                        className="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-lg border-2 border-gray-200 flex-shrink-0"
                       />
                     ))}
                   </div>
                 </div>
               )}
 
-              <div className="pt-4 border-t border-gray-200">
+              <div className="pt-3 sm:pt-4 border-t border-gray-200">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600 font-medium">Total registrado:</span>
-                  <span className="text-3xl font-bold text-emerald-600">
+                  <span className="text-gray-600 font-medium text-sm sm:text-base">Total registrado:</span>
+                  <span className="text-2xl sm:text-3xl font-bold text-emerald-600">
                     {entries.reduce((sum, e) => sum + e.quantity, 0).toFixed(1)} kg
                   </span>
                 </div>
@@ -1034,21 +1036,21 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
                       <Sparkles className="w-4 h-4 text-amber-500" />
                       Impacto ambiental estimado:
                     </p>
-                    <div className="grid grid-cols-3 gap-3">
-                      <div className="bg-emerald-50 rounded-xl p-3 text-center border border-emerald-200">
-                        <TreeDeciduous className="w-6 h-6 text-emerald-600 mx-auto mb-1" />
-                        <p className="text-xl font-bold text-emerald-700">{impact.trees}</p>
-                        <p className="text-xs text-emerald-600">árboles salvados</p>
+                    <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                      <div className="bg-emerald-50 rounded-xl p-2 sm:p-3 text-center border border-emerald-200">
+                        <TreeDeciduous className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600 mx-auto mb-1" />
+                        <p className="text-lg sm:text-xl font-bold text-emerald-700">{impact.trees}</p>
+                        <p className="text-[10px] sm:text-xs text-emerald-600 leading-tight">árboles salvados</p>
                       </div>
-                      <div className="bg-blue-50 rounded-xl p-3 text-center border border-blue-200">
-                        <Droplets className="w-6 h-6 text-blue-600 mx-auto mb-1" />
-                        <p className="text-xl font-bold text-blue-700">{impact.water}L</p>
-                        <p className="text-xs text-blue-600">agua ahorrada</p>
+                      <div className="bg-blue-50 rounded-xl p-2 sm:p-3 text-center border border-blue-200">
+                        <Droplets className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 mx-auto mb-1" />
+                        <p className="text-lg sm:text-xl font-bold text-blue-700">{impact.water}L</p>
+                        <p className="text-[10px] sm:text-xs text-blue-600 leading-tight">agua ahorrada</p>
                       </div>
-                      <div className="bg-amber-50 rounded-xl p-3 text-center border border-amber-200">
-                        <Zap className="w-6 h-6 text-amber-600 mx-auto mb-1" />
-                        <p className="text-xl font-bold text-amber-700">{impact.co2}kg</p>
-                        <p className="text-xs text-amber-600">CO₂ evitado</p>
+                      <div className="bg-amber-50 rounded-xl p-2 sm:p-3 text-center border border-amber-200">
+                        <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-amber-600 mx-auto mb-1" />
+                        <p className="text-lg sm:text-xl font-bold text-amber-700">{impact.co2}kg</p>
+                        <p className="text-[10px] sm:text-xs text-amber-600 leading-tight">CO₂ evitado</p>
                       </div>
                     </div>
                   </div>
@@ -1065,19 +1067,19 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto p-0">
-        <div className="p-6 pb-0">
+      <DialogContent className="w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-3xl overflow-y-auto p-0 rounded-none sm:rounded-lg">
+        <div className="p-4 sm:p-6 pb-0 sticky top-0 bg-white z-10 border-b sm:border-b-0">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-3 text-xl">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center">
-                <ClipboardList className="w-5 h-5 text-white" />
+            <DialogTitle className="flex items-center gap-2 sm:gap-3 text-lg sm:text-xl">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center flex-shrink-0">
+                <ClipboardList className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
-              Registro Diario de Residuos
+              <span className="truncate">Registro Diario de Residuos</span>
             </DialogTitle>
           </DialogHeader>
         </div>
 
-        <div className="p-6">
+        <div className="p-4 sm:p-6 pb-safe">
           {/* Stepper */}
           {step <= totalSteps && !showSuccess && (
             <>
@@ -1088,12 +1090,12 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
 
           <AnimatePresence mode="wait">{renderStepContent()}</AnimatePresence>
 
-          {/* Navigation buttons */}
+          {/* Navigation buttons - sticky on mobile */}
           {step <= totalSteps && !showSuccess && (
-            <div className="flex gap-3 mt-8 pt-6 border-t border-gray-100">
+            <div className="flex gap-2 sm:gap-3 mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-100 sticky bottom-0 bg-white pb-safe">
               {step > 1 && (
-                <Button variant="outline" onClick={() => setStep(step - 1)} className="flex-1 h-12">
-                  <ArrowLeft className="w-5 h-5 mr-2" />
+                <Button variant="outline" onClick={() => setStep(step - 1)} className="flex-1 h-12 sm:h-12 text-sm sm:text-base">
+                  <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
                   Atrás
                 </Button>
               )}
@@ -1101,19 +1103,20 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
                 <Button
                   onClick={handleNextStep}
                   disabled={!canProceed()}
-                  className="flex-1 h-12 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-lg"
+                  className="flex-1 h-12 sm:h-12 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-sm sm:text-lg"
                 >
                   Siguiente
-                  <ArrowRight className="w-5 h-5 ml-2" />
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-1 sm:ml-2" />
                 </Button>
               ) : (
                 <Button
                   onClick={handleSubmit}
                   disabled={entries.length === 0}
-                  className="flex-1 h-12 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-lg"
+                  className="flex-1 h-12 sm:h-12 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-sm sm:text-lg"
                 >
-                  <CheckCircle2 className="w-5 h-5 mr-2" />
-                  Guardar Registro
+                  <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Guardar Registro</span>
+                  <span className="sm:hidden">Guardar</span>
                 </Button>
               )}
             </div>
