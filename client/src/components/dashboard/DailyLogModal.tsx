@@ -591,7 +591,8 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
                   })}
                 </div>
               </motion.div>
-            ))}
+              );
+            })}
           </div>
 
           <Button
