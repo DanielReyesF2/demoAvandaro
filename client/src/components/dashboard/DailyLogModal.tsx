@@ -327,7 +327,8 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
         return !!selectedWasteType;
       case 4:
         // Permitir avanzar si hay entries O si hay datos pendientes en el formulario
-        const hasPendingEntry = selectedWasteType && selectedCategory && quantity;
+        const hasValidQuantity = quantity && parseFloat(quantity) > 0;
+        const hasPendingEntry = selectedCategory && hasValidQuantity;
         return entries.length > 0 || hasPendingEntry;
       case 5:
         return true;
@@ -339,16 +340,15 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
   // Función para manejar el avance de paso con auto-guardado
   const handleNextStep = () => {
     // Si estamos en el paso 4 y hay datos pendientes, agregarlos primero
-    if (step === 4 && selectedWasteType && selectedCategory && quantity) {
-      const wasteType = WASTE_TYPES.find((w) => w.id === selectedWasteType);
+    if (step === 4 && selectedCategory && quantity && parseFloat(quantity) > 0) {
+      // Usar currentWasteType que viene del paso 3
       const newEntry = {
-        type: wasteType?.name || '',
+        type: currentWasteType?.name || '',
         category: selectedCategory,
         quantity: parseFloat(quantity),
         unit: 'kg',
       };
       setEntries((prev) => [...prev, newEntry]);
-      setSelectedWasteType('');
       setSelectedCategory('');
       setQuantity('');
     }
