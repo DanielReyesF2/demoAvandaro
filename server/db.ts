@@ -6,9 +6,8 @@ import * as schema from "@shared/schema";
 // Configuración para trabajar con Neon Serverless (que es lo que usa Supabase bajo el capó)
 neonConfig.webSocketConstructor = ws;
 
-// En desarrollo, permitir que el servidor inicie sin base de datos para ver el frontend
-const isDevelopment = process.env.NODE_ENV === 'development';
-
+// Permitir que el servidor inicie sin base de datos para modo demo
+// El frontend usa datos mock cuando la API no tiene datos reales
 let pool: Pool | null = null;
 let db: ReturnType<typeof drizzle> | null = null;
 
@@ -17,12 +16,8 @@ if (process.env.DATABASE_URL) {
   pool = new Pool({ connectionString: process.env.DATABASE_URL });
   // Crear la instancia de drizzle con nuestro esquema
   db = drizzle(pool, { schema });
-} else if (!isDevelopment) {
-  throw new Error(
-    "DATABASE_URL debe estar configurado. ¿Olvidaste provisionar una base de datos?",
-  );
 } else {
-  console.warn("⚠️  DATABASE_URL no configurada. El servidor iniciará pero las funcionalidades de base de datos no estarán disponibles.");
+  console.warn("⚠️  DATABASE_URL no configurada. El servidor iniciará en modo DEMO con datos simulados.");
 }
 
 // Exportar con getters para acceso seguro
