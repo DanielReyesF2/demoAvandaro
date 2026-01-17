@@ -569,6 +569,14 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
             exit={{ opacity: 0, x: -20 }}
             className="space-y-4"
           >
+            {/* Descripción introductoria */}
+            <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-4 mb-2">
+              <p className="text-sm text-emerald-800 leading-relaxed">
+                En esta ventana el equipo puede registrar todos los residuos del club en un solo lugar,
+                asegurando <span className="font-semibold">transparencia</span> y <span className="font-semibold">trazabilidad</span> en tiempo real.
+              </p>
+            </div>
+
             <div className="text-center mb-6">
               <h3 className="text-xl font-bold text-gray-900">Selecciona el Área Operativa</h3>
               <p className="text-sm text-gray-500">¿Dónde se generaron los residuos?</p>
