@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
 import {
   ClipboardList,
   User,
@@ -39,6 +40,10 @@ import {
   ImagePlus,
   X,
   Check,
+  Sparkles,
+  TreeDeciduous,
+  Droplets,
+  Zap,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -61,14 +66,20 @@ interface DailyRecord {
   photos?: string[];
 }
 
-// Fotos de ejemplo para el demo (URLs de imágenes representativas)
+// Fotos de ejemplo para el demo - contexto de club de golf y residencial
 const SAMPLE_PHOTOS = {
-  organicos: 'https://images.unsplash.com/photo-1591193686104-fddba4d0e4d8?w=400&h=300&fit=crop',
-  poda: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&h=300&fit=crop',
-  reciclables: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=400&h=300&fit=crop',
-  vidrio: 'https://images.unsplash.com/photo-1605600659908-0ef719419d41?w=400&h=300&fit=crop',
-  plastico: 'https://images.unsplash.com/photo-1605600659873-d808a13e4d9a?w=400&h=300&fit=crop',
-  relleno: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop',
+  // Poda de jardín / campo de golf
+  poda: 'https://images.unsplash.com/photo-1592722182599-097cf989ab32?w=400&h=300&fit=crop',
+  // Residuos orgánicos de cocina
+  organicos: 'https://images.unsplash.com/photo-1466637574441-749b8f19452f?w=400&h=300&fit=crop',
+  // Botellas de vidrio reciclables
+  vidrio: 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=300&fit=crop',
+  // Plásticos y PET reciclables
+  reciclables: 'https://images.unsplash.com/photo-1572204292164-b35ba943fca7?w=400&h=300&fit=crop',
+  // Cartón y papel
+  carton: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?w=400&h=300&fit=crop',
+  // Bolsas de basura / relleno sanitario
+  relleno: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=400&h=300&fit=crop',
 };
 
 // Datos de áreas y responsables del Club Avándaro
@@ -193,7 +204,7 @@ const SAMPLE_RECORDS: DailyRecord[] = [
       { type: 'Reciclables', category: 'Papel', quantity: 12, unit: 'kg' },
       { type: 'Relleno Sanitario', category: 'No reciclable', quantity: 25, unit: 'kg' },
     ],
-    photos: [SAMPLE_PHOTOS.reciclables, SAMPLE_PHOTOS.relleno],
+    photos: [SAMPLE_PHOTOS.reciclables, SAMPLE_PHOTOS.carton],
   },
   {
     id: '4',
@@ -205,9 +216,18 @@ const SAMPLE_RECORDS: DailyRecord[] = [
       { type: 'Para Reuso', category: 'Materiales construcción', quantity: 30, unit: 'kg' },
       { type: 'Reciclables', category: 'Aluminio', quantity: 8, unit: 'kg' },
     ],
-    photos: [SAMPLE_PHOTOS.plastico],
+    photos: [SAMPLE_PHOTOS.relleno],
   },
 ];
+
+// Función para calcular impacto ambiental
+const calculateEnvironmentalImpact = (totalKg: number) => {
+  return {
+    trees: Math.round(totalKg * 0.05), // ~1 árbol por cada 20kg reciclados
+    water: Math.round(totalKg * 15), // ~15 litros de agua ahorrados por kg
+    co2: (totalKg * 0.5).toFixed(1), // ~0.5kg CO2 evitado por kg
+  };
+};
 
 interface DailyLogModalProps {
   open: boolean;
@@ -225,7 +245,9 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
   const [photos, setPhotos] = useState<string[]>([]);
   const [records, setRecords] = useState<DailyRecord[]>(SAMPLE_RECORDS);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [newRecordId, setNewRecordId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
 
   // Reset cuando se cierra el modal
   useEffect(() => {
@@ -284,8 +306,12 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
 
   const handleSubmit = () => {
     const areaData = AREAS_DATA.find((a) => a.id === selectedArea);
+    const recordId = Date.now().toString();
+    const totalKg = entries.reduce((sum, e) => sum + e.quantity, 0);
+    const impact = calculateEnvironmentalImpact(totalKg);
+
     const newRecord: DailyRecord = {
-      id: Date.now().toString(),
+      id: recordId,
       timestamp: new Date(),
       responsible: selectedResponsible,
       area: areaData?.name || '',
@@ -293,8 +319,17 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
       entries: entries,
       photos: photos.length > 0 ? photos : undefined,
     };
+
     setRecords([newRecord, ...records]);
+    setNewRecordId(recordId);
     setShowSuccess(true);
+
+    // Toast elegante de confirmación
+    toast({
+      title: "✅ Registro guardado exitosamente",
+      description: `${totalKg.toFixed(1)} kg registrados · Equivale a ${impact.trees} árboles salvados`,
+    });
+
     setTimeout(() => {
       setStep(6);
       setShowSuccess(false);
@@ -485,21 +520,37 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
 
           {/* Lista de registros con fotos */}
           <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
-            {records.map((record, index) => (
+            {records.map((record, index) => {
+              const isNew = record.id === newRecordId;
+              return (
               <motion.div
                 key={record.id}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition-shadow"
+                className={cn(
+                  "bg-white rounded-2xl border p-5 shadow-sm hover:shadow-md transition-shadow",
+                  isNew ? "border-emerald-400 ring-2 ring-emerald-100" : "border-gray-200"
+                )}
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-100 to-gray-50 flex items-center justify-center text-gray-600">
+                    <div className={cn(
+                      "w-12 h-12 rounded-xl flex items-center justify-center",
+                      isNew ? "bg-gradient-to-br from-emerald-100 to-teal-100 text-emerald-600" : "bg-gradient-to-br from-gray-100 to-gray-50 text-gray-600"
+                    )}>
                       {record.areaIcon}
                     </div>
                     <div>
-                      <p className="font-semibold text-gray-900">{record.area}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="font-semibold text-gray-900">{record.area}</p>
+                        {isNew && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-500 text-white animate-pulse">
+                            <Sparkles className="w-3 h-3" />
+                            NUEVO
+                          </span>
+                        )}
+                      </div>
                       <p className="text-sm text-gray-500">{record.responsible}</p>
                     </div>
                   </div>
@@ -569,6 +620,14 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
             exit={{ opacity: 0, x: -20 }}
             className="space-y-4"
           >
+            {/* Descripción introductoria */}
+            <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-4 mb-2">
+              <p className="text-sm text-emerald-800 leading-relaxed">
+                En esta ventana el equipo puede registrar todos los residuos del club en un solo lugar,
+                asegurando <span className="font-semibold">transparencia</span> y <span className="font-semibold">trazabilidad</span> en tiempo real.
+              </p>
+            </div>
+
             <div className="text-center mb-6">
               <h3 className="text-xl font-bold text-gray-900">Selecciona el Área Operativa</h3>
               <p className="text-sm text-gray-500">¿Dónde se generaron los residuos?</p>
@@ -909,6 +968,37 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
                   </span>
                 </div>
               </div>
+
+              {/* Impacto ambiental */}
+              {entries.length > 0 && (() => {
+                const totalKg = entries.reduce((sum, e) => sum + e.quantity, 0);
+                const impact = calculateEnvironmentalImpact(totalKg);
+                return (
+                  <div className="pt-4 border-t border-gray-200">
+                    <p className="text-sm font-medium text-gray-600 mb-3 flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-amber-500" />
+                      Impacto ambiental estimado:
+                    </p>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="bg-emerald-50 rounded-xl p-3 text-center border border-emerald-200">
+                        <TreeDeciduous className="w-6 h-6 text-emerald-600 mx-auto mb-1" />
+                        <p className="text-xl font-bold text-emerald-700">{impact.trees}</p>
+                        <p className="text-xs text-emerald-600">árboles salvados</p>
+                      </div>
+                      <div className="bg-blue-50 rounded-xl p-3 text-center border border-blue-200">
+                        <Droplets className="w-6 h-6 text-blue-600 mx-auto mb-1" />
+                        <p className="text-xl font-bold text-blue-700">{impact.water}L</p>
+                        <p className="text-xs text-blue-600">agua ahorrada</p>
+                      </div>
+                      <div className="bg-amber-50 rounded-xl p-3 text-center border border-amber-200">
+                        <Zap className="w-6 h-6 text-amber-600 mx-auto mb-1" />
+                        <p className="text-xl font-bold text-amber-700">{impact.co2}kg</p>
+                        <p className="text-xs text-amber-600">CO₂ evitado</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           </motion.div>
         );
