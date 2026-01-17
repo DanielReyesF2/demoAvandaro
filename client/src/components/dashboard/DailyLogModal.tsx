@@ -276,7 +276,7 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
           unit: 'kg',
         },
       ]);
-      setSelectedWasteType('');
+      // Solo resetear categoría y cantidad, mantener el tipo para agregar más del mismo
       setSelectedCategory('');
       setQuantity('');
     }
@@ -326,12 +326,33 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
       case 3:
         return !!selectedWasteType;
       case 4:
-        return entries.length > 0;
+        // Permitir avanzar si hay entries O si hay datos pendientes en el formulario
+        const hasPendingEntry = selectedWasteType && selectedCategory && quantity;
+        return entries.length > 0 || hasPendingEntry;
       case 5:
         return true;
       default:
         return false;
     }
+  };
+
+  // Función para manejar el avance de paso con auto-guardado
+  const handleNextStep = () => {
+    // Si estamos en el paso 4 y hay datos pendientes, agregarlos primero
+    if (step === 4 && selectedWasteType && selectedCategory && quantity) {
+      const wasteType = WASTE_TYPES.find((w) => w.id === selectedWasteType);
+      const newEntry = {
+        type: wasteType?.name || '',
+        category: selectedCategory,
+        quantity: parseFloat(quantity),
+        unit: 'kg',
+      };
+      setEntries((prev) => [...prev, newEntry]);
+      setSelectedWasteType('');
+      setSelectedCategory('');
+      setQuantity('');
+    }
+    setStep(step + 1);
   };
 
   // Stepper visual component
@@ -933,7 +954,7 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
               )}
               {step < totalSteps ? (
                 <Button
-                  onClick={() => setStep(step + 1)}
+                  onClick={handleNextStep}
                   disabled={!canProceed()}
                   className="flex-1 h-12 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-lg"
                 >
