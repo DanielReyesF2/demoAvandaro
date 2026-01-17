@@ -89,6 +89,14 @@ const AREAS_DATA = [
     name: 'Club Residencial Avándaro',
     icon: <Home className="w-5 h-5" />,
     responsibles: ['María González', 'Roberto Sánchez', 'Ana Martínez'],
+    subAreas: [
+      { id: 'cra-501', name: 'CRA 501' },
+      { id: 'cra-502', name: 'CRA 502' },
+      { id: 'cra-503', name: 'CRA 503' },
+      { id: 'cra-504', name: 'CRA 504' },
+      { id: 'cra-505', name: 'CRA 505' },
+      { id: 'cra-506', name: 'CRA 506' },
+    ],
   },
   {
     id: 'campo-golf',
@@ -237,6 +245,7 @@ interface DailyLogModalProps {
 export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
   const [step, setStep] = useState(1);
   const [selectedArea, setSelectedArea] = useState('');
+  const [selectedSubArea, setSelectedSubArea] = useState('');
   const [selectedResponsible, setSelectedResponsible] = useState('');
   const [selectedWasteType, setSelectedWasteType] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -255,6 +264,7 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
       setTimeout(() => {
         setStep(1);
         setSelectedArea('');
+        setSelectedSubArea('');
         setSelectedResponsible('');
         setSelectedWasteType('');
         setSelectedCategory('');
@@ -306,15 +316,21 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
 
   const handleSubmit = () => {
     const areaData = AREAS_DATA.find((a) => a.id === selectedArea);
+    const subAreaData = areaData?.subAreas?.find((s) => s.id === selectedSubArea);
     const recordId = Date.now().toString();
     const totalKg = entries.reduce((sum, e) => sum + e.quantity, 0);
     const impact = calculateEnvironmentalImpact(totalKg);
+
+    // Incluir sub-área en el nombre si existe
+    const areaName = subAreaData
+      ? `${areaData?.name} - ${subAreaData.name}`
+      : areaData?.name || '';
 
     const newRecord: DailyRecord = {
       id: recordId,
       timestamp: new Date(),
       responsible: selectedResponsible,
-      area: areaData?.name || '',
+      area: areaName,
       areaIcon: areaData?.icon,
       entries: entries,
       photos: photos.length > 0 ? photos : undefined,
@@ -355,7 +371,9 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
   const canProceed = () => {
     switch (step) {
       case 1:
-        return !!selectedArea;
+        // Si el área tiene sub-áreas, requerir que se seleccione una
+        const areaHasSubAreas = currentAreaData?.subAreas && currentAreaData.subAreas.length > 0;
+        return !!selectedArea && (!areaHasSubAreas || !!selectedSubArea);
       case 2:
         return !!selectedResponsible;
       case 3:
@@ -601,6 +619,7 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
               setEntries([]);
               setPhotos([]);
               setSelectedArea('');
+              setSelectedSubArea('');
               setSelectedResponsible('');
             }}
             className="w-full h-12 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-lg"
@@ -640,6 +659,7 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
                   key={area.id}
                   onClick={() => {
                     setSelectedArea(area.id);
+                    setSelectedSubArea('');
                     setSelectedResponsible('');
                   }}
                   className={cn(
@@ -663,6 +683,33 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
                 </button>
               ))}
             </div>
+
+            {/* Sub-áreas para Club Residencial */}
+            {currentAreaData?.subAreas && currentAreaData.subAreas.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                className="mt-4"
+              >
+                <p className="text-sm font-medium text-gray-700 mb-3">Selecciona la sección:</p>
+                <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
+                  {currentAreaData.subAreas.map((subArea) => (
+                    <button
+                      key={subArea.id}
+                      onClick={() => setSelectedSubArea(subArea.id)}
+                      className={cn(
+                        'p-3 rounded-xl border-2 transition-all text-center font-semibold hover:scale-105',
+                        selectedSubArea === subArea.id
+                          ? 'border-violet-500 bg-violet-50 text-violet-700 shadow-lg shadow-violet-100'
+                          : 'border-gray-200 hover:border-violet-300 hover:bg-gray-50 text-gray-700'
+                      )}
+                    >
+                      {subArea.name}
+                    </button>
+                  ))}
+                </div>
+              </motion.div>
+            )}
           </motion.div>
         );
 
@@ -915,7 +962,14 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
                   {currentAreaData?.icon}
                 </div>
                 <div>
-                  <p className="font-semibold text-gray-900 text-lg">{currentAreaData?.name}</p>
+                  <p className="font-semibold text-gray-900 text-lg">
+                    {currentAreaData?.name}
+                    {selectedSubArea && (
+                      <span className="ml-2 px-2 py-0.5 bg-violet-100 text-violet-700 text-sm rounded-lg font-bold">
+                        {currentAreaData?.subAreas?.find(s => s.id === selectedSubArea)?.name}
+                      </span>
+                    )}
+                  </p>
                   <p className="text-gray-500">{selectedResponsible}</p>
                 </div>
               </div>
