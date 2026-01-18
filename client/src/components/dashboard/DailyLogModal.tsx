@@ -82,6 +82,37 @@ const SAMPLE_PHOTOS = {
   relleno: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=400&h=300&fit=crop',
 };
 
+// Mapeo de imágenes para cada categoría específica de residuo
+const CATEGORY_IMAGES: Record<string, string> = {
+  // Orgánicos
+  'Poda de jardín': '/007-reciclamos-restos-de-poda-de-forma-sostenible-en-navarra-la-rioja-y-aragon-alava (1).jpg',
+  'Restos de césped': '/007-reciclamos-restos-de-poda-de-forma-sostenible-en-navarra-la-rioja-y-aragon-alava (1).jpg',
+  'Residuos de cocina del club': SAMPLE_PHOTOS.organicos,
+  'Restos de comida de eventos': SAMPLE_PHOTOS.organicos,
+  'Cáscaras de frutas': SAMPLE_PHOTOS.organicos,
+  'Restos vegetales del restaurante': SAMPLE_PHOTOS.organicos,
+  // Reciclables
+  'Botellas PET': SAMPLE_PHOTOS.reciclables,
+  'Vasos de plástico': SAMPLE_PHOTOS.reciclables,
+  'Vasos de Starbucks': SAMPLE_PHOTOS.reciclables,
+  'Charolas de comida para llevar': SAMPLE_PHOTOS.reciclables,
+  'Latas de aluminio': SAMPLE_PHOTOS.reciclables,
+  'Botellas de vidrio': SAMPLE_PHOTOS.vidrio,
+  'Cartón de empaques': SAMPLE_PHOTOS.carton,
+  'Papel y revistas': SAMPLE_PHOTOS.carton,
+  // Para Reuso
+  'Mobiliario del club': 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop',
+  'Textiles (manteles, cortinas)': 'https://images.unsplash.com/photo-1544966503-7d0a9c94a0c1?w=400&h=300&fit=crop',
+  'Equipos de golf usados': 'https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=400&h=300&fit=crop',
+  'Materiales de eventos': 'https://images.unsplash.com/photo-1478146896982-2bcc14b886f8?w=400&h=300&fit=crop',
+  'Electrónicos en buen estado': 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400&h=300&fit=crop',
+  // Relleno Sanitario
+  'Residuos sanitarios': SAMPLE_PHOTOS.relleno,
+  'Materiales mezclados no separables': SAMPLE_PHOTOS.relleno,
+  'Plásticos no reciclables': SAMPLE_PHOTOS.relleno,
+  'Otros no clasificables': SAMPLE_PHOTOS.relleno,
+};
+
 // Datos de áreas y responsables del Club Avándaro
 const AREAS_DATA = [
   {
@@ -137,7 +168,16 @@ const WASTE_TYPES = [
     icon: <Recycle className="w-5 h-5 text-teal-500" />,
     color: 'bg-teal-50 border-teal-200 text-teal-700',
     colorSolid: 'bg-teal-500',
-    categories: ['PET', 'Cartón', 'Vidrio', 'Aluminio', 'Papel', 'Plástico HDPE'],
+    categories: [
+      'Botellas PET',
+      'Vasos de plástico',
+      'Vasos de Starbucks',
+      'Charolas de comida para llevar',
+      'Latas de aluminio',
+      'Botellas de vidrio',
+      'Cartón de empaques',
+      'Papel y revistas',
+    ],
   },
   {
     id: 'organicos',
@@ -145,7 +185,14 @@ const WASTE_TYPES = [
     icon: <Leaf className="w-5 h-5 text-emerald-500" />,
     color: 'bg-emerald-50 border-emerald-200 text-emerald-700',
     colorSolid: 'bg-emerald-500',
-    categories: ['Residuos de cocina', 'Poda de jardín', 'Restos de comida', 'Cáscaras'],
+    categories: [
+      'Poda de jardín',
+      'Restos de césped',
+      'Residuos de cocina del club',
+      'Restos de comida de eventos',
+      'Cáscaras de frutas',
+      'Restos vegetales del restaurante',
+    ],
   },
   {
     id: 'reuso',
@@ -153,7 +200,13 @@ const WASTE_TYPES = [
     icon: <Package className="w-5 h-5 text-violet-500" />,
     color: 'bg-violet-50 border-violet-200 text-violet-700',
     colorSolid: 'bg-violet-500',
-    categories: ['Mobiliario', 'Textiles', 'Electrónicos', 'Materiales construcción'],
+    categories: [
+      'Mobiliario del club',
+      'Textiles (manteles, cortinas)',
+      'Equipos de golf usados',
+      'Materiales de eventos',
+      'Electrónicos en buen estado',
+    ],
   },
   {
     id: 'relleno',
@@ -161,7 +214,12 @@ const WASTE_TYPES = [
     icon: <Truck className="w-5 h-5 text-gray-500" />,
     color: 'bg-gray-50 border-gray-200 text-gray-700',
     colorSolid: 'bg-gray-500',
-    categories: ['No reciclable', 'Sanitarios', 'Mezclados', 'Otros'],
+    categories: [
+      'Residuos sanitarios',
+      'Materiales mezclados no separables',
+      'Plásticos no reciclables',
+      'Otros no clasificables',
+    ],
   },
 ];
 
@@ -255,6 +313,7 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
   const [records, setRecords] = useState<DailyRecord[]>(SAMPLE_RECORDS);
   const [showSuccess, setShowSuccess] = useState(false);
   const [newRecordId, setNewRecordId] = useState<string | null>(null);
+  const [showSubAreaPopup, setShowSubAreaPopup] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -272,6 +331,7 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
         setEntries([]);
         setPhotos([]);
         setShowSuccess(false);
+        setShowSubAreaPopup(false);
       }, 300);
     }
   }, [open]);
@@ -377,7 +437,8 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
       case 2:
         return !!selectedResponsible;
       case 3:
-        return !!selectedWasteType;
+        // Requerir tanto la categoría principal como el tipo específico
+        return !!selectedWasteType && !!selectedCategory;
       case 4:
         // Permitir avanzar si hay entries O si hay datos pendientes en el formulario
         const hasValidQuantity = quantity && parseFloat(quantity) > 0;
@@ -578,15 +639,15 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
                   </div>
                 </div>
 
-                {/* Fotos del registro */}
+                {/* Fotos del registro - máximo 2 fotos */}
                 {record.photos && record.photos.length > 0 && (
-                  <div className="flex gap-2 mb-3 sm:mb-4 overflow-x-auto pb-1">
-                    {record.photos.map((photo, idx) => (
+                  <div className="flex gap-2 mb-3 sm:mb-4">
+                    {record.photos.slice(0, 2).map((photo, idx) => (
                       <img
                         key={idx}
                         src={photo}
                         alt={`Evidencia ${idx + 1}`}
-                        className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-lg sm:rounded-xl object-cover flex-shrink-0 border-2 border-gray-100"
+                        className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-lg sm:rounded-xl object-cover flex-shrink-0 border-2 border-gray-200 shadow-sm"
                       />
                     ))}
                   </div>
@@ -649,66 +710,91 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
             </div>
 
             <div className="text-center mb-6">
-              <h3 className="text-xl font-bold text-gray-900">Selecciona el Área Operativa</h3>
-              <p className="text-sm text-gray-500">¿Dónde se generaron los residuos?</p>
+              <p className="text-lg font-semibold text-gray-900">¿Dónde se generó el residuo que estás registrando?</p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
-              {AREAS_DATA.map((area) => (
-                <button
-                  key={area.id}
-                  onClick={() => {
-                    setSelectedArea(area.id);
-                    setSelectedSubArea('');
-                    setSelectedResponsible('');
-                  }}
-                  className={cn(
-                    'flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl border-2 transition-all text-left active:scale-[0.98] touch-manipulation',
-                    selectedArea === area.id
-                      ? 'border-emerald-500 bg-emerald-50 shadow-lg shadow-emerald-100'
-                      : 'border-gray-200 hover:border-emerald-300 hover:bg-gray-50'
-                  )}
-                >
-                  <div
+              {AREAS_DATA.map((area) => {
+                const isSelected = selectedArea === area.id;
+                const hasSubAreas = area.subAreas && area.subAreas.length > 0;
+                
+                return (
+                  <button
+                    key={area.id}
+                    onClick={() => {
+                      if (hasSubAreas) {
+                        setShowSubAreaPopup(true);
+                        setSelectedArea(area.id);
+                      } else {
+                        setSelectedArea(area.id);
+                        setSelectedSubArea('');
+                      }
+                    }}
                     className={cn(
-                      'w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center transition-colors flex-shrink-0',
-                      selectedArea === area.id
-                        ? 'bg-emerald-500 text-white'
-                        : 'bg-gray-100 text-gray-600'
+                      'flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl border-2 transition-all text-left active:scale-[0.98] touch-manipulation',
+                      isSelected
+                        ? 'border-emerald-500 bg-emerald-50 shadow-lg shadow-emerald-100'
+                        : 'border-gray-200 hover:border-emerald-300 hover:bg-gray-50'
                     )}
                   >
-                    {area.icon}
-                  </div>
-                  <span className="font-medium text-gray-900 text-sm sm:text-base">{area.name}</span>
-                </button>
-              ))}
-            </div>
-
-            {/* Sub-áreas para Club Residencial */}
-            {currentAreaData?.subAreas && currentAreaData.subAreas.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                className="mt-4"
-              >
-                <p className="text-sm font-medium text-gray-700 mb-3">Selecciona la sección:</p>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
-                  {currentAreaData.subAreas.map((subArea) => (
-                    <button
-                      key={subArea.id}
-                      onClick={() => setSelectedSubArea(subArea.id)}
+                    <div
                       className={cn(
-                        'p-3 sm:p-3 min-h-[48px] rounded-xl border-2 transition-all text-center font-semibold active:scale-95 touch-manipulation',
-                        selectedSubArea === subArea.id
-                          ? 'border-violet-500 bg-violet-50 text-violet-700 shadow-lg shadow-violet-100'
-                          : 'border-gray-200 hover:border-violet-300 hover:bg-gray-50 text-gray-700'
+                        'w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center transition-colors flex-shrink-0',
+                        isSelected
+                          ? 'bg-emerald-500 text-white'
+                          : 'bg-gray-100 text-gray-600'
                       )}
                     >
-                      {subArea.name}
-                    </button>
-                  ))}
-                </div>
-              </motion.div>
+                      {area.icon}
+                    </div>
+                    <span className="font-medium text-gray-900 text-sm sm:text-base">{area.name}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Popup para selección de sub-área (CRA 501-506) */}
+            {showSubAreaPopup && currentAreaData?.subAreas && (
+              <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowSubAreaPopup(false)}>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  onClick={(e) => e.stopPropagation()}
+                  className="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl"
+                >
+                  <div className="mb-4">
+                    <h3 className="text-xl font-bold text-gray-900 mb-1">{currentAreaData.name}</h3>
+                    <p className="text-sm text-gray-600">Selecciona la sección:</p>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {currentAreaData.subAreas.map((subArea) => (
+                      <button
+                        key={subArea.id}
+                        onClick={() => {
+                          setSelectedSubArea(subArea.id);
+                          setShowSubAreaPopup(false);
+                          setStep(2); // Avanzar automáticamente al paso 2 (Responsable)
+                        }}
+                        className={cn(
+                          'p-4 rounded-xl border-2 transition-all text-center font-semibold active:scale-95 touch-manipulation',
+                          selectedSubArea === subArea.id
+                            ? 'border-violet-500 bg-violet-50 text-violet-700 shadow-lg shadow-violet-100'
+                            : 'border-gray-200 hover:border-violet-300 hover:bg-gray-50 text-gray-700'
+                        )}
+                      >
+                        {subArea.name}
+                      </button>
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => setShowSubAreaPopup(false)}
+                    className="mt-4 w-full py-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                </motion.div>
+              </div>
             )}
           </motion.div>
         );
@@ -759,6 +845,64 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
         );
 
       case 3:
+        const currentWasteTypeForStep3 = WASTE_TYPES.find((w) => w.id === selectedWasteType);
+
+        // Si no hay categoría seleccionada, mostrar las 4 categorías principales
+        if (!selectedWasteType) {
+          return (
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="space-y-4"
+            >
+              <div className="text-center mb-4 sm:mb-6">
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900">¿Qué tipo de residuos vas a registrar?</h3>
+                <p className="text-sm text-gray-500 mt-1">Selecciona la categoría principal</p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                {WASTE_TYPES.map((wasteType) => (
+                  <button
+                    key={wasteType.id}
+                    onClick={() => {
+                      setSelectedWasteType(wasteType.id);
+                      setSelectedCategory('');
+                    }}
+                    className={cn(
+                      'relative flex items-center gap-4 p-4 sm:p-5 rounded-xl border-2 transition-all text-left active:scale-[0.98] touch-manipulation group bg-white border-gray-200 hover:border-gray-300 hover:shadow-sm'
+                    )}
+                  >
+                    {/* Icono */}
+                    <div
+                      className={cn(
+                        'w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center transition-all flex-shrink-0 bg-gray-100 text-gray-400 group-hover:bg-gray-200'
+                      )}
+                    >
+                      {wasteType.icon}
+                    </div>
+
+                    {/* Contenido */}
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-base sm:text-lg font-semibold mb-1 text-gray-900">
+                        {wasteType.name}
+                      </h4>
+                      <p className="text-xs sm:text-sm line-clamp-2 text-gray-500">
+                        {wasteType.categories.slice(0, 2).join(', ')}
+                        {wasteType.categories.length > 2 && '...'}
+                      </p>
+                    </div>
+
+                    {/* Flecha indicando que se puede expandir */}
+                    <ArrowRight className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          );
+        }
+
+        // Si hay categoría seleccionada, mostrar todos los tipos específicos de esa categoría
         return (
           <motion.div
             initial={{ opacity: 0, x: 20 }}
@@ -766,40 +910,76 @@ export function DailyLogModal({ open, onOpenChange }: DailyLogModalProps) {
             exit={{ opacity: 0, x: -20 }}
             className="space-y-4"
           >
+            {/* Botón para volver */}
+            <button
+              onClick={() => {
+                setSelectedWasteType('');
+                setSelectedCategory('');
+              }}
+              className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors mb-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Volver a categorías</span>
+            </button>
+
             <div className="text-center mb-4 sm:mb-6">
-              <h3 className="text-lg sm:text-xl font-bold text-gray-900">Tipo de Residuos</h3>
-              <p className="text-sm text-gray-500">¿Qué tipo de residuos vas a registrar?</p>
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900">
+                {currentWasteTypeForStep3?.name}
+              </h3>
+              <p className="text-sm text-gray-500 mt-1">Selecciona el tipo específico de residuo</p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
-              {WASTE_TYPES.map((wasteType) => (
-                <button
-                  key={wasteType.id}
-                  onClick={() => {
-                    setSelectedWasteType(wasteType.id);
-                    setSelectedCategory('');
-                  }}
-                  className={cn(
-                    'flex items-center gap-3 sm:gap-4 p-3 sm:p-5 rounded-xl border-2 transition-all text-left active:scale-[0.98] touch-manipulation',
-                    selectedWasteType === wasteType.id
-                      ? `border-2 ${wasteType.color} shadow-lg`
-                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                  )}
-                >
-                  <div
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              {currentWasteTypeForStep3?.categories.map((category) => {
+                const isSelected = selectedCategory === category;
+                return (
+                  <button
+                    key={category}
+                    onClick={() => {
+                      setSelectedCategory(category);
+                    }}
                     className={cn(
-                      'w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center flex-shrink-0',
-                      selectedWasteType === wasteType.id ? wasteType.colorSolid + ' text-white' : 'bg-gray-100'
+                      'relative flex items-center gap-4 p-4 sm:p-5 rounded-xl border-2 transition-all text-left active:scale-[0.98] touch-manipulation group',
+                      isSelected
+                        ? `${currentWasteTypeForStep3.color} border-2 shadow-md`
+                        : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-sm'
                     )}
                   >
-                    {wasteType.icon}
-                  </div>
-                  <div className="min-w-0">
-                    <span className="font-semibold text-gray-900 block text-sm sm:text-base">{wasteType.name}</span>
-                    <span className="text-xs text-gray-500 truncate block">{wasteType.categories.slice(0, 3).join(', ')}...</span>
-                  </div>
-                </button>
-              ))}
+                    {/* Icono */}
+                    <div
+                      className={cn(
+                        'w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center transition-all flex-shrink-0',
+                        isSelected
+                          ? `${currentWasteTypeForStep3.colorSolid} text-white shadow-sm`
+                          : 'bg-gray-100 text-gray-400 group-hover:bg-gray-200'
+                      )}
+                    >
+                      {currentWasteTypeForStep3.icon}
+                    </div>
+
+                    {/* Contenido */}
+                    <div className="flex-1 min-w-0">
+                      <h4 className={cn(
+                        'text-base sm:text-lg font-semibold transition-colors',
+                        isSelected ? 'text-gray-900' : 'text-gray-900'
+                      )}>
+                        {category}
+                      </h4>
+                    </div>
+
+                    {/* Check mark cuando está seleccionado */}
+                    {isSelected && (
+                      <motion.div
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className="flex-shrink-0"
+                      >
+                        <CheckCircle2 className={cn('w-5 h-5', currentWasteTypeForStep3.colorSolid.replace('bg-', 'text-'))} />
+                      </motion.div>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </motion.div>
         );
