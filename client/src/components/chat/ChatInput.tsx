@@ -42,7 +42,7 @@ export function ChatInput({ onSend, disabled = false, placeholder = "Pregunta so
               "focus:outline-none focus:ring-2 focus:ring-accent-green/20 focus:border-accent-green",
               "resize-none max-h-32 overflow-y-auto",
               "text-sm text-gray-900 placeholder:text-gray-400",
-              "disabled:bg-gray-50 disabled:cursor-not-allowed",
+              "bg-white disabled:bg-gray-100 disabled:text-gray-700 disabled:cursor-not-allowed",
               disabled && "cursor-not-allowed"
             )}
             style={{ 

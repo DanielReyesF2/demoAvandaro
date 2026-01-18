@@ -17,6 +17,7 @@ interface HeroMetricsProps {
   waterRecycled: number;
   circularityIndex: number;
   totalWasteDiverted: number; // toneladas
+  ahorroEconomico: number; // ahorro económico en MXN
 }
 
 export function HeroMetrics({
@@ -25,6 +26,7 @@ export function HeroMetrics({
   waterRecycled,
   circularityIndex,
   totalWasteDiverted,
+  ahorroEconomico,
 }: HeroMetricsProps) {
   const mainMetrics = [
     {
@@ -186,6 +188,23 @@ export function HeroMetrics({
               <div className="text-gray-600">este año</div>
             </div>
           </div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.7 }}
+            className="mt-3 text-center"
+          >
+            <div className="text-lg font-semibold text-gray-700">
+              Equivalente a{' '}
+              <span className="text-emerald-600 font-bold">
+                ${(ahorroEconomico / 1000).toFixed(1)}K
+              </span>{' '}
+              de ahorro económico
+            </div>
+            <div className="text-xs text-gray-500 mt-1">
+              Gastos evitados por no usar servicios de relleno sanitario
+            </div>
+          </motion.div>
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: '100%' }}

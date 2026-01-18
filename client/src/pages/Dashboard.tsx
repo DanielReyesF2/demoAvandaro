@@ -146,6 +146,13 @@ export default function Dashboard() {
 
   // Calcular impacto ambiental con datos reales
   const totalWasteDiverted = realTimeKPIs.totalCircular / 1000; // kg a toneladas
+  
+  // ===== INDICADORES FINANCIEROS DE MANEJO DE RESIDUOS =====
+  // Factores de costo y precio (MXN)
+  const COSTO_RELLENO_SANITARIO = 850; // $/tonelada
+  
+  // Calcular ahorro económico por residuos desviados
+  const ahorroEconomicoDesviacion = totalWasteDiverted * COSTO_RELLENO_SANITARIO;
 
   // Datos de impacto ambiental basados en residuos desviados
   const co2Avoided = realTimeKPIs.totalCircular * 0.5; // ~0.5 kg CO2 por kg reciclado
@@ -155,11 +162,10 @@ export default function Dashboard() {
 
   // ===== INDICADORES FINANCIEROS DE MANEJO DE RESIDUOS =====
   // Factores de costo y precio (MXN)
-  const COSTO_RELLENO_SANITARIO = 850; // $/tonelada
-  const PRECIO_RECICLABLES = 3500; // $/tonelada (promedio de materiales reciclables)
-  const PRECIO_COMPOSTA = 1200; // $/tonelada
-  const PRECIO_REUSO = 2500; // $/tonelada
-  const COSTO_GESTION_TOTAL = 450; // $/tonelada (procesamiento, transporte, etc.)
+  const PRECIO_RECICLABLES = 1200; // $/tonelada (promedio de materiales reciclables)
+  const PRECIO_COMPOSTA = 400; // $/tonelada
+  const PRECIO_REUSO = 800; // $/tonelada
+  const COSTO_GESTION_TOTAL = 900; // $/tonelada (procesamiento, transporte, etc.)
   const TASA_RECHAZO_CONTAMINACION = 0.08; // 8% de reciclables rechazados por contaminación
 
   // Cálculos financieros
@@ -269,6 +275,7 @@ export default function Dashboard() {
             waterRecycled={processedData.waterRecycled}
             circularityIndex={processedData.circularityIndex}
             totalWasteDiverted={totalWasteDiverted}
+            ahorroEconomico={ahorroEconomicoDesviacion}
           />
 
           {/* Sección de Impacto Ambiental con Equivalencias */}
@@ -292,22 +299,14 @@ export default function Dashboard() {
             transition={{ delay: 0.4 }}
           >
             <GlassCard variant="default" hover={false}>
-              <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center">
-                    <DollarSign className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900">Análisis Financiero de Residuos</h3>
-                    <p className="text-sm text-gray-500">Impacto económico de tu gestión actual</p>
-                  </div>
+              <div className="flex items-center gap-3 mb-8">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center">
+                  <DollarSign className="w-5 h-5 text-white" />
                 </div>
-                {/* Logo Grupo Avandaro */}
-                <img 
-                  src="/descarga (1).png" 
-                  alt="Grupo Avandaro" 
-                  className="h-12 w-auto opacity-90"
-                />
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900">Análisis Financiero de Residuos</h3>
+                  <p className="text-sm text-gray-500">Impacto económico de tu gestión actual</p>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -355,48 +354,6 @@ export default function Dashboard() {
                     <div className="flex justify-between items-center">
                       <span className="text-gray-700">Composta y reuso:</span>
                       <span className="font-bold text-green-700">${((ingresosComposta + ingresosReuso) / 1000).toFixed(1)}K</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Resultado si mejoras tu proceso */}
-              <div className="bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 rounded-2xl p-6 border-2 border-blue-200 shadow-lg">
-                <div className="flex items-center gap-3 mb-4">
-                  <Target className="w-8 h-8 text-blue-600" />
-                  <div>
-                    <h4 className="text-lg font-bold text-gray-900">Resultado si mejoras tu proceso</h4>
-                    <p className="text-sm text-gray-600">Potencial de ingresos no recuperados</p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Residuos no recuperados */}
-                  <div className="bg-white/50 rounded-xl p-4 border border-blue-100">
-                    <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">
-                      Residuos no recuperados
-                    </div>
-                    <div className="text-3xl font-bold text-amber-600 mb-2">
-                      {totalRellenoTon.toFixed(1)} ton
-                    </div>
-                    <div className="text-sm text-gray-600">
-                      Enviados a relleno sanitario
-                    </div>
-                  </div>
-                  
-                  {/* Total no recuperado */}
-                  <div className="bg-white/50 rounded-xl p-4 border border-blue-100">
-                    <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">
-                      Total no recuperado
-                    </div>
-                    <div className={`text-3xl font-bold mb-2 ${
-                      ((totalRellenoTon * PRECIO_RECICLABLES) - costoTotalManejo) >= 0 
-                        ? 'text-green-600' 
-                        : 'text-red-600'
-                    }`}>
-                      ${(((totalRellenoTon * PRECIO_RECICLABLES) - costoTotalManejo) / 1000).toFixed(1)}K
-                    </div>
-                    <div className="text-sm text-gray-600">
-                      Potencial de mejora mensual
                     </div>
                   </div>
                 </div>
