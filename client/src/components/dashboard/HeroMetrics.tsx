@@ -201,6 +201,9 @@ export function HeroMetrics({
               </span>{' '}
               de ahorro económico
             </div>
+            <div className="text-xs text-gray-500 mt-1">
+              Gastos evitados por no usar servicios de relleno sanitario
+            </div>
           </motion.div>
           <motion.div
             initial={{ width: 0 }}
