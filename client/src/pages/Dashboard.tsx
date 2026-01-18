@@ -405,13 +405,22 @@ export default function Dashboard() {
             </GlassCard>
           </motion.div>
 
+          {/* Flujos Dinámicos de Residuos - Sankey */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <WasteFlowVisualization totalWasteDiverted={totalWasteDiverted} />
+          </motion.div>
+
           {/* Grid de dos columnas: Insights IA + Tendencias */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* AI Insights */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 }}
+              transition={{ delay: 0.5 }}
             >
               <AIInsights
                 deviationRate={processedData.wasteDeviation}
@@ -423,7 +432,7 @@ export default function Dashboard() {
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.5 }}
+              transition={{ delay: 0.6 }}
             >
               <GlassCard variant="default" hover={false} className="h-full">
                 <div className="flex items-center justify-between mb-4">
@@ -476,15 +485,6 @@ export default function Dashboard() {
               </GlassCard>
             </motion.div>
           </div>
-
-          {/* Flujos Dinámicos de Residuos - Sankey */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-          >
-            <WasteFlowVisualization totalWasteDiverted={totalWasteDiverted} />
-          </motion.div>
 
           {/* Gráfico de Composición Mensual */}
           {monthlyData.length > 0 && (
