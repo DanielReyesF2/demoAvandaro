@@ -83,9 +83,6 @@ export function EconovaAI() {
           aria-label="Abrir Econova AI"
         >
           <Bot className="w-6 h-6" />
-          <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent-green rounded-full flex items-center justify-center text-xs font-semibold border-2 border-white">
-            {remainingQuestions}
-          </span>
         </button>
       )}
 
@@ -109,10 +106,7 @@ export function EconovaAI() {
               <div>
                 <h3 className="text-sm font-semibold text-gray-900">Econova AI</h3>
                 <p className="text-xs text-gray-500">
-                  {remainingQuestions > 0 
-                    ? `${remainingQuestions} pregunta${remainingQuestions > 1 ? 's' : ''} restante${remainingQuestions > 1 ? 's' : ''}`
-                    : 'Límite alcanzado'
-                  }
+                  Asistente de gestión ambiental
                 </p>
               </div>
             </div>
@@ -151,9 +145,6 @@ export function EconovaAI() {
                 <p className="text-xs text-gray-600 max-w-xs">
                   Tu asistente de gestión ambiental. Puedo ayudarte a entender tus datos de residuos, agua y energía.
                 </p>
-                <p className="text-xs text-gray-500 mt-4">
-                  Tienes <span className="font-semibold text-accent-green">{remainingQuestions} preguntas</span> disponibles
-                </p>
               </div>
             ) : (
               <div className="py-2">
@@ -183,25 +174,11 @@ export function EconovaAI() {
           </div>
 
           {/* Input */}
-          {isLimitReached && messages.length > 0 ? (
-            <div className="border-t border-subtle p-4 bg-gradient-to-r from-yellow-50 to-orange-50">
-              <p className="text-xs text-center text-gray-600">
-                Has alcanzado el límite de {MAX_QUESTIONS} preguntas. 
-                <button
-                  onClick={handleReset}
-                  className="ml-1 text-accent-green hover:underline font-medium"
-                >
-                  Reiniciar conversación
-                </button>
-              </p>
-            </div>
-          ) : (
-            <ChatInput
-              onSend={handleSend}
-              disabled={isLoading || isLimitReached}
-              placeholder={isLimitReached ? "Límite alcanzado" : "Pregunta sobre tus datos..."}
-            />
-          )}
+          <ChatInput
+            onSend={handleSend}
+            disabled={isLoading || isLimitReached}
+            placeholder="Pregunta sobre tus datos..."
+          />
         </div>
       )}
     </>
