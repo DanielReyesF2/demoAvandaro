@@ -161,14 +161,19 @@ export function EconovaAI() {
                   <ChatMessage key={index} {...message} />
                 ))}
                 {isLoading && (
-                  <div className="flex gap-3 px-4 py-3 bg-gray-50">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-accent-purple to-accent-teal flex items-center justify-center">
+                  <div className="flex gap-3 px-4 py-3 bg-gray-50 animate-fade-in">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-accent-purple to-accent-teal flex items-center justify-center flex-shrink-0">
                       <Bot className="w-4 h-4 text-white animate-pulse" />
                     </div>
-                    <div className="flex items-center gap-1 pt-2">
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xs text-gray-500 font-medium">Pensando, revisando base de datos...</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <div className="w-2 h-2 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                        <div className="w-2 h-2 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                        <div className="w-2 h-2 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                      </div>
                     </div>
                   </div>
                 )}
