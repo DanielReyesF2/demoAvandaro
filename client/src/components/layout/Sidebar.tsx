@@ -48,11 +48,13 @@ export default function Sidebar() {
   
   return (
     <div className="flex flex-col w-72 bg-white border-r border-subtle h-screen shadow-premium-sm">
-      {/* Icono Econova circular pequeño - Premium */}
-      <div className="flex items-center justify-center h-20 px-4 border-b border-subtle bg-gradient-to-br from-white to-gray-50/50">
-        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent-green to-accent-teal flex items-center justify-center shadow-premium-sm hover:shadow-premium-md transition-shadow">
-          <span className="text-white font-bold text-xl">E</span>
-        </div>
+      {/* Logo Grupo Avandaro */}
+      <div className="flex items-center justify-center h-24 px-4 border-b border-subtle bg-gradient-to-br from-white to-gray-50/50">
+        <img 
+          src="/descarga (1).png" 
+          alt="Grupo Avandaro" 
+          className="h-16 w-auto object-contain"
+        />
       </div>
       
       {/* Barra de búsqueda - Premium */}
