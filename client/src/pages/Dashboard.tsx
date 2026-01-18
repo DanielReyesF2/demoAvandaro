@@ -8,7 +8,6 @@ import { ImpactEquivalences } from '@/components/dashboard/ImpactEquivalences';
 import { AIInsights } from '@/components/dashboard/AIInsights';
 import { GlassCard } from '@/components/ui/glass-card';
 import { generateMonthlyWasteData, IMPACT_EQUIVALENCES } from '@/lib/avandaroData';
-import avandaroLogo from '@assets/logo-avandaro.svg';
 import {
   BarChart,
   Bar,
@@ -305,7 +304,7 @@ export default function Dashboard() {
                 </div>
                 {/* Logo Grupo Avandaro */}
                 <img 
-                  src={avandaroLogo} 
+                  src="/descarga (1).png" 
                   alt="Grupo Avandaro" 
                   className="h-12 w-auto opacity-90"
                 />
